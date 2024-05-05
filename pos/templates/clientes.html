@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Clientes</title>
+    <style>
+        .mt-7, .my-7 {
+            margin-top: 3.8rem !important;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .toast-centered {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+
+    {%include 'layouts/navbar.html'%}
+    
+    <h1 class="mt-7">Listado de Clientes</h1>
+
+    <button id="btnMostrarFormulario" class="btn btn-primary">Agregar Cliente</button>
+
+    <div id="divFormulario" style="display: none;">
+        <h3>Agregar Cliente</h3>
+        
+        <form id="formularioAgregarCliente">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="apellidos">Apellidos:</label>
+                <input type="text" id="apellidos" name="apellidos" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="correo">Correo Electrónico:</label>
+                <input type="email" id="correo" name="correo" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="telefono">Teléfono:</label>
+                <input type="tel" id="telefono" name="telefono" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar</button>
+        </form>
+    </div>
+
+    <table class="table" style="width: 90%; margin: 0 auto;" id="tabla_clientes">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th>Correo Electrónico</th>
+                <th>Teléfono</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cliente in clientes %}
+            <tr>
+                <td>{{ cliente.nombre }}</td>
+                <td>{{ cliente.apellidos }}</td>
+                <td>{{ cliente.correo }}</td>
+                <td>{{ cliente.telefono }}</td>
+                <td>
+                    <button class="btn-eliminar btn btn-danger" data-id="{{ cliente.id }}">Eliminar</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Agrega una clase personalizada al elemento del toast -->
+    <div id="confirmacion-eliminacion" class="toast toast-centered" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+        <div class="toast-header">
+            <strong class="me-auto">Confirmación</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body text-center"> <!-- Agrega la clase text-center para centrar el contenido -->
+            <p>¿Estás seguro de que deseas eliminar este cliente?</p> <!-- Texto centrado -->
+            <div class="d-flex justify-content-center"> <!-- Centra los botones horizontalmente -->
+                <button type="button" class="btn btn-danger btn-confirmar-eliminar me-2">Eliminar</button> <!-- Botón Eliminar -->
+                <button type="button" class="btn btn-secondary btn-cancelar-eliminar" data-bs-dismiss="toast">Cancelar</button> <!-- Botón Cancelar -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var btnMostrarFormulario = document.getElementById('btnMostrarFormulario');
+            var divFormulario = document.getElementById('divFormulario');
+            var formularioAgregarCliente = document.getElementById('formularioAgregarCliente');
+        
+            btnMostrarFormulario.addEventListener('click', function() {
+                btnMostrarFormulario.style.display = 'none'; // Ocultar el botón
+                divFormulario.style.display = 'block'; // Mostrar el formulario
+            });
+        
+            formularioAgregarCliente.addEventListener('submit', function(event) {
+                event.preventDefault(); // Evitar el envío del formulario
+        
+                // Obtener los datos del formulario
+                var formData = new FormData(formularioAgregarCliente);
+        
+                // Enviar los datos al servidor
+                fetch('/agregar-cliente/', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('Error al agregar el cliente');
+                })
+                .then(data => {
+                    console.log('Cliente agregado:', formData);
+                    // Mostrar una alerta de éxito con Bootstrap
+                    document.getElementById('nuevo_cliente').style.display = 'block';
+                    // Eliminar la alerta después de unos segundos
+                    setTimeout(function() {
+                        document.getElementById('nuevo_cliente').style.display = 'none';
+                        location.reload();
+                    }, 4000); // Eliminar la alerta después de 5 segundos
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Aquí puedes manejar el error, como mostrar un mensaje de error al usuario
+                })
+                .finally(() => {
+                    // Ocultar el formulario y mostrar el botón nuevamente
+                    divFormulario.style.display = 'none'; // Ocultar el formulario
+                    btnMostrarFormulario.style.display = 'block'; // Mostrar el botón
+                });
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var btnEliminar = document.querySelectorAll('.btn-eliminar');
+        
+            // Iterar sobre cada botón de eliminar
+            btnEliminar.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    // Obtener el ID del cliente a eliminar
+                    var clienteId = this.dataset.id;
+        
+                    // Mostrar el toast de confirmación en el centro de la página
+                    var toastElement = document.getElementById('confirmacion-eliminacion');
+                    var toast = new bootstrap.Toast(toastElement, { autohide: false });
+                    toast.show();
+        
+                    // Agregar evento al botón de confirmar eliminación dentro del toast
+                    var btnConfirmarEliminar = document.querySelector('.btn-confirmar-eliminar');
+                    btnConfirmarEliminar.addEventListener('click', function() {
+                        // Ocultar el toast al confirmar la eliminación
+                        toast.hide();
+        
+                        // Enviar una solicitud de eliminación al servidor
+                        fetch('/eliminar-cliente/' + clienteId + '/', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            }
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                return response.json();
+                            }
+                            throw new Error('Error al eliminar el cliente');
+                        })
+                        .then(data => {
+                            console.log('Cliente eliminado:', data);
+                            document.getElementById('eliminar_cliente').style.display = 'block';
+                            setTimeout(function() {
+                                document.getElementById('eliminar_cliente').style.display = 'none';
+                                location.reload();
+                            }, 4000);
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            // Aquí puedes manejar el error, como mostrar un mensaje de error al usuario
+                        });
+                    });
+        
+                    // Agregar evento al botón de cancelar dentro del toast
+                    var btnCancelarEliminar = document.querySelector('.btn-cancelar-eliminar');
+                    btnCancelarEliminar.addEventListener('click', function() {
+                        // Ocultar el toast al cancelar la eliminación
+                        toast.hide();
+                    });
+                });
+            });
+        });
+        
+    </script>
+
+</body>
+</html>

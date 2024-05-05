@@ -1,0 +1,230 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activar</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        .mt-7, .my-7 {
+            margin-top: 3.8rem !important;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    {%include 'layouts/navbar.html'%}
+
+    <div class="container mt-7">
+        <h2>Activar</h2>
+        <div class="row">
+            <!-- Tarjeta de activación -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Lavadora 1</h5>
+                        <img src={% static 'img/icons8-lavadora-80.png' %} />
+                        <input type="hidden" class="lavadora" name="lavadora" value="Lavadora 1">
+                        <button class="btn btn-primary btn-activar" data-lavadora="Lavadora 1" data-toggle="modal" data-target="#modalActivar">Activar</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Otras tarjetas de activación -->
+            <!-- Añadir aquí más tarjetas si es necesario -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Lavadora 2</h5>
+                        <img src={% static 'img/icons8-lavadora-80.png' %} />
+                        <input type="hidden" class="lavadora" name="lavadora" value="Lavadora 2">
+                        <button class="btn btn-primary btn-activar" data-lavadora="Lavadora 2" data-toggle="modal" data-target="#modalActivar">Activar</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Lavadora 3</h5>
+                        <img src={% static 'img/icons8-lavadora-80.png' %} />
+                        <input type="hidden" class="lavadora" name="lavadora" value="Lavadora 3">
+                        <button class="btn btn-primary btn-activar" data-lavadora="Lavadora 3" data-toggle="modal" data-target="#modalActivar">Activar</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Lavadora 4</h5>
+                        <img src={% static 'img/icons8-lavadora-80.png' %} />
+                        <input type="hidden" class="lavadora" name="lavadora" value="Lavadora 4">
+                        <button class="btn btn-primary btn-activar" data-lavadora="Lavadora 4" data-toggle="modal" data-target="#modalActivar">Activar</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Lavadora 5</h5>
+                        <img src={% static 'img/icons8-lavadora-80.png' %} />
+                        <input type="hidden" class="lavadora" name="lavadora" value="Lavadora 5">
+                        <button class="btn btn-primary btn-activar" data-lavadora="Lavadora 5" data-toggle="modal" data-target="#modalActivar">Activar</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Lavadora 6</h5>
+                        <img src={% static 'img/icons8-lavadora-80.png' %} />
+                        <input type="hidden" class="lavadora" name="lavadora" value="Lavadora 6">
+                        <button class="btn btn-primary btn-activar" data-lavadora="Lavadora 6" data-toggle="modal" data-target="#modalActivar">Activar</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Lavadora 7</h5>
+                        <img src={% static 'img/icons8-lavadora-80.png' %} />
+                        <input type="hidden" class="lavadora" name="lavadora" value="Lavadora 7">
+                        <button class="btn btn-primary btn-activar" data-lavadora="Lavadora 7" data-toggle="modal" data-target="#modalActivar">Activar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para activar la lavadora -->
+    <div class="modal fade" id="modalActivar" tabindex="-1" aria-labelledby="modalActivarLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalActivarLabel">Activar Lavadora</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formActivar" action="{% url 'guardar_activacion' %}" method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <input type="hidden" id="lavadora" name="lavadora">
+                            <label for="motivo" class="form-label">Motivo</label>
+                            <select class="form-select" id="motivo" name="motivo">
+                                <option value="encargo">Encargo</option>
+                                <option value="publico">Público en general</option>
+                                <option value="mantenimiento">Mantenimiento</option>
+                                <option value="error">Error</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="comentario" class="form-label">Comentario</label>
+                            <textarea class="form-control" id="comentario" name="comentario"></textarea>
+                        </div>
+                        <input type="hidden" id="lavadoraSeleccionada" name="lavadora">
+                        <button type="submit" class="btn btn-primary">Aceptar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast para mostrar mensaje de activación -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toastActivacion" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Activación de lavadora</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                La lavadora <span id="lavadoraMensaje"></span> ha sido activada.
+            </div>
+        </div>
+    </div>
+
+    <h1>Activaciones de Lavadoras</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Lavadora</th>
+                <th>Motivo</th>
+                <th>Comentario</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for activacion in activaciones %}
+                <tr>
+                    <td>{{ activacion.lavadora }}</td>
+                    <td>{{ activacion.motivo }}</td>
+                    <td>{{ activacion.comentario }}</td>
+                    <td>{{ activacion.fecha }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <a target="_blank" href="https://icons8.com">Icons8</a>
+
+
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Agregar evento click al botón de activar
+            document.querySelectorAll('.btn-activar').forEach(button => {
+                button.addEventListener('click', function() {
+                    // Obtener el nombre de la lavadora desde el input oculto
+                    var lavadora = this.getAttribute('data-lavadora');
+                    // Asignar el nombre de la lavadora al campo oculto del modal
+                    document.getElementById('lavadoraSeleccionada').value = lavadora;
+                });
+            });
+        
+            // Agregar evento submit al formulario de activación
+            document.getElementById('formActivar').addEventListener('submit', function(event) {
+                event.preventDefault(); // Evitar el envío del formulario por defecto
+                
+                // Obtener los datos del formulario
+                var formData = new FormData(this);
+                // Enviar los datos al servidor mediante AJAX
+                fetch('/guardar-activacion/', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        }
+                        throw new Error('Error al guardar la activación');
+                    })
+                    .then(data => {
+                        console.log('Activación guardada:', data);
+                        // Cerrar el modal después de guardar la activación
+                        // Cerrar el modal después de guardar la activación
+                        
+                        var modalElement = document.getElementById('modalActivar');
+                        console.log(modalElement);
+                        var modal = bootstrap.Modal.getInstance(modalElement);
+
+                        // Mostrar el toast de activación de lavadora
+                        var toast = new bootstrap.Toast(document.getElementById('toastActivacion'));
+                        toast.show();
+
+                        // Recargar la página después de un breve tiempo
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        // Manejar el error, como mostrar un mensaje al usuario
+                    });
+            });
+        });                
+    </script>
+</body>
+</html>

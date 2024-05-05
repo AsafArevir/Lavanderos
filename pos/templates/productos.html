@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Productos</title>
+    <style>
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .total {
+            font-weight: bold;
+        }
+
+        .mt-7, .my-7 {
+            margin-top: 3.8rem !important;
+        }
+
+    </style>
+</head>
+<body>
+    {% include 'layouts/navbar.html' %}
+
+    <div class="container mt-7">
+        <h1>Productos disponibles</h1>
+
+        <!-- Botón de búsqueda de cliente -->
+        <button class="btn btn-primary mt-2" id="buscarCliente" type="button" data-bs-toggle="modal" data-bs-target="#modalBuscarCliente">Buscar Cliente</button>
+
+        <!-- Agregar Producto Temporal -->
+        <!-- Botón para mostrar/ocultar el formulario de agregar producto temporal -->
+        <button class="btn btn-primary mt-2" id='temporal' type="button" onclick="toggleFormularioTemporal()">Agregar Producto Temporal</button>
+
+        <div id="formularioTemporal" class="mt-4" style="display: none;">
+            <h3>Agregar Producto Temporal</h3>
+            <div class="form-group">
+                <label for="id_nombre">Nombre:</label>
+                <input type="text" id="id_nombre" name="nombre" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="id_precio">Precio:</label>
+                <input type="text" id="id_precio" name="precio" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="id_cantidad">Cantidad:</label>
+                <input type="number" id="id_cantidad" name="cantidad" min="1" value="1" class="form-control">
+            </div>
+            <button class="btn btn-primary" id="agregarTemporal">Agregar Producto Temporal</button>
+        </div>
+
+        <div id="nombreClienteSeleccionado" class="text-end mt-2"></div>
+
+        <h2 class="mt-4">Lista de productos seleccionados</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered mt-2" id="lista-productos">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
+                        <th>Importe</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <p class="total" id="totalprecio">Total: $0.00</p>
+        <button type="submit" class="btn btn-success mt-2 float-end btn-lg" id="pagar" onclick="realizarPago()">Pagar</button>
+        <button type="submit" name="vaciar_lista" class="btn btn-secondary">Vaciar Lista</button>
+    </div>
+
+    <div class="container mt-5">
+        <h1>Productos disponibles</h1>
+        <div class="row">
+            {% for producto in productos %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ producto.nombre }}</h5>
+                            <p class="card-text">Precio: ${{ producto.precio }}</p>
+                            <!-- Agregar formulario para agregar el producto a la lista -->
+                            <button class="btn btn-primary agregar-producto" data-nombre="{{ producto.nombre }}" data-precio="{{ producto.precio }}">Agregar a la lista</button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Modal de búsqueda y selección de cliente -->
+    <div class="modal fade" id="modalBuscarCliente" tabindex="-1" aria-labelledby="modalBuscarClienteLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalBuscarClienteLabel">Buscar Cliente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="cliente" class="form-label">Cliente</label>
+                        <select class="form-select" id="cliente" name="cliente_id">
+                            {% for cliente in clientes %}
+                                <option value="{{ cliente.id }}">{{ cliente.nombre }} {{ cliente.apellidos  }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <!-- Botón para seleccionar el cliente -->
+                    <button type="button" class="btn btn-primary" id="seleccionarCliente">Seleccionar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function realizarPago() {
+            var btnPagar = document.getElementById('pagar');
+        
+            btnPagar.addEventListener('click', function() {
+                // Obtener los datos de la venta
+                var productos = obtenerProductos();
+                var clienteElement = document.getElementById('nombreClienteSeleccionado');
+                var cliente = clienteElement ? clienteElement.textContent.trim() : "Público General";
+                var total = actualizarTotal2().toString();
+                // Enviar solicitud de pago al servidor
+                fetch('{% url "pagar_venta" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        productos: productos,
+                        cliente: cliente,
+                        total: total
+                    })
+
+                    
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('Error al realizar el pago');
+                })
+                .then(data => {
+                    // Manejar la respuesta del servidor
+                    console.log('Pago realizado:', data);
+                    // Aquí puedes realizar alguna acción después del pago, como mostrar un mensaje de éxito al usuario
+                    alert('¡Pago realizado correctamente!');
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1000);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Aquí puedes manejar el error, como mostrar un mensaje de error al usuario
+                    alert('Error al realizar el pago. Por favor, inténtalo de nuevo.');
+                });
+            });
+        }
+        
+        // Función para obtener los productos de la tabla
+        function obtenerProductos() {
+            var productos = [];
+            var filasProductos = document.querySelectorAll('#lista-productos tbody tr');
+            filasProductos.forEach(function(fila) {
+                var nombre = fila.querySelector('td:nth-child(1)').textContent.trim();
+                var precio = parseFloat(fila.querySelector('td:nth-child(2)').textContent.trim().replace('$', ''));
+                var cantidad = parseInt(fila.querySelector('td:nth-child(3)').textContent.trim());
+                productos.push({
+                    nombre: nombre,
+                    precio: precio,
+                    cantidad: cantidad
+                });
+            });
+            console.log(productos)
+            return productos;
+        }
+        
+        function actualizarTotal2() {
+            var importe = 0;
+            var filasProductos = document.querySelectorAll('#lista-productos tbody tr');
+            filasProductos.forEach(function(fila) {
+                var precio = parseFloat(fila.querySelector('td:nth-child(2)').textContent);
+                var cantidad = parseFloat(fila.querySelector('td:nth-child(3)').textContent);
+                importe += precio * cantidad;
+            });
+            console.log(importe);
+            return importe;
+        }        
+    </script>
+
+    <script>
+        function toggleFormularioTemporal() {
+            var formularioTemporal = document.getElementById('formularioTemporal');
+            var botonTemporal = document.getElementById('temporal');
+            if (formularioTemporal.style.display === 'none') {
+                formularioTemporal.style.display = 'block';
+                botonTemporal.style.display = 'none';
+            } else {
+                formularioTemporal.style.display = 'none';
+                botonTemporal.style.display = 'block';
+            }
+        }
+
+        // Manejar el clic en los botones "Agregar a la lista"
+        var botonesAgregar = document.querySelectorAll('.agregar-producto');
+        botonesAgregar.forEach(function(boton) {
+            boton.addEventListener('click', function() {
+                var nombreProducto = boton.getAttribute('data-nombre');
+                var precioProducto = parseFloat(boton.getAttribute('data-precio'));
+
+                // Obtener la tabla y el cuerpo de la tabla
+                var tabla = document.querySelector('#lista-productos tbody');
+
+                // Crear una nueva fila para el producto
+                var nuevaFila = document.createElement('tr');
+
+                // Crear las celdas para el nombre, precio y acciones del producto
+                var celdaNombre = document.createElement('td');
+                celdaNombre.textContent = nombreProducto;
+
+                var celdaPrecio = document.createElement('td');
+                celdaPrecio.textContent = precioProducto.toFixed(2);
+
+                var celdaCantidad = document.createElement('td');
+                celdaCantidad.textContent = 1;
+
+                var celdaImporte = document.createElement('td');
+                celdaImporte.textContent = (precioProducto * 1).toFixed(2);
+
+                var celdaAcciones = document.createElement('td');
+                var botonEliminar = document.createElement('button');
+                botonEliminar.textContent = 'Eliminar';
+                botonEliminar.classList.add('btn', 'btn-danger');
+                botonEliminar.addEventListener('click', function() {
+                    tabla.removeChild(nuevaFila);
+                    actualizarTotal(); // Actualizar el total al eliminar un producto
+                });
+                celdaAcciones.appendChild(botonEliminar);
+
+                // Agregar las celdas a la fila
+                nuevaFila.appendChild(celdaNombre);
+                nuevaFila.appendChild(celdaPrecio);
+                nuevaFila.appendChild(celdaCantidad);
+                nuevaFila.appendChild(celdaImporte);
+                nuevaFila.appendChild(celdaAcciones);
+
+                // Agregar la fila a la tabla
+                tabla.appendChild(nuevaFila);
+
+                // Actualizar el total al agregar un producto
+                actualizarTotal();
+            });
+        });
+
+        // Función para actualizar el total
+        function actualizarTotal() {
+            var total = 0;
+            var filasProductos = document.querySelectorAll('#lista-productos tbody tr');
+            filasProductos.forEach(function(fila) {
+                var precio = parseFloat(fila.querySelector('td:nth-child(2)').textContent);
+                var cantidad = parseFloat(fila.querySelector('td:nth-child(3)').textContent);
+                total += precio * cantidad;
+            });
+            document.getElementById('totalprecio').textContent = 'Total: $' + total.toFixed(2);
+        }
+
+        // Manejar el clic en el botón "Agregar Producto Temporal"
+        document.getElementById('agregarTemporal').addEventListener('click', function(event) {
+            event.preventDefault(); // Evitar que se envíe el formulario
+
+            // Obtener los valores del formulario
+            var nombreProducto = document.getElementById('id_nombre').value;
+            var precioProducto = parseFloat(document.getElementById('id_precio').value);
+            var cantidadProducto = parseInt(document.getElementById('id_cantidad').value);
+
+            // Obtener la tabla y el cuerpo de la tabla
+            var tabla = document.querySelector('#lista-productos tbody');
+
+            // Crear una nueva fila para el producto
+            var nuevaFila = document.createElement('tr');
+
+            // Crear las celdas para el nombre, precio, cantidad, importe y acciones del producto
+            var celdaNombre = document.createElement('td');
+            celdaNombre.textContent = nombreProducto;
+
+            var celdaPrecio = document.createElement('td');
+            celdaPrecio.textContent = precioProducto.toFixed(2);
+
+            var celdaCantidad = document.createElement('td');
+            celdaCantidad.textContent = cantidadProducto;
+
+            var celdaImporte = document.createElement('td');
+            celdaImporte.textContent = (precioProducto * cantidadProducto).toFixed(2);
+
+            var celdaAcciones = document.createElement('td');
+            var botonEliminar = document.createElement('button');
+            botonEliminar.textContent = 'Eliminar';
+            botonEliminar.classList.add('btn', 'btn-danger');
+            botonEliminar.addEventListener('click', function() {
+                tabla.removeChild(nuevaFila);
+                actualizarTotal(); // Actualizar el total al eliminar un producto
+            });
+            celdaAcciones.appendChild(botonEliminar);
+
+            // Agregar las celdas a la fila
+            nuevaFila.appendChild(celdaNombre);
+            nuevaFila.appendChild(celdaPrecio);
+            nuevaFila.appendChild(celdaCantidad);
+            nuevaFila.appendChild(celdaImporte);
+            nuevaFila.appendChild(celdaAcciones);
+
+            // Agregar la fila a la tabla
+            tabla.appendChild(nuevaFila);
+
+            // Actualizar el total al agregar un producto
+            actualizarTotal();
+
+            // Ocultar el formulario temporal
+            document.getElementById('formularioTemporal').style.display = 'none';
+        });
+
+        // Evento clic en el botón "Seleccionar"
+        $('#seleccionarCliente').click(function() {
+            // Obtener el nombre del cliente seleccionado
+            var nombreCliente = $('#cliente option:selected').text();
+            
+            // Mostrar el nombre del cliente en el elemento correspondiente
+            $('#nombreClienteSeleccionado').text(nombreCliente);
+        });
+    </script>
+
+</body>
+</html>
+

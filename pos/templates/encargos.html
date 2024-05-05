@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabla de Encargos</title>
+    <style>
+        .mt-7, .my-7 {
+            margin-top: 3.8rem !important;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    {%include 'layouts/navbar.html'%}
+    <div class="container mt-7">
+        <h1>Tabla de Encargos</h1>
+        <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#modalAgregarEncargo">
+            Agregar Encargo
+          </button>
+        <!-- Pestañas de encargos -->
+        <ul class="nav nav-tabs mt-3" id="tabEncargos" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="encargo-tab" data-toggle="tab" href="#encargo" role="tab" aria-controls="encargo" aria-selected="true">Encargo</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="proceso-tab" data-toggle="tab" href="#proceso" role="tab" aria-controls="proceso" aria-selected="false">En Proceso</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="completado-tab" data-toggle="tab" href="#completado" role="tab" aria-controls="completado" aria-selected="false">Completado</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="entregado-tab" data-toggle="tab" href="#entregado" role="tab" aria-controls="entregado" aria-selected="false">Entregado</a>
+            </li>
+        </ul>
+        
+        <!-- Contenido de las pestañas -->
+        <div class="tab-content" id="contenidoEncargos">
+            <div class="tab-pane fade show active" id="encargo" role="tabpanel" aria-labelledby="encargo-tab">
+                <!-- Tabla de encargos con estado "encargo" -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Fecha de Encargo</th>
+                            <th>Fecha de Entrega</th>
+                            <th>Costo</th>
+                            <th>Estado de Pago</th>
+                            <th>Adeudo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for encargo in encargos_encargo %}
+                        <tr>
+                            <td>{{ encargo.cliente.nombre }}</td>
+                            <td>{{ encargo.fecha_encargo }}</td>
+                            <td>{{ encargo.fecha_entrega }}</td>
+                            <td>{{ encargo.costo }}</td>
+                            <td>
+                                {% if encargo.pagado %}
+                                &#9989;
+                                {% else %}
+                                &#10060;
+                                {% endif %}
+                            </td>
+                            <td>{{ encargo.adeudo }}</td>
+                            <!-- Botón para cambiar el estado del encargo -->
+                            <td>
+                                <button class="btn-cambiar-estado btn btn-primary" data-id="{{ encargo.id }}">Cambiar Estado</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="proceso" role="tabpanel" aria-labelledby="proceso-tab">
+                <!-- Tabla de encargos con estado "en proceso" -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Fecha de Encargo</th>
+                            <th>Fecha de Entrega</th>
+                            <th>Costo</th>
+                            <th>Estado de Pago</th>
+                            <th>Adeudo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for encargo in encargos_proceso %}
+                        <tr>
+                            <td>{{ encargo.cliente.nombre }}</td>
+                            <td>{{ encargo.fecha_encargo }}</td>
+                            <td>{{ encargo.fecha_entrega }}</td>
+                            <td>{{ encargo.costo }}</td>
+                            <td>
+                                {% if encargo.pagado %}
+                                &#9989;
+                                {% else %}
+                                &#10060;
+                                {% endif %}
+                            </td>
+                            <td>{{ encargo.adeudo }}</td>
+                            <!-- Botón para cambiar el estado del encargo -->
+                            <td>
+                                <button class="btn-cambiar-estado btn btn-primary" data-id="{{ encargo.id }}">Cambiar Estado</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="completado" role="tabpanel" aria-labelledby="completado-tab">
+                <!-- Tabla de encargos con estado "completado" -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Fecha de Encargo</th>
+                            <th>Fecha de Entrega</th>
+                            <th>Costo</th>
+                            <th>Estado de Pago</th>
+                            <th>Adeudo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for encargo in encargos_completado %}
+                        <tr>
+                            <td>{{ encargo.cliente.nombre }}</td>
+                            <td>{{ encargo.fecha_encargo }}</td>
+                            <td>{{ encargo.fecha_entrega }}</td>
+                            <td>{{ encargo.costo }}</td>
+                            <td>
+                                {% if encargo.pagado %}
+                                &#9989;
+                                {% else %}
+                                &#10060;
+                                {% endif %}
+                            </td>
+                            <td>{{ encargo.adeudo }}</td>
+                            <!-- Botón para cambiar el estado del encargo -->
+                            <td>
+                                <button class="btn-cambiar-estado btn btn-primary" data-id="{{ encargo.id }}">Cambiar Estado</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="tab-pane fade" id="entregado" role="tabpanel" aria-labelledby="entregado-tab">
+                <!-- Tabla de encargos entregados -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Fecha de Encargo</th>
+                            <th>Fecha de Entrega</th>
+                            <th>Costo</th>
+                            <th>Estado de Pago</th>
+                            <th>Adeudo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for encargo in encargos_entregados %}
+                        <tr>
+                            <td>{{ encargo.cliente.nombre }}</td>
+                            <td>{{ encargo.fecha_encargo }}</td>
+                            <td>{{ encargo.fecha_entrega }}</td>
+                            <td>{{ encargo.costo }}</td>
+                            <td>
+                                {% if encargo.pagado %}
+                                &#9989;
+                                {% else %}
+                                &#10060;
+                                {% endif %}
+                            </td>
+                            <td>{{ encargo.adeudo }}</td>
+                            <!-- Botón para cambiar el estado del encargo -->
+                            <td>
+                                <button class="btn-cambiar-estado btn btn-primary" data-id="{{ encargo.id }}">Cambiar Estado</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para seleccionar el nuevo estado y estado de pago -->
+    <div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-labelledby="modalCambiarEstadoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalCambiarEstadoLabel">Cambiar Estado del Encargo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formCambiarEstado">
+                        <div class="mb-3">
+                            <label for="selectEstado" class="form-label">Nuevo Estado</label>
+                            <select class="form-select" id="selectEstado">
+                                <option value="ENCARGO">Encargo</option>
+                                <option value="EN_PROCESO">En Proceso</option>
+                                <option value="COMPLETADO">Completado</option>
+                                <option value="ENTREGADO">Entregado</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="selectPago" class="form-label">Estado de Pago</label>
+                            <select class="form-select" id="selectPago">
+                                <option value="1">Pagado</option>
+                                <option value="0">Adeuda</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="selectAdeudo" class="form-label">Nuevo Adeudo</label>
+                            <input type="number" class="form-control" id="selectAdeudo" name="selectAdeudo" step="0.01">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar un nuevo encargo -->
+    <div class="modal fade" id="modalAgregarEncargo" tabindex="-1" aria-labelledby="modalAgregarEncargoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAgregarEncargoLabel">Agregar Nuevo Encargo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formAgregarEncargo">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="cliente" class="form-label">Cliente</label>
+                            <select class="form-select" id="cliente" name="cliente_id">
+                                {% for cliente in clientes %}
+                                    <option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fecha_encargo" class="form-label">Fecha de Encargo</label>
+                            <input type="date" class="form-control" id="fecha_encargo" name="fecha_encargo">
+                        </div>
+                        <div class="mb-3">
+                            <label for="fecha_entrega" class="form-label">Fecha de Entrega</label>
+                            <input type="date" class="form-control" id="fecha_entrega" name="fecha_entrega">
+                        </div>
+                        <div class="mb-3">
+                            <label for="costo" class="form-label">Costo</label>
+                            <input type="number" class="form-control" id="costo" name="costo" step="0.01">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="pagadoCheckbox" name="pagadoCheckbox">
+                            <label class="form-check-label" for="pagadoCheckbox">¿Pagado?</label>
+                        </div>
+                        <div id="adeudoField" class="mb-3 d-none">
+                            <label for="adeudo" class="form-label">Adeudo</label>
+                            <input type="number" class="form-control" id="adeudo" name="adeudo" step="0.01">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar Encargo</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Toast de notificación -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="toastNotification" class="toast align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div id="toastBody" class="toast-body"></div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    <!-- Tu script personalizado -->
+    <script src=""></script>
+
+    <!-- Script para manejar el cambio de estado -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var btnCambiarEstado = document.querySelectorAll('.btn-cambiar-estado');
+        
+            btnCambiarEstado.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var encargoId = this.dataset.id;
+                    $('#modalCambiarEstado').modal('show');
+        
+                    // Enviar solicitud al servidor para cambiar el estado
+                    $('#formCambiarEstado').submit(function(e) {
+                        e.preventDefault();
+                        var nuevoEstado = $('#selectEstado').val();
+                        var nuevoPago = $('#selectPago').val();
+                        var nuevoAdeudo = $('#selectAdeudo').val();
+        
+                        $.ajax({
+                            type: 'POST',
+                            url: '/cambiar-estado-encargo/' + encargoId + '/',
+                            data: {
+                                nuevo_estado: nuevoEstado,
+                                nuevo_pago: nuevoPago,
+                                nuevo_adeudo: nuevoAdeudo,
+                                csrfmiddlewaretoken: '{{ csrf_token }}'
+                            },
+                            success: function(response) {
+                                $('#modalCambiarEstado').modal('hide');
+                                showToast('Encargo actualizado', 'success');
+                                setTimeout(function() {
+                                    location.reload();
+                                }, 3000);
+                            },
+                            error: function(xhr, errmsg, err) {
+                                console.log(xhr.status + ": " + xhr.responseText);
+                                showToast('Error al actualizar el encargo', 'error');
+                            }
+                        });
+                    });
+                });
+            });
+        });
+
+            // Función para mostrar un toast
+            function showToast(message, type) {
+                var toast = new bootstrap.Toast(document.getElementById('toastNotification'));
+                document.getElementById('toastBody').innerText = message;
+                document.getElementById('toastNotification').classList.add('bg-' + type);
+                toast.show();
+            }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Agregar evento submit al formulario de agregar encargo
+            document.getElementById('formAgregarEncargo').addEventListener('submit', function(event) {
+              event.preventDefault(); // Evitar el envío del formulario por defecto
+              
+              // Obtener los datos del formulario
+              var formData = new FormData(this);
+          
+              // Enviar los datos al servidor mediante AJAX
+              fetch('/guardar-encargo/', {
+                method: 'POST',
+                body: formData
+              })
+              .then(response => {
+                if (response.ok) {
+                  return response.json();
+                }
+                throw new Error('Error al guardar el encargo');
+              })
+              .then(data => {
+                console.log('Encargo guardado:', data);
+                // Cerrar el modal después de guardar el encargo
+                var modal = new bootstrap.Modal(document.getElementById('modalAgregarEncargo'));
+                modal.hide();
+                // Recargar la página después de un breve tiempo
+                setTimeout(function() {
+                  location.reload();
+                }, 2000);
+              })
+              .catch(error => {
+                console.error('Error:', error);
+                // Manejar el error, como mostrar un mensaje al usuario
+              });
+            });
+          });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obtener el campo de pagado y el campo de adeudo
+            var pagadoCheckbox = document.getElementById('pagadoCheckbox');
+            var adeudoField = document.getElementById('adeudoField');
+            adeudoField.classList.remove('d-none');
+        
+            // Agregar un evento change al campo de pagado
+            pagadoCheckbox.addEventListener('change', function() {
+                if (pagadoCheckbox.checked) {
+                    adeudoField.classList.add('d-none'); // Ocultar el campo de adeudo si está pagado
+                    document.getElementById('adeudo').value = '0.00'; // Establecer el valor del adeudo en 0.00
+                } else {
+                    adeudoField.classList.remove('d-none'); // Mostrar el campo de adeudo si no está pagado
+                }
+            });
+        });
+    </script>
+</body>
+</html>

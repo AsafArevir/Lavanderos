@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingresar Saldo Final</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .mt-7, .my-7 {
+            margin-top: 3.8rem !important;
+        }
+    </style>
+</head>
+<body>
+    {%include 'layouts/navbar.html'%}
+    <div class="container mt-7">
+        <h2 class="mb-4">Ingresar Saldo Final del Día</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="saldo_final">Saldo Final:</label>
+                <input type="number" class="form-control" id="saldo_final" name="saldo_final" required step="0.01">
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Punto de Venta - Inicio</title>
+    <!-- Agregar enlaces a Bootstrap y a tu archivo CSS personalizado -->
+    <style>
+        .mt-7, .my-7 {
+            margin-top: 3.8rem !important;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    
+    {% include 'layouts/navbar.html' %}
+
+    <!-- Contenido de la página -->
+    <div class="container mt-7">
+        <h1 class="mb-4">Dashboard</h1>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Productos</h5>
+                        <p class="card-text">Comprar productos de abarrotes/limpieza</p>
+                        <a href={%url 'productos'%} class="btn btn-primary">Comprar</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Lavadoras</h5>
+                        <p class="card-text">Usar una lavadora</p>
+                        <a href="" class="btn btn-primary">Usar lavadora</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Encargos de Ropa</h5>
+                        <p class="card-text">Registrar un nuevo encargo de ropa</p>
+                        <a href="#" class="btn btn-primary">Registrar encargo</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
