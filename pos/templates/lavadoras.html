@@ -115,10 +115,18 @@
                             <input type="hidden" id="lavadora" name="lavadora">
                             <label for="motivo" class="form-label">Motivo</label>
                             <select class="form-select" id="motivo" name="motivo">
-                                <option value="encargo">Encargo</option>
                                 <option value="publico">Público en general</option>
+                                <option value="encargo">Encargo</option>
                                 <option value="mantenimiento">Mantenimiento</option>
                                 <option value="error">Error</option>
+                            </select>
+                        </div>
+                        <div class="mb-3" id="encargosContainer" style="display:none;">
+                            <label for="encargo" class="form-label">Seleccionar Encargo</label>
+                            <select class="form-select" id="encargo" name="encargo">
+                                {% for encargo in encargos %}
+                                    <option value="{{ encargo.id }}">{{ encargo.cliente }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                         <div class="mb-3">
@@ -172,6 +180,22 @@
 
 
     <!-- JavaScript -->
+    <script>
+        function toggleEncargos() {
+            var motivo = document.getElementById('motivo').value;
+            var encargosContainer = document.getElementById('encargosContainer');
+            if (motivo === 'encargo') {
+                encargosContainer.style.display = 'block';
+            } else {
+                encargosContainer.style.display = 'none';
+            }
+        }
+
+        // Asegúrate de que el DOM está completamente cargado antes de añadir el event listener
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('motivo').addEventListener('change', toggleEncargos);
+        });
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Agregar evento click al botón de activar

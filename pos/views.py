@@ -10,6 +10,7 @@ from .decorators import superusuario_required
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.db.models import Sum
+from escpos.printer import Usb
 
 @login_required
 def inicio(request):
@@ -18,8 +19,8 @@ def inicio(request):
 
 @login_required
 def productos(request):
-    productos = Producto.objects.all()
-    clientes = Cliente.objects.all()
+    productos = Producto.objects.all().order_by('nombre')
+    clientes = Cliente.objects.all().order_by('nombre')
     return render(request, 'productos.html', {'productos': productos, 'clientes': clientes})
 
 
@@ -156,7 +157,8 @@ def guardar_encargo(request):
 @login_required
 def lavadoras(request):
     activaciones = Activacion.objects.order_by('-fecha')
-    return render(request, 'lavadoras.html', {'activaciones': activaciones})
+    encargos = Encargo.objects.filter(estado='EN_PROCESO')
+    return render(request, 'lavadoras.html', {'encargos': encargos, 'activaciones': activaciones})
 
 def guardar_activacion(request):
     if request.method == 'POST':
@@ -164,7 +166,13 @@ def guardar_activacion(request):
         lavadora = request.POST.get('lavadora')
         motivo = request.POST.get('motivo')
         comentario = request.POST.get('comentario')
-        usuario = request.user.username
+        encargo_id = request.POST.get('encargo')
+        usuario = request.user
+        
+        encargo = None
+        if encargo_id:
+            encargo = Encargo.objects.get(id=encargo_id)
+        
         
         # Guardar los datos en la base de datos
         activacion = Activacion(
@@ -172,7 +180,8 @@ def guardar_activacion(request):
             motivo=motivo,
             comentario=comentario,
             fecha = timezone.now(),
-            usuario=usuario
+            usuario=usuario,
+            encargo=encargo
         )
         activacion.save()
 
@@ -213,6 +222,8 @@ def guardar_activacion(request):
         # Devolver una respuesta de error si no se recibe una solicitud POST
         return JsonResponse({'error': 'Se esperaba una solicitud POST'}, status=400)
     
+    
+    
 from django.utils import timezone
 
 def pagar_venta(request):
@@ -232,6 +243,10 @@ def pagar_venta(request):
 
             # Crear la venta en la base de datos
             venta = Ventas.objects.create(cliente=cliente, productos=productos_comprados,importe_total=importe_total, fecha_venta=fecha_venta)
+            
+            # Imprimir el ticket
+            #imprimir_ticket(venta)
+            
             # Devolver una respuesta JSON indicando que la venta ha sido realizada correctamente
             return JsonResponse({'message': 'Venta realizada correctamente'})
         else:
@@ -242,11 +257,53 @@ def pagar_venta(request):
             # Crear la venta en la base de datos
             venta = Ventas.objects.create(cliente=cliente, productos=productos_comprados,importe_total=importe_total, fecha_venta=fecha_venta, usuario=usuario)
             
+            # Imprimir el ticket
+            #imprimir_ticket(venta)
+            
             # Devolver una respuesta JSON indicando que la venta ha sido realizada correctamente
             return JsonResponse({'message': 'Venta realizada correctamente con cliente por defecto (Publico General)'})
     else:
         # Devolver una respuesta de error si no se recibe una solicitud POST
         return JsonResponse({'error': 'Se esperaba una solicitud POST'}, status=400)
+    
+    
+def imprimir_ticket(venta):
+    # Configura la impresora (ajusta los parámetros según tu impresora)
+    p = Usb(0x04b8, 0x0202, 0)  # Reemplaza con el Vendor ID y Product ID de tu impresora
+
+    # Imprimir el logo (suponiendo que el logo está en el mismo directorio y se llama 'logo.png')
+    p.set(align='center')
+    p.image('img/icons8-lavadora-80.png')
+    p.text("========== LAVANDEROS ==========\n")
+    p.text("WhatsApp: 7222947337\n")
+    p.text("Teléfono: 7229365461\n")
+    p.text("Calle Paseo de los Matlatzincas 235\n")
+    p.text("Col. Lomas Altas, Toluca, México\n")
+    p.text("================================\n")
+    p.text("Folio: {}\n".format(venta.id))
+    p.text("================================\n")
+    p.text("Cliente: {}\n".format(venta.cliente))
+    p.text("================================\n")
+    p.text("Atendió: {}\n".format(venta.usuario.username))
+    p.text("================================\n")
+    p.text("Fecha: {}\n".format(venta.fecha_venta.strftime("%d-%m-%Y %H:%M:%S")))
+    p.text("================================\n")
+    p.text("Cant    Descripción      Importe\n")
+    p.text("--------------------------------\n")
+
+    for producto in venta.productos:
+        p.text("{: <8}{: <15} ${:.2f}\n".format(producto['cantidad'], producto['nombre'], producto['precio']))
+
+    p.text("================================\n")
+    p.text("Total: ${:.2f}\n".format(venta.importe_total))
+    p.text("================================\n")
+    p.text("\"Porque NO toda la ropa sucia se lava en casa\"\n")
+    p.text("================================\n")
+
+    p.cut()
+
+    # Cerrar conexión con la impresora
+    p.close()
 
 class CustomLoginView(LoginView):
     template_name = 'login.html'
@@ -266,13 +323,14 @@ def crear_producto(request):
         # Obtener los datos del formulario enviado
         nombre = request.POST.get('nombre')
         precio = request.POST.get('precio')
+        codigo_barras = request.POST.get('codigo_barras')
 
         # Guardar los datos en el modelo Producto
-        producto = Producto(nombre=nombre, precio=precio)
+        producto = Producto(nombre=nombre, precio=precio, codigo_barras=codigo_barras)
         producto.save()
 
         # Redirigir a la página de productos
-        return redirect('productos')
+        return redirect('crear_producto')
     else:
         return render(request, 'producto.html', {'productos': productos})
 
@@ -317,13 +375,9 @@ def corte_caja(request):
     # Calcular el saldo final total
     saldo_final_total = pagos_recibidos + adeudos + ventas_totales + saldo_inicial
     
-    saldo_final_reportado = SaldoFinalDiario.objects.filter(fecha=fecha_actual).first().saldo_final
-    # Pasar los datos a la plantilla
-    
-    usuario_saldo_final = None
-    saldo_final_query = SaldoFinalDiario.objects.filter(fecha=fecha_actual)
-    if saldo_final_query.exists():
-        usuario_saldo_final = saldo_final_query.first().usuario
+    saldo_final_reportado_obj = SaldoFinalDiario.objects.filter(fecha=fecha_actual).first()
+    saldo_final_reportado = saldo_final_reportado_obj.saldo_final if saldo_final_reportado_obj else None
+    usuario_saldo_final = saldo_final_reportado_obj.usuario if saldo_final_reportado_obj else None
         
         
     context = {
@@ -352,3 +406,4 @@ def ingresar_saldo_final(request):
             logout(request)  # Cerrar sesión del usuario
             return redirect('login')  # Redirigir a la página de inicio de sesión
     return render(request, 'ingresar_saldo_final.html')
+

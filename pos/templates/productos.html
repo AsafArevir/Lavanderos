@@ -22,17 +22,17 @@
     {% include 'layouts/navbar.html' %}
 
     <div class="container mt-7">
-        <h1>Productos disponibles</h1>
+        <h1>Productos y Servicios</h1>
 
         <!-- Botón de búsqueda de cliente -->
         <button class="btn btn-primary mt-2" id="buscarCliente" type="button" data-bs-toggle="modal" data-bs-target="#modalBuscarCliente">Buscar Cliente</button>
 
         <!-- Agregar Producto Temporal -->
         <!-- Botón para mostrar/ocultar el formulario de agregar producto temporal -->
-        <button class="btn btn-primary mt-2" id='temporal' type="button" onclick="toggleFormularioTemporal()">Agregar Producto Temporal</button>
+        <button class="btn btn-primary mt-2" id='temporal' type="button" onclick="toggleFormularioTemporal()">Agregar Producto o Servicio Temporal</button>
 
         <div id="formularioTemporal" class="mt-4" style="display: none;">
-            <h3>Agregar Producto Temporal</h3>
+            <h3>Agregar Producto o Servicio Temporal</h3>
             <div class="form-group">
                 <label for="id_nombre">Nombre:</label>
                 <input type="text" id="id_nombre" name="nombre" class="form-control">
@@ -45,12 +45,17 @@
                 <label for="id_cantidad">Cantidad:</label>
                 <input type="number" id="id_cantidad" name="cantidad" min="1" value="1" class="form-control">
             </div>
-            <button class="btn btn-primary" id="agregarTemporal">Agregar Producto Temporal</button>
+            <button class="btn btn-primary" id="agregarTemporal">Agregar Producto o Servicio Temporal</button>
         </div>
 
         <div id="nombreClienteSeleccionado" class="text-end mt-2"></div>
 
-        <h2 class="mt-4">Lista de productos seleccionados</h2>
+        <div class="form-group">
+            <label for="codigoBarras">Escanear Código de Barras:</label>
+            <input type="text" id="codigoBarras" class="form-control">
+        </div>
+
+        <h2 class="mt-4">Lista de productos y servicios seleccionados</h2>
         <div class="table-responsive">
             <table class="table table-bordered mt-2" id="lista-productos">
                 <thead>
@@ -94,12 +99,12 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalBuscarClienteLabel">Buscar Cliente</h5>
+                    <h5 class="modal-title" id="modalBuscarClienteLabel">Seleccionar Cliente</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="cliente" class="form-label">Cliente</label>
+                        <label for="cliente" class="form-label">Clientes</label>
                         <select class="form-select" id="cliente" name="cliente_id">
                             {% for cliente in clientes %}
                                 <option value="{{ cliente.id }}">{{ cliente.nombre }} {{ cliente.apellidos  }}</option>
@@ -116,6 +121,111 @@
         </div>
     </div>
 
+    <script>
+        // Pasar los datos de los productos al JavaScript
+        const productos = [
+            {% for producto in productos %}
+            {
+                nombre: "{{ producto.nombre }}",
+                precio: {{ producto.precio }},
+                codigo_barras: "{{ producto.codigo_barras }}"
+            },
+            {% endfor %}
+        ];
+
+        // Añadir evento de escucha para la combinación de teclas Alt + P
+    document.addEventListener('keydown', function(event) {
+        if (event.altKey && event.key === 'p') {
+            event.preventDefault();
+            document.getElementById('pagar').click();
+        }
+    });
+    </script>
+
+    <script>
+        // Función para autoenfocar el input de código de barras
+        function autoEnfocarCodigoBarras() {
+            const codigoBarrasInput = document.getElementById('codigoBarras');
+            codigoBarrasInput.focus();
+        }
+
+        // Enfocar automáticamente al cargar la página
+        window.onload = autoEnfocarCodigoBarras;
+
+        document.getElementById('codigoBarras').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                var codigoBarras = event.target.value.trim();
+                if (codigoBarras) {
+                    // Buscar el producto en la lista de productos
+                    var producto = productos.find(p => p.codigo_barras === codigoBarras);
+                    if (producto) {
+                        // Añadir el producto a la lista de productos seleccionados
+                        agregarProductoALista(producto);
+                    } else {
+                        alert('Producto no encontrado');
+                    }
+
+                    // Limpiar el campo de código de barras
+                    event.target.value = '';
+                }
+            }
+        });
+
+        function agregarProductoALista(producto) {
+            var tabla = document.querySelector('#lista-productos tbody');
+
+            // Crear una nueva fila para el producto
+            var nuevaFila = document.createElement('tr');
+
+            // Crear las celdas para el nombre, precio y acciones del producto
+            var celdaNombre = document.createElement('td');
+            celdaNombre.textContent = producto.nombre;
+
+            var celdaPrecio = document.createElement('td');
+            celdaPrecio.textContent = producto.precio.toFixed(2);
+
+            var celdaCantidad = document.createElement('td');
+            celdaCantidad.textContent = 1;
+
+            var celdaImporte = document.createElement('td');
+            celdaImporte.textContent = (producto.precio * 1).toFixed(2);
+
+            var celdaAcciones = document.createElement('td');
+            var botonEliminar = document.createElement('button');
+            botonEliminar.textContent = 'Eliminar';
+            botonEliminar.classList.add('btn', 'btn-danger');
+            botonEliminar.addEventListener('click', function() {
+                tabla.removeChild(nuevaFila);
+                actualizarTotal(); // Actualizar el total al eliminar un producto
+            });
+            celdaAcciones.appendChild(botonEliminar);
+
+            // Agregar las celdas a la fila
+            nuevaFila.appendChild(celdaNombre);
+            nuevaFila.appendChild(celdaPrecio);
+            nuevaFila.appendChild(celdaCantidad);
+            nuevaFila.appendChild(celdaImporte);
+            nuevaFila.appendChild(celdaAcciones);
+
+            // Agregar la fila a la tabla
+            tabla.appendChild(nuevaFila);
+
+            // Actualizar el total al agregar un producto
+            actualizarTotal();
+            autoEnfocarCodigoBarras();
+        }
+
+        function actualizarTotal() {
+            var total = 0;
+            var filasProductos = document.querySelectorAll('#lista-productos tbody tr');
+            filasProductos.forEach(function(fila) {
+                var precio = parseFloat(fila.querySelector('td:nth-child(2)').textContent);
+                var cantidad = parseFloat(fila.querySelector('td:nth-child(3)').textContent);
+                total += precio * cantidad;
+            });
+            document.getElementById('totalprecio').textContent = 'Total: $' + total.toFixed(2);
+        }
+    </script>
 
     <script>
         function realizarPago() {
@@ -257,6 +367,7 @@
 
                 // Actualizar el total al agregar un producto
                 actualizarTotal();
+                autoEnfocarCodigoBarras();
             });
         });
 
@@ -322,6 +433,7 @@
 
             // Actualizar el total al agregar un producto
             actualizarTotal();
+            autoEnfocarCodigoBarras();
 
             // Ocultar el formulario temporal
             document.getElementById('formularioTemporal').style.display = 'none';

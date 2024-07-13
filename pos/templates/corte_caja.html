@@ -16,10 +16,25 @@
                 <p class="font-weight-bold">Total Encargos Entregados: ${{ total_encargos }}</p>
                 <p class="font-weight-bold">Saldo Inicial: ${{ saldo_inicial }}</p>
                 <p class="font-weight-bold">Saldo Final: ${{ saldo_final }}</p>
-                <p class="font-weight-bold">Saldo Final Reportado: ${{ saldo_final_reportado }}</p>
-                <p class="font-weight-bold">Vendedor: {{ usuario_saldo_final }}</p>
+                <p class="font-weight-bold">
+                    Saldo Final Reportado: 
+                    {% if saldo_final_reportado is not None %}
+                        ${{ saldo_final_reportado }}
+                    {% else %}
+                        Aún no se cierra caja
+                    {% endif %}
+                </p>
+                <p class="font-weight-bold">
+                    Vendedor: 
+                    {% if usuario_saldo_final %}
+                        {{ usuario_saldo_final }}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </p>
             </div>
         </div>
     </div>
+</div>
 </body>
 </html>

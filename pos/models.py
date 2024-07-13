@@ -4,12 +4,16 @@ from django.contrib.auth.models import User
 class Producto(models.Model):
     nombre = models.CharField(max_length=100)
     precio = models.DecimalField(max_digits=10, decimal_places=2)
+    codigo_barras = models.CharField(max_length=100)
 
 class Cliente(models.Model):
     nombre = models.CharField(max_length=100)
     apellidos = models.CharField(max_length=100)
     telefono = models.CharField(max_length=15)
     correo = models.EmailField(max_length=100)
+    
+    def __str__(self):
+        return f"{self.nombre} {self.apellidos}"
 
 class Encargo(models.Model):
     ESTADOS_CHOICES = (
@@ -27,6 +31,7 @@ class Encargo(models.Model):
     pagado = models.BooleanField(default=False)
     adeudo = models.DecimalField(max_digits=10, decimal_places=2)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    
 
 class Activacion(models.Model):
     LAVADORA_CHOICES = (
@@ -51,6 +56,7 @@ class Activacion(models.Model):
     comentario = models.TextField(blank=True)
     fecha = models.DateTimeField(auto_now_add=True)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    encargo = models.ForeignKey(Encargo, on_delete=models.SET_NULL, null=True, blank=True)
 
 class Ventas(models.Model):
     cliente = models.CharField(max_length=100)

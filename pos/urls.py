@@ -4,7 +4,7 @@ from .views import CustomLoginView
 
 urlpatterns = [
     path('home/', views.inicio, name='home'),
-    path('login/', CustomLoginView.as_view(), name='login'),
+    path('', CustomLoginView.as_view(), name='login'),
     path('productos/', views.productos, name='productos'),
     path('clientes/', views.clientes, name='clientes'),
     path('agregar-cliente/', views.agregar_cliente, name='agregar_cliente'),
