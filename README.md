@@ -12,6 +12,8 @@ python manage.py migrate
 ```
 
 Requirements in the requirements.txt
+```
 Django
 requests
 escpos
+```
