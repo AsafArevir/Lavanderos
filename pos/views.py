@@ -66,7 +66,7 @@ def encargo(request):
     encargos_encargo = Encargo.objects.filter(estado='ENCARGO')
     encargos_proceso = Encargo.objects.filter(estado='EN_PROCESO')
     encargos_completado = Encargo.objects.filter(estado='COMPLETADO')
-    encargos_entregados = Encargo.objects.filter(estado='ENTREGADO')
+    #encargos_entregados = Encargo.objects.filter(estado='ENTREGADO')
     # Obtener la lista de clientes
     clientes = Cliente.objects.all()
     
@@ -75,7 +75,7 @@ def encargo(request):
         'encargos_encargo': encargos_encargo,
         'encargos_proceso': encargos_proceso,
         'encargos_completado': encargos_completado,
-        'encargos_entregados': encargos_entregados,
+        #'encargos_entregados': encargos_entregados,
         'clientes': clientes,
     }
     return render(request, 'encargos.html', context)

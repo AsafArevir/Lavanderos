@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+
 # Create your models here.
 class Producto(models.Model):
     nombre = models.CharField(max_length=100)
@@ -20,7 +21,6 @@ class Encargo(models.Model):
         ('ENCARGO', 'Encargo'),
         ('EN_PROCESO', 'En proceso'),
         ('COMPLETADO', 'Completado'),
-        ('ENTREGADO', 'Entregado'),
     )
 
     cliente = models.ForeignKey('Cliente', on_delete=models.CASCADE)
@@ -78,3 +78,5 @@ class SaldoFinalDiario(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     saldo_final = models.DecimalField(max_digits=10, decimal_places=2)
     fecha = models.DateField()
+
+# Clases para dar de alta los tipos de encargo existentes

@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<!-- Edite esto -->
+<!-- Cabesera de encargos (seccion meta de la pagina) -->
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tabla de Encargos</title>
+
     <style>
         .mt-7, .my-7 {
             margin-top: 3.8rem !important;
@@ -12,35 +17,47 @@
             vertical-align: middle;
         }
     </style>
+
 </head>
+
+<!-- Seccion del curpo de pagina -->
 <body>
+
     {%include 'layouts/navbar.html'%}
+
     <div class="container mt-7">
+
         <h1>Tabla de Encargos</h1>
+
         <button type="button" class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#modalAgregarEncargo">
             Agregar Encargo
-          </button>
+        </button>
+
         <!-- Pestañas de encargos -->
         <ul class="nav nav-tabs mt-3" id="tabEncargos" role="tablist">
+
             <li class="nav-item">
                 <a class="nav-link active" id="encargo-tab" data-toggle="tab" href="#encargo" role="tab" aria-controls="encargo" aria-selected="true">Encargo</a>
             </li>
+
             <li class="nav-item">
                 <a class="nav-link" id="proceso-tab" data-toggle="tab" href="#proceso" role="tab" aria-controls="proceso" aria-selected="false">En Proceso</a>
             </li>
+
             <li class="nav-item">
                 <a class="nav-link" id="completado-tab" data-toggle="tab" href="#completado" role="tab" aria-controls="completado" aria-selected="false">Completado</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" id="entregado-tab" data-toggle="tab" href="#entregado" role="tab" aria-controls="entregado" aria-selected="false">Entregado</a>
-            </li>
+
         </ul>
         
         <!-- Contenido de las pestañas -->
         <div class="tab-content" id="contenidoEncargos">
+            
             <div class="tab-pane fade show active" id="encargo" role="tabpanel" aria-labelledby="encargo-tab">
-                <!-- Tabla de encargos con estado "encargo" -->
+
+                <!-- Tabla de encargos con estado "Encargo" -->
                 <table class="table">
+
                     <thead>
                         <tr>
                             <th>Cliente</th>
@@ -52,33 +69,40 @@
                             <th>Acciones</th>
                         </tr>
                     </thead>
+
+                    <!-- Cuerpo que indica el como se agregan los datos provinientes de la BD-->
                     <tbody>
-                        {% for encargo in encargos_encargo %}
-                        <tr>
-                            <td>{{ encargo.cliente.nombre }}</td>
-                            <td>{{ encargo.fecha_encargo }}</td>
-                            <td>{{ encargo.fecha_entrega }}</td>
-                            <td>{{ encargo.costo }}</td>
-                            <td>
-                                {% if encargo.pagado %}
-                                &#9989;
-                                {% else %}
-                                &#10060;
-                                {% endif %}
-                            </td>
-                            <td>{{ encargo.adeudo }}</td>
-                            <!-- Botón para cambiar el estado del encargo -->
-                            <td>
-                                <button class="btn-cambiar-estado btn btn-primary" data-id="{{ encargo.id }}">Cambiar Estado</button>
-                            </td>
-                        </tr>
-                        {% endfor %}
+                            {% for encargo in encargos_encargo %}
+                            <tr>
+                                <td>{{ encargo.cliente.nombre }}</td>
+                                <td>{{ encargo.fecha_encargo }}</td>
+                                <td>{{ encargo.fecha_entrega }}</td>
+                                <td>{{ encargo.costo }}</td>
+                                <td>
+                                    {% if encargo.pagado %}
+                                    &#9989;
+                                    {% else %}
+                                    &#10060;
+                                    {% endif %}
+                                </td>
+                                <td>{{ encargo.adeudo }}</td>
+                                <!-- Botón para cambiar el estado del encargo -->
+                                <td>
+                                    <button class="btn-cambiar-estado btn btn-primary" data-id="{{ encargo.id }}">Cambiar Estado</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
                     </tbody>
+
                 </table>
+
             </div>
+            
             <div class="tab-pane fade" id="proceso" role="tabpanel" aria-labelledby="proceso-tab">
-                <!-- Tabla de encargos con estado "en proceso" -->
+
+                <!-- Tabla de encargos con estado "En Proceso" -->
                 <table class="table">
+
                     <thead>
                         <tr>
                             <th>Cliente</th>
@@ -90,6 +114,8 @@
                             <th>Acciones</th>
                         </tr>
                     </thead>
+
+                    <!-- Cuerpo que indica el como se agregan los datos provinientes de la BD-->
                     <tbody>
                         {% for encargo in encargos_proceso %}
                         <tr>
@@ -112,11 +138,16 @@
                         </tr>
                         {% endfor %}
                     </tbody>
+
                 </table>
+
             </div>
+
             <div class="tab-pane fade" id="completado" role="tabpanel" aria-labelledby="completado-tab">
+
                 <!-- Tabla de encargos con estado "completado" -->
                 <table class="table">
+
                     <thead>
                         <tr>
                             <th>Cliente</th>
@@ -128,6 +159,8 @@
                             <th>Acciones</th>
                         </tr>
                     </thead>
+
+                    <!-- Cuerpo que indica el como se agregan los datos provinientes de la BD-->
                     <tbody>
                         {% for encargo in encargos_completado %}
                         <tr>
@@ -150,47 +183,10 @@
                         </tr>
                         {% endfor %}
                     </tbody>
+
                 </table>
+
             </div>
-            <div class="tab-pane fade" id="entregado" role="tabpanel" aria-labelledby="entregado-tab">
-                <!-- Tabla de encargos entregados -->
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Cliente</th>
-                            <th>Fecha de Encargo</th>
-                            <th>Fecha de Entrega</th>
-                            <th>Costo</th>
-                            <th>Estado de Pago</th>
-                            <th>Adeudo</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for encargo in encargos_entregados %}
-                        <tr>
-                            <td>{{ encargo.cliente.nombre }}</td>
-                            <td>{{ encargo.fecha_encargo }}</td>
-                            <td>{{ encargo.fecha_entrega }}</td>
-                            <td>{{ encargo.costo }}</td>
-                            <td>
-                                {% if encargo.pagado %}
-                                &#9989;
-                                {% else %}
-                                &#10060;
-                                {% endif %}
-                            </td>
-                            <td>{{ encargo.adeudo }}</td>
-                            <!-- Botón para cambiar el estado del encargo -->
-                            <td>
-                                <button class="btn-cambiar-estado btn btn-primary" data-id="{{ encargo.id }}">Cambiar Estado</button>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
     </div>
 
     <!-- Modal para seleccionar el nuevo estado y estado de pago -->
@@ -266,7 +262,7 @@
                             <label class="form-check-label" for="pagadoCheckbox">¿Pagado?</label>
                         </div>
                         <div id="adeudoField" class="mb-3 d-none">
-                            <label for="adeudo" class="form-label">Adeudo</label>
+                            <label for="adeudo" class="form-label">Anticipo</label>
                             <input type="number" class="form-control" id="adeudo" name="adeudo" step="0.01">
                         </div>
                         <button type="submit" class="btn btn-primary">Guardar Encargo</button>
