@@ -1,7 +1,8 @@
+<!-- Inicio de la seccion encargo en html -->
 <!DOCTYPE html>
+
 <html lang="en">
 
-<!-- Edite esto -->
 <!-- Cabesera de encargos (seccion meta de la pagina) -->
 <head>
 
@@ -156,6 +157,7 @@
                             <th>Costo</th>
                             <th>Estado de Pago</th>
                             <th>Adeudo</th>
+                            <th>Entregado</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -176,12 +178,23 @@
                                 {% endif %}
                             </td>
                             <td>{{ encargo.adeudo }}</td>
+                            <td>
+                                {% if encargo.pagado %}
+                                &#9989;
+                                {% else %}
+                                &#10060;
+                                {% endif %}
+                            </td>
+
                             <!-- Botón para cambiar el estado del encargo -->
                             <td>
                                 <button class="btn-cambiar-estado btn btn-primary" data-id="{{ encargo.id }}">Cambiar Estado</button>
                             </td>
+
                         </tr>
+                        
                         {% endfor %}
+                        
                     </tbody>
 
                 </table>
@@ -191,14 +204,20 @@
 
     <!-- Modal para seleccionar el nuevo estado y estado de pago -->
     <div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-labelledby="modalCambiarEstadoLabel" aria-hidden="true">
+
         <div class="modal-dialog">
+
             <div class="modal-content">
+
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalCambiarEstadoLabel">Cambiar Estado del Encargo</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <div class="modal-body">
+
                     <form id="formCambiarEstado">
+
                         <div class="mb-3">
                             <label for="selectEstado" class="form-label">Nuevo Estado</label>
                             <select class="form-select" id="selectEstado">
@@ -208,6 +227,7 @@
                                 <option value="ENTREGADO">Entregado</option>
                             </select>
                         </div>
+
                         <div class="mb-3">
                             <label for="selectPago" class="form-label">Estado de Pago</label>
                             <select class="form-select" id="selectPago">
@@ -215,27 +235,40 @@
                                 <option value="0">Adeuda</option>
                             </select>
                         </div>
+
                         <div class="mb-3">
                             <label for="selectAdeudo" class="form-label">Nuevo Adeudo</label>
                             <input type="number" class="form-control" id="selectAdeudo" name="selectAdeudo" step="0.01">
                         </div>
+
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+
                     </form>
+
                 </div>
+
             </div>
+
         </div>
+        
     </div>
 
     <!-- Modal para agregar un nuevo encargo -->
     <div class="modal fade" id="modalAgregarEncargo" tabindex="-1" aria-labelledby="modalAgregarEncargoLabel" aria-hidden="true">
+
         <div class="modal-dialog">
+
             <div class="modal-content">
+
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalAgregarEncargoLabel">Agregar Nuevo Encargo</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <div class="modal-body">
+
                     <form id="formAgregarEncargo">
+
                         {% csrf_token %}
                         <div class="mb-3">
                             <label for="cliente" class="form-label">Cliente</label>
@@ -245,45 +278,60 @@
                                 {% endfor %}
                             </select>
                         </div>
+
                         <div class="mb-3">
                             <label for="fecha_encargo" class="form-label">Fecha de Encargo</label>
-                            <input type="date" class="form-control" id="fecha_encargo" name="fecha_encargo">
+                            <input type="date" class="form-control" id="fecha_encargo" name="fecha_encargo" value="{{ current_date }}">
                         </div>
+
                         <div class="mb-3">
                             <label for="fecha_entrega" class="form-label">Fecha de Entrega</label>
                             <input type="date" class="form-control" id="fecha_entrega" name="fecha_entrega">
                         </div>
+
                         <div class="mb-3">
                             <label for="costo" class="form-label">Costo</label>
                             <input type="number" class="form-control" id="costo" name="costo" step="0.01">
                         </div>
+
+                        <div class="mb-3">
+                            <label for="anticipo" class="form-label">Anticipo</label>
+                            <input type="number" class="form-control" id="anticipo" name="anticipo" step="0.01">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="adeudo" class="form-label">Adeudo</label>
+                            <input type="number" class="form-control" id="adeudo" name="adeudo" step="0.01" readonly>
+                        </div>
+
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="pagadoCheckbox" name="pagadoCheckbox">
                             <label class="form-check-label" for="pagadoCheckbox">¿Pagado?</label>
                         </div>
-                        <div id="adeudoField" class="mb-3 d-none">
-                            <label for="adeudo" class="form-label">Anticipo</label>
-                            <input type="number" class="form-control" id="adeudo" name="adeudo" step="0.01">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Guardar Encargo</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 
+                        <button type="submit" class="btn btn-primary">Guardar Encargo</button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
     <!-- Toast de notificación -->
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+
         <div id="toastNotification" class="toast align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div id="toastBody" class="toast-body"></div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
+
     </div>
-    <!-- Tu script personalizado -->
-    <script src=""></script>
 
     <!-- Script para manejar el cambio de estado -->
     <script>
@@ -336,59 +384,109 @@
                 toast.show();
             }
     </script>
+
+
+    <!-- Control de acciones del formulario  -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Agregar evento submit al formulario de agregar encargo
-            document.getElementById('formAgregarEncargo').addEventListener('submit', function(event) {
-              event.preventDefault(); // Evitar el envío del formulario por defecto
-              
-              // Obtener los datos del formulario
-              var formData = new FormData(this);
-          
-              // Enviar los datos al servidor mediante AJAX
-              fetch('/guardar-encargo/', {
-                method: 'POST',
-                body: formData
-              })
-              .then(response => {
-                if (response.ok) {
-                  return response.json();
-                }
-                throw new Error('Error al guardar el encargo');
-              })
-              .then(data => {
-                console.log('Encargo guardado:', data);
-                // Cerrar el modal después de guardar el encargo
-                var modal = new bootstrap.Modal(document.getElementById('modalAgregarEncargo'));
-                modal.hide();
-                // Recargar la página después de un breve tiempo
-                setTimeout(function() {
-                  location.reload();
-                }, 2000);
-              })
-              .catch(error => {
-                console.error('Error:', error);
-                // Manejar el error, como mostrar un mensaje al usuario
-              });
-            });
-          });
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Obtener el campo de pagado y el campo de adeudo
-            var pagadoCheckbox = document.getElementById('pagadoCheckbox');
-            var adeudoField = document.getElementById('adeudoField');
-            adeudoField.classList.remove('d-none');
+
+            var modal = new bootstrap.Modal(document.getElementById('modalAgregarEncargo'));
         
-            // Agregar un evento change al campo de pagado
+            document.getElementById('formAgregarEncargo').addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                var formData = new FormData(this);
+                var activeTab = document.querySelector('.nav-link.active').id;
+                var url = '/guardar-encargo/';
+        
+                switch (activeTab) {
+                    case 'encargo-tab':
+                        url = '/guardar-encargo/';
+                        break;
+                    case 'proceso-tab':
+                        url = '/guardar-encargo-proceso/';
+                        break;
+                    case 'completado-tab':
+                        url = '/guardar-encargo-completado/';
+                        break;
+                    default:
+                        break;
+                }
+        
+                // Envio de la informacion al servidor por medio de AJAX
+                fetch(url, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('Error al guardar el encargo');
+                })
+                .then(data => {
+                    console.log('Encargo guardado:', data);
+                    modal.hide(); // Ocultar el modal después de guardar
+                    resetForm(); // Llamar a la función para limpiar el formulario
+                    setTimeout(function() {
+                        location.reload(); // Recargar la página después de cierto tiempo para mostrar los nuevos resultados
+                    }, 2000); // Recargar la página después de 2 segundos (ajustable según sea necesario)
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        
+            // Función para limpiar el formulario
+            function resetForm() {
+                document.getElementById('formAgregarEncargo').reset(); // Resetear el formulario
+        
+                // Asignacion de la fecha del dia que se ejecuta la alta del encargo
+                document.getElementById('fecha_encargo').valueAsDate = new Date();
+        
+                // Limpiar campos adicionales si es necesario
+                document.getElementById('anticipo').value = '';
+                document.getElementById('adeudo').value = '';
+                document.getElementById('pagadoCheckbox').checked = false;
+                document.getElementById('anticipo').disabled = false;
+            }
+        
+            // Asignacion de la fecha del dia que se ejecuta la alta del encargo
+            document.getElementById('fecha_encargo').valueAsDate = new Date();
+        
+            // Calculo del adeudo enbase al costo y el anticipo
+            var costoField = document.getElementById('costo');
+            var anticipoField = document.getElementById('anticipo');
+            var adeudoField = document.getElementById('adeudo');
+        
+            function calculateAdeudo() {
+                var costo = parseFloat(costoField.value) || 0;
+                var anticipo = parseFloat(anticipoField.value) || 0;
+                var adeudo = costo - anticipo;
+                adeudoField.value = adeudo.toFixed(2);
+            }
+        
+            costoField.addEventListener('input', calculateAdeudo);
+            anticipoField.addEventListener('input', calculateAdeudo);
+        
+            // Validacion de todo pagado mediante el checkbox
+            var pagadoCheckbox = document.getElementById('pagadoCheckbox');
+        
             pagadoCheckbox.addEventListener('change', function() {
                 if (pagadoCheckbox.checked) {
-                    adeudoField.classList.add('d-none'); // Ocultar el campo de adeudo si está pagado
-                    document.getElementById('adeudo').value = '0.00'; // Establecer el valor del adeudo en 0.00
+                    anticipoField.value = costoField.value;
+                    anticipoField.disabled = true;
+                    calculateAdeudo();
                 } else {
-                    adeudoField.classList.remove('d-none'); // Mostrar el campo de adeudo si no está pagado
+                    anticipoField.disabled = false;
+                    calculateAdeudo();
                 }
             });
         });
+        
+
     </script>
+
 </body>
 </html>

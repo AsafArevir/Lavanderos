@@ -11,6 +11,7 @@ from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.db.models import Sum
 from escpos.printer import Usb
+from django.views.decorators.csrf import csrf_exempt
 
 @login_required
 def inicio(request):
@@ -118,6 +119,7 @@ def guardar_encargo(request):
         
         pagado_str = request.POST.get('pagado')
         usuario = request.user
+
         # Convertir el valor de "pagado" a un booleano si es válido
         if pagado_str is not None:
             pagado = bool(int(pagado_str))
