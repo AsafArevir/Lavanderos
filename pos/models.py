@@ -31,7 +31,7 @@ class Encargo(models.Model):
     pagado = models.BooleanField(default=False)
     adeudo = models.DecimalField(max_digits=10, decimal_places=2)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
-    #entregado = models.BooleanField(default=False)
+    entregado = models.BooleanField(default=False)
     
 
 class Activacion(models.Model):

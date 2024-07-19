@@ -17,11 +17,12 @@
         .table th, .table td {
             vertical-align: middle;
         }
+
     </style>
 
 </head>
 
-<!-- Seccion del curpo de pagina -->
+<!-- Seccion del cuerpo de pagina -->
 <body>
 
     {%include 'layouts/navbar.html'%}
@@ -73,7 +74,9 @@
 
                     <!-- Cuerpo que indica el como se agregan los datos provinientes de la BD-->
                     <tbody>
+
                             {% for encargo in encargos_encargo %}
+
                             <tr>
                                 <td>{{ encargo.cliente.nombre }}</td>
                                 <td>{{ encargo.fecha_encargo }}</td>
@@ -87,12 +90,16 @@
                                     {% endif %}
                                 </td>
                                 <td>{{ encargo.adeudo }}</td>
+
                                 <!-- Botón para cambiar el estado del encargo -->
                                 <td>
                                     <button class="btn-cambiar-estado btn btn-primary" data-id="{{ encargo.id }}">Cambiar Estado</button>
                                 </td>
+
                             </tr>
+
                             {% endfor %}
+
                     </tbody>
 
                 </table>
@@ -118,7 +125,9 @@
 
                     <!-- Cuerpo que indica el como se agregan los datos provinientes de la BD-->
                     <tbody>
+
                         {% for encargo in encargos_proceso %}
+
                         <tr>
                             <td>{{ encargo.cliente.nombre }}</td>
                             <td>{{ encargo.fecha_encargo }}</td>
@@ -132,12 +141,15 @@
                                 {% endif %}
                             </td>
                             <td>{{ encargo.adeudo }}</td>
+
                             <!-- Botón para cambiar el estado del encargo -->
                             <td>
                                 <button class="btn-cambiar-estado btn btn-primary" data-id="{{ encargo.id }}">Cambiar Estado</button>
                             </td>
                         </tr>
+
                         {% endfor %}
+
                     </tbody>
 
                 </table>
@@ -164,7 +176,9 @@
 
                     <!-- Cuerpo que indica el como se agregan los datos provinientes de la BD-->
                     <tbody>
+
                         {% for encargo in encargos_completado %}
+
                         <tr>
                             <td>{{ encargo.cliente.nombre }}</td>
                             <td>{{ encargo.fecha_encargo }}</td>
@@ -179,7 +193,7 @@
                             </td>
                             <td>{{ encargo.adeudo }}</td>
                             <td>
-                                {% if encargo.pagado %}
+                                {% if encargo.entregado %}
                                 &#9989;
                                 {% else %}
                                 &#10060;
@@ -224,7 +238,6 @@
                                 <option value="ENCARGO">Encargo</option>
                                 <option value="EN_PROCESO">En Proceso</option>
                                 <option value="COMPLETADO">Completado</option>
-                                <option value="ENTREGADO">Entregado</option>
                             </select>
                         </div>
 
@@ -241,6 +254,14 @@
                             <input type="number" class="form-control" id="selectAdeudo" name="selectAdeudo" step="0.01">
                         </div>
 
+                        <div class="mb-3">
+                            <label for="estadoEntrega" class="form-label">Estado de Entrega</label>
+                            <select class="form-select" id="estadoEntrega">
+                                <option value="no_entregado">No entregado</option>
+                                <option value="entregado">Entregado</option>
+                            </select>
+                        </div>
+
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
 
                     </form>
@@ -250,7 +271,7 @@
             </div>
 
         </div>
-        
+
     </div>
 
     <!-- Modal para agregar un nuevo encargo -->
@@ -294,6 +315,11 @@
                             <input type="number" class="form-control" id="costo" name="costo" step="0.01">
                         </div>
 
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="pagadoCheckbox" name="pagadoCheckbox">
+                            <label class="form-check-label" for="pagadoCheckbox">¿Pagado?</label>
+                        </div>
+
                         <div class="mb-3">
                             <label for="anticipo" class="form-label">Anticipo</label>
                             <input type="number" class="form-control" id="anticipo" name="anticipo" step="0.01">
@@ -302,11 +328,6 @@
                         <div class="mb-3">
                             <label for="adeudo" class="form-label">Adeudo</label>
                             <input type="number" class="form-control" id="adeudo" name="adeudo" step="0.01" readonly>
-                        </div>
-
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="pagadoCheckbox" name="pagadoCheckbox">
-                            <label class="form-check-label" for="pagadoCheckbox">¿Pagado?</label>
                         </div>
 
                         <button type="submit" class="btn btn-primary">Guardar Encargo</button>
@@ -335,20 +356,48 @@
 
     <!-- Script para manejar el cambio de estado -->
     <script>
+
         document.addEventListener('DOMContentLoaded', function() {
             var btnCambiarEstado = document.querySelectorAll('.btn-cambiar-estado');
         
             btnCambiarEstado.forEach(function(btn) {
                 btn.addEventListener('click', function() {
                     var encargoId = this.dataset.id;
-                    $('#modalCambiarEstado').modal('show');
+                    var modal = $('#modalCambiarEstado');
+                    modal.modal('show');
+        
+                    // Obtener el adeudo actual
+                    $.ajax({
+                        type: 'GET',
+                        url: '/cambiar-estado-encargo/' + encargoId + '/',
+                        success: function(response) {
+                            var adeudo = response.adeudo;
+                            $('#selectAdeudo').val(adeudo);
+        
+                            // Ajustar el campo "Nuevo Adeudo" según la selección del usuario
+                            $('#selectPago').off('change').on('change', function() {
+                                if ($(this).val() == '1') { // Pagado
+                                    $('#selectAdeudo').val('0.00').prop('readonly', true);
+                                } else { // Adeuda
+                                    $('#selectAdeudo').val(adeudo).prop('readonly', true);
+                                }
+                            });
+        
+                            // Inicializa el valor del campo "Nuevo Adeudo" según el estado actual
+                            $('#selectPago').trigger('change');
+                        },
+                        error: function(xhr, errmsg, err) {
+                            console.log(xhr.status + ": " + xhr.responseText);
+                        }
+                    });
         
                     // Enviar solicitud al servidor para cambiar el estado
-                    $('#formCambiarEstado').submit(function(e) {
+                    $('#formCambiarEstado').off('submit').on('submit', function(e) {
                         e.preventDefault();
                         var nuevoEstado = $('#selectEstado').val();
                         var nuevoPago = $('#selectPago').val();
                         var nuevoAdeudo = $('#selectAdeudo').val();
+                        var estadoEntrega = $('#estadoEntrega').val();
         
                         $.ajax({
                             type: 'POST',
@@ -357,10 +406,11 @@
                                 nuevo_estado: nuevoEstado,
                                 nuevo_pago: nuevoPago,
                                 nuevo_adeudo: nuevoAdeudo,
+                                estado_entrega: estadoEntrega,
                                 csrfmiddlewaretoken: '{{ csrf_token }}'
                             },
                             success: function(response) {
-                                $('#modalCambiarEstado').modal('hide');
+                                modal.modal('hide');
                                 showToast('Encargo actualizado', 'success');
                                 setTimeout(function() {
                                     location.reload();
@@ -375,14 +425,16 @@
                 });
             });
         });
-
-            // Función para mostrar un toast
-            function showToast(message, type) {
-                var toast = new bootstrap.Toast(document.getElementById('toastNotification'));
-                document.getElementById('toastBody').innerText = message;
-                document.getElementById('toastNotification').classList.add('bg-' + type);
-                toast.show();
-            }
+        
+        // Función para mostrar un toast
+        function showToast(message, type) {
+            var toast = new bootstrap.Toast(document.getElementById('toastNotification'));
+            document.getElementById('toastBody').innerText = message;
+            document.getElementById('toastNotification').classList.add('bg-' + type);
+            toast.show();
+        }
+        
+        
     </script>
 
 
@@ -390,12 +442,11 @@
     <script>
 
         document.addEventListener('DOMContentLoaded', function() {
-
             var modal = new bootstrap.Modal(document.getElementById('modalAgregarEncargo'));
         
             document.getElementById('formAgregarEncargo').addEventListener('submit', function(event) {
                 event.preventDefault();
-                
+        
                 var formData = new FormData(this);
                 var activeTab = document.querySelector('.nav-link.active').id;
                 var url = '/guardar-encargo/';
@@ -459,6 +510,7 @@
             var costoField = document.getElementById('costo');
             var anticipoField = document.getElementById('anticipo');
             var adeudoField = document.getElementById('adeudo');
+            var pagadoIcon = document.getElementById('pagadoIcon');
         
             function calculateAdeudo() {
                 var costo = parseFloat(costoField.value) || 0;
@@ -478,14 +530,16 @@
                     anticipoField.value = costoField.value;
                     anticipoField.disabled = true;
                     calculateAdeudo();
+                    pagadoIcon.style.display = 'inline'; // Mostrar el símbolo "✔"
                 } else {
                     anticipoField.disabled = false;
                     calculateAdeudo();
+                    pagadoIcon.style.display = 'none'; // Ocultar el símbolo "✔"
                 }
             });
         });
         
-
+        
     </script>
 
 </body>

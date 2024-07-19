@@ -12,6 +12,7 @@ from django.shortcuts import redirect
 from django.db.models import Sum
 from escpos.printer import Usb
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
 
 @login_required
 def inicio(request):
@@ -82,34 +83,40 @@ def encargo(request):
     return render(request, 'encargos.html', context)
 
 
-@require_POST
+@csrf_exempt
 def cambiar_estado_encargo(request, encargo_id):
-    nuevo_estado = request.POST.get('nuevo_estado')
-    nuevo_pago = request.POST.get('nuevo_pago')
-    nuevo_adeudo = request.POST.get('nuevo_adeudo')
+    encargo = get_object_or_404(Encargo, pk=encargo_id)
+    
+    if request.method == 'GET':
+        return JsonResponse({'adeudo': encargo.adeudo})
+    
+    elif request.method == 'POST':
+        nuevo_estado = request.POST.get('nuevo_estado')
+        nuevo_pago = request.POST.get('nuevo_pago')
+        nuevo_adeudo = request.POST.get('nuevo_adeudo')
+        estado_entrega = request.POST.get('estado_entrega')
 
-    try:
-        encargo = Encargo.objects.get(pk=encargo_id)
-        encargo.estado = nuevo_estado
-        encargo.pagado = bool(int(nuevo_pago))
-        encargo.adeudo = float(nuevo_adeudo)
-        encargo.save()
-        
-        if nuevo_estado == 'ENTREGADO':
-            control_pago_encargo = ControlPagoEncargos.objects.get(encargo=encargo)
-            control_pago_encargo.fecha_entregado = timezone.now()
-            control_pago_encargo.save()
+        try:
+            encargo.estado = nuevo_estado
+            encargo.pagado = bool(int(nuevo_pago))
+            encargo.adeudo = float(nuevo_adeudo)
+            encargo.entregado = (estado_entrega == 'entregado')
+            encargo.save()
             
-        return JsonResponse({'message': 'Encargo actualizado correctamente'}, status=200)
-    except Encargo.DoesNotExist:
-        return JsonResponse({'error': 'El encargo no existe'}, status=404)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
-
-
+            if nuevo_estado == 'ENTREGADO':
+                control_pago_encargo = ControlPagoEncargos.objects.get(encargo=encargo)
+                control_pago_encargo.fecha_entregado = timezone.now()
+                control_pago_encargo.save()
+                
+            return JsonResponse({'message': 'Encargo actualizado correctamente'}, status=200)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+    
+@csrf_exempt
 def guardar_encargo(request):
     if request.method == 'POST':
-        # Obtener los datos del formulario de la solicitud POST
         cliente_id = request.POST.get('cliente_id')
         fecha_encargo = request.POST.get('fecha_encargo')
         fecha_entrega = request.POST.get('fecha_entrega')
@@ -117,16 +124,12 @@ def guardar_encargo(request):
         estado = 'ENCARGO'
         adeudo = request.POST.get('adeudo')
         
-        pagado_str = request.POST.get('pagado')
+        pagado_checkbox = request.POST.get('pagadoCheckbox')
         usuario = request.user
 
         # Convertir el valor de "pagado" a un booleano si es válido
-        if pagado_str is not None:
-            pagado = bool(int(pagado_str))
-        else:
-            pagado = False
+        pagado = bool(pagado_checkbox) if pagado_checkbox else False
 
-        # Crear una instancia de Encargo y guardarla en la base de datos
         encargo = Encargo(
             cliente_id=cliente_id,
             fecha_encargo=fecha_encargo,
@@ -139,7 +142,7 @@ def guardar_encargo(request):
         )
         encargo.save()
         
-        pago_rec= float(costo) - float(adeudo)
+        pago_rec = float(costo) - float(adeudo)
         
         control_pago_encargo = ControlPagoEncargos(
             encargo=encargo,
@@ -149,12 +152,9 @@ def guardar_encargo(request):
         )
         control_pago_encargo.save()
 
-        # Devolver una respuesta JSON indicando que el encargo ha sido guardado
         return JsonResponse({'message': 'Encargo guardado correctamente'})
     else:
-        # Devolver una respuesta de error si no se recibe una solicitud POST
         return JsonResponse({'error': 'Se esperaba una solicitud POST'}, status=400)
-
 
 @login_required
 def lavadoras(request):
