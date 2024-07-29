@@ -7,8 +7,14 @@
         .mt-7, .my-7 {
             margin-top: 3.8rem !important;
         }
+        .table {
+            width: 90%;
+            margin: 0 auto;
+            border-collapse: collapse; /* Ensure borders between cells are collapsed */
+        }
         .table th, .table td {
             vertical-align: middle;
+            padding: 0.5rem;
         }
         .toast-centered {
             position: fixed;
@@ -20,6 +26,7 @@
 </head>
 <body>
 
+    {% load static %}
     {%include 'layouts/navbar.html'%}
     
     <h1 class="mt-7">Listado de Clientes</h1>

@@ -3,45 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <title>Punto de Venta - Inicio</title>
+    <!-- Enlaces a Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Agregar enlaces a Bootstrap y a tu archivo CSS personalizado -->
     <style>
         .mt-7, .my-7 {
             margin-top: 3.8rem !important;
+            
         }
         .table th, .table td {
             vertical-align: middle;
         }
+        .card-body img {
+            max-width: 80px;
+            max-height: 80px;
+            float: right;
+        }
     </style>
 </head>
 <body>
-    
+
+    {% load static %}
     {% include 'layouts/navbar.html' %}
 
     <!-- Contenido de la página -->
     <div class="container mt-7">
         <h1 class="mb-4">Dashboard</h1>
+        <h4 class="mb-4">Punto de Venta</h4>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-4  mb-4">
                 <div class="card">
                     <div class="card-body">
+                        <img src="{% static 'img/icons8-productos-80.png' %}" alt="Productos">
                         <h5 class="card-title">Productos</h5>
                         <p class="card-text">Comprar productos de abarrotes/limpieza</p>
                         <a href={%url 'productos'%} class="btn btn-primary">Comprar</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4  mb-4">
                 <div class="card">
                     <div class="card-body">
+                        <img src="{% static 'img/icons8-lavadora-80.png' %}" alt="Lavadoras">
                         <h5 class="card-title">Lavadoras</h5>
                         <p class="card-text">Usar una lavadora</p>
                         <a href="" class="btn btn-primary">Usar lavadora</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4  mb-4">
                 <div class="card">
                     <div class="card-body">
+                        <img src="{% static 'img/icons8-historial-de-pedidos-80.png' %}" alt="Encargos">
                         <h5 class="card-title">Encargos de Ropa</h5>
                         <p class="card-text">Registrar un nuevo encargo de ropa</p>
                         <a href="#" class="btn btn-primary">Registrar encargo</a>

@@ -15,7 +15,20 @@
         .mt-7, .my-7 {
             margin-top: 3.8rem !important;
         }
-
+        .color-blue {
+            color: #181864;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .blue {
+            color: #181864;
+        }
+        .color-green {
+            color: #008000;
+        }
+        .color-price {
+            color: rgb(0, 110, 255);
+        }
     </style>
 </head>
 <body>
@@ -34,14 +47,14 @@
         <div id="formularioTemporal" class="mt-4" style="display: none;">
             <h3>Agregar Producto o Servicio Temporal</h3>
             <div class="form-group">
-                <label for="id_nombre">Nombre:</label>
+                <label for="id_nombre blue">Nombre:</label>
                 <input type="text" id="id_nombre" name="nombre" class="form-control">
             </div>
-            <div class="form-group">
+            <div class="form-group blue">
                 <label for="id_precio">Precio:</label>
                 <input type="text" id="id_precio" name="precio" class="form-control">
             </div>
-            <div class="form-group">
+            <div class="form-group blue">
                 <label for="id_cantidad">Cantidad:</label>
                 <input type="number" id="id_cantidad" name="cantidad" min="1" value="1" class="form-control">
             </div>
@@ -50,17 +63,17 @@
 
         <div id="nombreClienteSeleccionado" class="text-end mt-2"></div>
 
-        <div class="form-group">
+        <div class="form-group color-blue">
             <label for="codigoBarras">Escanear Código de Barras:</label>
             <input type="text" id="codigoBarras" class="form-control">
         </div>
 
-        <h2 class="mt-4">Lista de productos y servicios seleccionados</h2>
+        <h2 class="mt-4 ">Lista de productos y servicios seleccionados</h2>
         <div class="table-responsive">
-            <table class="table table-bordered mt-2" id="lista-productos">
+            <table class="table table-bordered mt-2" id="lista-productos color-blue">
                 <thead>
                     <tr>
-                        <th>Nombre</th>
+                        <th class="color-blue">Nombre</th>
                         <th>Precio</th>
                         <th>Cantidad</th>
                         <th>Importe</th>
@@ -82,9 +95,11 @@
             {% for producto in productos %}
                 <div class="col-md-4 mb-4">
                     <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ producto.nombre }}</h5>
-                            <p class="card-text">Precio: ${{ producto.precio }}</p>
+                        <div class="card-body text-center">
+                            <h5 class="card-title color-blue">{{ producto.nombre }}</h5>
+                            <p class="card-text">
+                                <span class="color-price">Precio:</span> 
+                                <span class="color-green">${{ producto.precio }}</span></p>
                             <!-- Agregar formulario para agregar el producto a la lista -->
                             <button class="btn btn-primary agregar-producto" data-nombre="{{ producto.nombre }}" data-precio="{{ producto.precio }}">Agregar a la lista</button>
                         </div>

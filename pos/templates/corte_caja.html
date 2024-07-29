@@ -5,31 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Corte de Caja</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .centered-content {
+            text-align: center; /* Center align text */
+        }
+        .blue-numbers {
+            color: blue;
+        }
+        .no-report {
+            color: red;
+        }
+        
+        .final-report {
+            color: green;
+        }
+        .green-numbers {
+            color: green;
+        }
+        .orange-numbers {
+            color: orange;
+        }
+        .gray-numbers {
+            color: gray;
+        }
+    </style>
 </head>
 <body>
+
+    {% load static %}
     {%include 'layouts/navbar.html'%}
     <div class="container mt-5">
         <h2 class="mb-4">Corte de Caja - {{ fecha_actual }}</h2>
-        <div class="row">
-            <div class="col-md-6">
-                <p class="font-weight-bold">Total Ventas: ${{ total_ventas }}</p>
-                <p class="font-weight-bold">Total Encargos Entregados: ${{ total_encargos }}</p>
-                <p class="font-weight-bold">Saldo Inicial: ${{ saldo_inicial }}</p>
-                <p class="font-weight-bold">Saldo Final: ${{ saldo_final }}</p>
+        <div class="row justify-content-center">
+            <div class="col-md-6 ">
+                <p class="font-weight-bold">Total Ventas:<span class="blue-numbers">${{ total_ventas }}</span> </p>
+                <p class="font-weight-bold">Total Encargos Entregados: <span class="blue-numbers">${{ total_encargos }}</span></p>
+                <p class="font-weight-bold">Saldo Inicial:  <span class="orange-numbers">${{ saldo_inicial }}</span></p>
+                <p class="font-weight-bold">Saldo Final: <span class="green-numbers">${{ saldo_final }}</span></p>
                 <p class="font-weight-bold">
                     Saldo Final Reportado: 
                     {% if saldo_final_reportado is not None %}
-                        ${{ saldo_final_reportado }}
+                        <span class="final-report">${{ saldo_final_reportado }}</span>
                     {% else %}
-                        Aún no se cierra caja
+                        <span class="no-report">Aún no se cierra caja</span>
                     {% endif %}
                 </p>
                 <p class="font-weight-bold">
                     Vendedor: 
                     {% if usuario_saldo_final %}
-                        {{ usuario_saldo_final }}
+                        <span class="final-report">{{ usuario_saldo_final }}</span>
                     {% else %}
-                        N/A
+                        <span class="gray-numbers">N/A</span>
                     {% endif %}
                 </p>
             </div>
