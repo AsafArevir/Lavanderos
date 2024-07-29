@@ -63,11 +63,9 @@
                     <thead>
                         <tr>
                             <th>Cliente</th>
-                            <th>Fecha de Encargo</th>
+                            <th>Folio Encargo</th>
                             <th>Fecha de Entrega</th>
                             <th>Costo</th>
-                            <th>Estado de Pago</th>
-                            <th>Adeudo</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -82,14 +80,6 @@
                                 <td>{{ encargo.fecha_encargo }}</td>
                                 <td>{{ encargo.fecha_entrega }}</td>
                                 <td>{{ encargo.costo }}</td>
-                                <td>
-                                    {% if encargo.pagado %}
-                                    &#9989;
-                                    {% else %}
-                                    &#10060;
-                                    {% endif %}
-                                </td>
-                                <td>{{ encargo.adeudo }}</td>
 
                                 <!-- Botón para cambiar el estado del encargo -->
                                 <td>
@@ -114,11 +104,9 @@
                     <thead>
                         <tr>
                             <th>Cliente</th>
-                            <th>Fecha de Encargo</th>
+                            <th>Folio Encargo</th>
                             <th>Fecha de Entrega</th>
                             <th>Costo</th>
-                            <th>Estado de Pago</th>
-                            <th>Adeudo</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -133,14 +121,6 @@
                             <td>{{ encargo.fecha_encargo }}</td>
                             <td>{{ encargo.fecha_entrega }}</td>
                             <td>{{ encargo.costo }}</td>
-                            <td>
-                                {% if encargo.pagado %}
-                                &#9989;
-                                {% else %}
-                                &#10060;
-                                {% endif %}
-                            </td>
-                            <td>{{ encargo.adeudo }}</td>
 
                             <!-- Botón para cambiar el estado del encargo -->
                             <td>
@@ -168,7 +148,6 @@
                             <th>Fecha de Entrega</th>
                             <th>Costo</th>
                             <th>Estado de Pago</th>
-                            <th>Adeudo</th>
                             <th>Entregado</th>
                             <th>Acciones</th>
                         </tr>
@@ -184,6 +163,7 @@
                             <td>{{ encargo.fecha_encargo }}</td>
                             <td>{{ encargo.fecha_entrega }}</td>
                             <td>{{ encargo.costo }}</td>
+
                             <td>
                                 {% if encargo.pagado %}
                                 &#9989;
@@ -191,7 +171,7 @@
                                 &#10060;
                                 {% endif %}
                             </td>
-                            <td>{{ encargo.adeudo }}</td>
+                            
                             <td>
                                 {% if encargo.entregado %}
                                 &#9989;
@@ -433,7 +413,6 @@
             document.getElementById('toastNotification').classList.add('bg-' + type);
             toast.show();
         }
-        
         
     </script>
 

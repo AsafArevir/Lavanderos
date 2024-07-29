@@ -32,7 +32,23 @@ class Encargo(models.Model):
     adeudo = models.DecimalField(max_digits=10, decimal_places=2)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     entregado = models.BooleanField(default=False)
+
+class Encargo_data(models.Model):
     
+    ESTADOS_CHOICES = (
+        ('ENCARGO', 'Encargo'),
+        ('EN_PROCESO', 'En proceso'),
+        ('COMPLETADO', 'Completado'),
+    )
+
+    Folio = models.CharField(max_length=50, primary_key=True) 
+    fecha_entrega = models.DateField()
+    estado = models.CharField(max_length=20, choices=ESTADOS_CHOICES, default='ENCARGO')
+    costo = models.DecimalField(max_digits=10, decimal_places=2)
+    adeudo = models.DecimalField(max_digits=10, decimal_places=2)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    entregado = models.BooleanField(default=False)
+
 
 class Activacion(models.Model):
     LAVADORA_CHOICES = (

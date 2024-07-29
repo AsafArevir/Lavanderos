@@ -17,3 +17,7 @@ Django
 requests
 escpos
 ```
+Time zones plugin
+```
+pip install pytz
+```

@@ -64,11 +64,12 @@ def eliminar_cliente(request, cliente_id):
 
 @login_required
 def encargo(request):
+
     # Obtener encargos según su estado
     encargos_encargo = Encargo.objects.filter(estado='ENCARGO')
     encargos_proceso = Encargo.objects.filter(estado='EN_PROCESO')
     encargos_completado = Encargo.objects.filter(estado='COMPLETADO')
-    #encargos_entregados = Encargo.objects.filter(estado='ENTREGADO')
+    
     # Obtener la lista de clientes
     clientes = Cliente.objects.all()
     
