@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Producto, Cliente, Encargo, Activacion, Ventas, ControlPagoEncargos, SaldoFinalDiario
+from .models import Producto, Cliente, Encargo, Activacion, Ventas, ControlPagoEncargos, SaldoFinalDiario, Encargo_Control
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
@@ -116,46 +116,46 @@ def cambiar_estado_encargo(request, encargo_id):
         return JsonResponse({'error': 'Método no permitido'}, status=405)
     
 @csrf_exempt
+
+
 def guardar_encargo(request):
     if request.method == 'POST':
-        cliente_id = request.POST.get('cliente_id')
-        fecha_encargo = request.POST.get('fecha_encargo')
-        fecha_entrega = request.POST.get('fecha_entrega')
-        costo = request.POST.get('costo')
-        estado = 'ENCARGO'
-        adeudo = request.POST.get('adeudo')
-        
-        pagado_checkbox = request.POST.get('pagadoCheckbox')
-        usuario = request.user
+        try:
+            folio = request.POST.get('folio')
+            fecha_encargo = request.POST.get('fecha_encargo')
+            fecha_entrega = request.POST.get('fecha_entrega')
+            costo = request.POST.get('costo')
+            pagado = request.POST.get('pagadoCheckbox') == 'on'
+            anticipo = request.POST.get('anticipo')
+            adeudo = request.POST.get('adeudo')
+            tipo_operacion = request.POST.get('tipo_operacion')
 
-        # Convertir el valor de "pagado" a un booleano si es válido
-        pagado = bool(pagado_checkbox) if pagado_checkbox else False
+            encargo = Encargo_Control(
+                Folio=folio,
+                fecha_encargo=fecha_encargo,
+                fecha_entrega=fecha_entrega,
+                estado='ENCARGO',
+                costo=costo,
+                adeudo=adeudo,
+                usuario=request.user,
+                entregado=False
+            )
+            encargo.save()
 
-        encargo = Encargo(
-            cliente_id=cliente_id,
-            fecha_encargo=fecha_encargo,
-            fecha_entrega=fecha_entrega,
-            costo=costo,
-            estado=estado,
-            pagado=pagado,
-            adeudo=adeudo,
-            usuario=usuario
-        )
-        encargo.save()
-        
-        pago_rec = float(costo) - float(adeudo)
-        
-        control_pago_encargo = ControlPagoEncargos(
-            encargo=encargo,
-            fecha_encargo=fecha_encargo,
-            pago_recibido=pago_rec,
-            adeudo=adeudo
-        )
-        control_pago_encargo.save()
+            # Guardar el registro en ControlPagoEncargos
+            ControlPagoEncargos.objects.create(
+                encargo=encargo,
+                fecha_encargo=fecha_encargo,
+                pago_recibido=costo if pagado else 0,
+                adeudo=adeudo,
+                tipo_operacion=tipo_operacion
+            )
 
-        return JsonResponse({'message': 'Encargo guardado correctamente'})
+            return JsonResponse({'message': 'Encargo guardado correctamente'}, status=200)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
     else:
-        return JsonResponse({'error': 'Se esperaba una solicitud POST'}, status=400)
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
 
 @login_required
 def lavadoras(request):

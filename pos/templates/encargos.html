@@ -254,7 +254,7 @@
 
     </div>
 
-    <!-- Modal para agregar un nuevo encargo -->
+    <!-- Modal para agregar un nuevo encargo 
     <div class="modal fade" id="modalAgregarEncargo" tabindex="-1" aria-labelledby="modalAgregarEncargoLabel" aria-hidden="true">
 
         <div class="modal-dialog">
@@ -321,8 +321,73 @@
         </div>
 
     </div>
+    -->
+
+    <!-- Modal para agregar un nuevo encargo -->
+    <div class="modal fade" id="modalAgregarEncargo" tabindex="-1" aria-labelledby="modalAgregarEncargoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAgregarEncargoLabel">Agregar Nuevo Encargo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formAgregarEncargo">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="folio" class="form-label">Folio</label>
+                            <input type="text" class="form-control" id="folio" name="folio" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fecha_encargo" class="form-label">Fecha de Encargo</label>
+                            <input type="date" class="form-control" id="fecha_encargo" name="fecha_encargo" value="{{ current_date }}" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fecha_entrega" class="form-label">Fecha de Entrega</label>
+                            <input type="date" class="form-control" id="fecha_entrega" name="fecha_entrega">
+                        </div>
+                        <div class="mb-3">
+                            <label for="costo" class="form-label">Costo</label>
+                            <input type="number" class="form-control" id="costo" name="costo" step="0.01">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="pagadoCheckbox" name="pagadoCheckbox">
+                            <label class="form-check-label" for="pagadoCheckbox">¿Pagado?</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="anticipo" class="form-label">Anticipo</label>
+                            <input type="number" class="form-control" id="anticipo" name="anticipo" step="0.01">
+                        </div>
+                        <div class="mb-3">
+                            <label for="adeudo" class="form-label">Adeudo</label>
+                            <input type="number" class="form-control" id="adeudo" name="adeudo" step="0.01" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="tipo_operacion" class="form-label">Tipo de Operación</label>
+                            <select class="form-select" id="tipo_operacion" name="tipo_operacion">
+                                <option value="ingreso">Ingreso</option>
+                                <option value="gasto">Gasto</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar Encargo</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Toast de notificación -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="toastNotification" class="toast align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div id="toastBody" class="toast-body"></div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Toast de notificación 
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
 
         <div id="toastNotification" class="toast align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
@@ -332,11 +397,11 @@
             </div>
         </div>
 
-    </div>
+    </div> -->
 
     <!-- Script para manejar el cambio de estado -->
     <script>
-
+        /*
         document.addEventListener('DOMContentLoaded', function() {
             var btnCambiarEstado = document.querySelectorAll('.btn-cambiar-estado');
         
@@ -412,7 +477,58 @@
             document.getElementById('toastBody').innerText = message;
             document.getElementById('toastNotification').classList.add('bg-' + type);
             toast.show();
-        }
+        }*/
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('formAgregarEncargo');
+            const folioInput = document.getElementById('folio');
+            const fechaEncargoInput = document.getElementById('fecha_encargo');
+        
+            // Generar el folio automáticamente
+            function generarFolio() {
+                const now = new Date();
+                const folio = now.getFullYear().toString() + 
+                              (now.getMonth() + 1).toString().padStart(2, '0') + 
+                              now.getDate().toString().padStart(2, '0') + 
+                              now.getHours().toString().padStart(2, '0') + 
+                              now.getMinutes().toString().padStart(2, '0') + 
+                              now.getSeconds().toString().padStart(2, '0');
+                folioInput.value = folio;
+            }
+        
+            // Llenar el campo de fecha de encargo automáticamente
+            function llenarFechaEncargo() {
+                const now = new Date();
+                const fecha = now.toISOString().split('T')[0];
+                fechaEncargoInput.value = fecha;
+            }
+        
+            // Generar el folio y llenar la fecha de encargo cuando se abre el modal
+            $('#modalAgregarEncargo').on('show.bs.modal', function() {
+                generarFolio();
+                llenarFechaEncargo();
+            });
+        
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                const formData = new FormData(form);
+                fetch('/guardar-encargo/', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const toastBody = document.getElementById('toastBody');
+                    toastBody.textContent = data.message;
+                    const toast = new bootstrap.Toast(document.getElementById('toastNotification'));
+                    toast.show();
+                    form.reset();
+                    $('#modalAgregarEncargo').modal('hide');
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });        
         
     </script>
 
