@@ -1,8 +1,14 @@
+# Librerias importadas
+import uuid
+
+# Librerias y modulos de django
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.db.models import F
 
 # Create your models here.
+
 class Producto(models.Model):
     nombre = models.CharField(max_length=100)
     precio = models.DecimalField(max_digits=10, decimal_places=2)
@@ -25,40 +31,15 @@ class Encargo(models.Model):
         ('COMPLETADO', 'Completado'),
     )
 
-    cliente = models.ForeignKey('Cliente', on_delete=models.CASCADE)
-    fecha_encargo = models.DateField()
-    fecha_entrega = models.DateField()
-    estado = models.CharField(max_length=20, choices=ESTADOS_CHOICES, default='ENCARGO')
-    costo = models.DecimalField(max_digits=10, decimal_places=2)
-    pagado = models.BooleanField(default=False)
-    adeudo = models.DecimalField(max_digits=10, decimal_places=2)
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
-    entregado = models.BooleanField(default=False)
-
-class Encargo_Control(models.Model):
-    
-    ESTADOS_CHOICES = (
-        ('ENCARGO', 'Encargo'),
-        ('EN_PROCESO', 'En proceso'),
-        ('COMPLETADO', 'Completado'),
-    )
-
-    Folio = models.CharField(max_length=50, primary_key=True, editable=False) 
-    fecha_encargo = models.DateField(default=timezone.now().date(), editable=False)
+    Folio = models.CharField(max_length=30) 
+    fecha_encargo = models.DateField(auto_now_add=True,editable=False)
     fecha_entrega = models.DateField()
     estado = models.CharField(max_length=20, choices=ESTADOS_CHOICES, default='ENCARGO')
     costo = models.DecimalField(max_digits=10, decimal_places=2)
     adeudo = models.DecimalField(max_digits=10, decimal_places=2)
+    ingreso = models.DecimalField(max_digits=10, decimal_places=2)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     entregado = models.BooleanField(default=False)
-
-    def save(self, *args, **kwargs):
-
-        if not self: 
-            cod_en = timezone.now()
-            self.Folio = cod_en.strftime("%Y%m%d%H%M%S")
-        super(Encargo_Control, self).save(*args, **kwargs)
-
 
 class Activacion(models.Model):
     LAVADORA_CHOICES = (
@@ -105,5 +86,3 @@ class SaldoFinalDiario(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     saldo_final = models.DecimalField(max_digits=10, decimal_places=2)
     fecha = models.DateField()
-
-# Clases para dar de alta los tipos de encargo existentes

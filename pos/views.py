@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Producto, Cliente, Encargo, Activacion, Ventas, ControlPagoEncargos, SaldoFinalDiario, Encargo_Control
+from .models import Producto, Cliente, Encargo, Activacion, Ventas, ControlPagoEncargos, SaldoFinalDiario
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
@@ -83,6 +83,34 @@ def encargo(request):
     }
     return render(request, 'encargos.html', context)
 
+@csrf_exempt
+def cambiar_estado_proceso(request, encargo_id):
+
+    try:
+        encargo = Encargo.objects.get(id=encargo_id)
+        encargo.estado = 'EN_PROCESO'
+        encargo.save()
+
+        return JsonResponse({'success': True, 'message': 'Estado cambiado a Completado'})
+    
+    except Encargo.DoesNotExist:
+        
+        return JsonResponse({'success': False, 'message': 'Encargo no encontrado'})
+
+@csrf_exempt
+def cambiar_estado_completado(request, encargo_id):
+
+    try:
+        encargo = Encargo.objects.get(id=encargo_id)
+        encargo.estado = 'COMPLETADO'
+        encargo.save()
+
+        return JsonResponse({'success': True, 'message': 'Estado cambiado a Completado'})
+    
+    except Encargo.DoesNotExist:
+        
+        return JsonResponse({'success': False, 'message': 'Encargo no encontrado'})
+
 
 @csrf_exempt
 def cambiar_estado_encargo(request, encargo_id):
@@ -93,18 +121,18 @@ def cambiar_estado_encargo(request, encargo_id):
     
     elif request.method == 'POST':
         nuevo_estado = request.POST.get('nuevo_estado')
-        nuevo_pago = request.POST.get('nuevo_pago')
+        #nuevo_pago = request.POST.get('nuevo_pago')
         nuevo_adeudo = request.POST.get('nuevo_adeudo')
         estado_entrega = request.POST.get('estado_entrega')
 
         try:
             encargo.estado = nuevo_estado
-            encargo.pagado = bool(int(nuevo_pago))
+            #encargo.pagado = bool(int(nuevo_pago))
             encargo.adeudo = float(nuevo_adeudo)
             encargo.entregado = (estado_entrega == 'entregado')
             encargo.save()
             
-            if nuevo_estado == 'ENTREGADO':
+            if nuevo_estado == 'COMPLETADO':
                 control_pago_encargo = ControlPagoEncargos.objects.get(encargo=encargo)
                 control_pago_encargo.fecha_entregado = timezone.now()
                 control_pago_encargo.save()
@@ -116,8 +144,6 @@ def cambiar_estado_encargo(request, encargo_id):
         return JsonResponse({'error': 'Método no permitido'}, status=405)
     
 @csrf_exempt
-
-
 def guardar_encargo(request):
     if request.method == 'POST':
         try:
@@ -128,9 +154,8 @@ def guardar_encargo(request):
             pagado = request.POST.get('pagadoCheckbox') == 'on'
             anticipo = request.POST.get('anticipo')
             adeudo = request.POST.get('adeudo')
-            tipo_operacion = request.POST.get('tipo_operacion')
 
-            encargo = Encargo_Control(
+            encargo = Encargo(
                 Folio=folio,
                 fecha_encargo=fecha_encargo,
                 fecha_entrega=fecha_entrega,
@@ -148,7 +173,6 @@ def guardar_encargo(request):
                 fecha_encargo=fecha_encargo,
                 pago_recibido=costo if pagado else 0,
                 adeudo=adeudo,
-                tipo_operacion=tipo_operacion
             )
 
             return JsonResponse({'message': 'Encargo guardado correctamente'}, status=200)

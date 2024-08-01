@@ -62,8 +62,7 @@
 
                     <thead>
                         <tr>
-                            <th>Cliente</th>
-                            <th>Folio Encargo</th>
+                            <th>Folio del Encargo</th>
                             <th>Fecha de Entrega</th>
                             <th>Costo</th>
                             <th>Acciones</th>
@@ -76,14 +75,13 @@
                             {% for encargo in encargos_encargo %}
 
                             <tr>
-                                <td>{{ encargo.cliente.nombre }}</td>
-                                <td>{{ encargo.fecha_encargo }}</td>
+                                <td>{{ encargo.Folio }}</td>
                                 <td>{{ encargo.fecha_entrega }}</td>
                                 <td>{{ encargo.costo }}</td>
 
                                 <!-- Botón para cambiar el estado del encargo -->
                                 <td>
-                                    <button class="btn-cambiar-estado btn btn-primary" data-id="{{ encargo.id }}">Cambiar Estado</button>
+                                    <button class="btn-cambiar-proceso btn btn-success" data-id="{{ encargo.id }}">Cambiar Estado</button>
                                 </td>
 
                             </tr>
@@ -98,13 +96,12 @@
             
             <div class="tab-pane fade" id="proceso" role="tabpanel" aria-labelledby="proceso-tab">
 
-                <!-- Tabla de encargos con estado "En Proceso" -->
+                <!-- Tabla de encargos con estado "Encargo" -->
                 <table class="table">
 
                     <thead>
                         <tr>
-                            <th>Cliente</th>
-                            <th>Folio Encargo</th>
+                            <th>Folio del Encargo</th>
                             <th>Fecha de Entrega</th>
                             <th>Costo</th>
                             <th>Acciones</th>
@@ -114,21 +111,21 @@
                     <!-- Cuerpo que indica el como se agregan los datos provinientes de la BD-->
                     <tbody>
 
-                        {% for encargo in encargos_proceso %}
+                            {% for encargo in encargos_encargo %}
 
-                        <tr>
-                            <td>{{ encargo.cliente.nombre }}</td>
-                            <td>{{ encargo.fecha_encargo }}</td>
-                            <td>{{ encargo.fecha_entrega }}</td>
-                            <td>{{ encargo.costo }}</td>
+                            <tr>
+                                <td>{{ encargo.Folio }}</td>
+                                <td>{{ encargo.fecha_entrega }}</td>
+                                <td>{{ encargo.costo }}</td>
 
-                            <!-- Botón para cambiar el estado del encargo -->
-                            <td>
-                                <button class="btn-cambiar-estado btn btn-primary" data-id="{{ encargo.id }}">Cambiar Estado</button>
-                            </td>
-                        </tr>
+                                <!-- Botón para cambiar el estado del encargo -->
+                                <td>
+                                    <button class="btn-cambiar-completado btn btn-success" data-id="{{ encargo.id }}">Cambiar Estado</button>
+                                </td>
 
-                        {% endfor %}
+                            </tr>
+
+                            {% endfor %}
 
                     </tbody>
 
@@ -143,13 +140,12 @@
 
                     <thead>
                         <tr>
-                            <th>Cliente</th>
-                            <th>Fecha de Encargo</th>
+                            <th>Folio del Encargo</th>
                             <th>Fecha de Entrega</th>
                             <th>Costo</th>
                             <th>Estado de Pago</th>
                             <th>Entregado</th>
-                            <th>Acciones</th>
+                            <th>Actualizar Pago</th>
                         </tr>
                     </thead>
 
@@ -159,13 +155,12 @@
                         {% for encargo in encargos_completado %}
 
                         <tr>
-                            <td>{{ encargo.cliente.nombre }}</td>
-                            <td>{{ encargo.fecha_encargo }}</td>
+                            <td>{{ encargo.Folio}}</td>
                             <td>{{ encargo.fecha_entrega }}</td>
                             <td>{{ encargo.costo }}</td>
 
                             <td>
-                                {% if encargo.pagado %}
+                                {% if encargo.adeudo == 0 %}
                                 &#9989;
                                 {% else %}
                                 &#10060;
@@ -194,6 +189,7 @@
                 </table>
 
             </div>
+        </div>
     </div>
 
     <!-- Modal para seleccionar el nuevo estado y estado de pago -->
@@ -254,125 +250,66 @@
 
     </div>
 
-    <!-- Modal para agregar un nuevo encargo 
-    <div class="modal fade" id="modalAgregarEncargo" tabindex="-1" aria-labelledby="modalAgregarEncargoLabel" aria-hidden="true">
-
-        <div class="modal-dialog">
-
-            <div class="modal-content">
-
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalAgregarEncargoLabel">Agregar Nuevo Encargo</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <div class="modal-body">
-
-                    <form id="formAgregarEncargo">
-
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="cliente" class="form-label">Cliente</label>
-                            <select class="form-select" id="cliente" name="cliente_id">
-                                {% for cliente in clientes %}
-                                    <option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="fecha_encargo" class="form-label">Fecha de Encargo</label>
-                            <input type="date" class="form-control" id="fecha_encargo" name="fecha_encargo" value="{{ current_date }}">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="fecha_entrega" class="form-label">Fecha de Entrega</label>
-                            <input type="date" class="form-control" id="fecha_entrega" name="fecha_entrega">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="costo" class="form-label">Costo</label>
-                            <input type="number" class="form-control" id="costo" name="costo" step="0.01">
-                        </div>
-
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="pagadoCheckbox" name="pagadoCheckbox">
-                            <label class="form-check-label" for="pagadoCheckbox">¿Pagado?</label>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="anticipo" class="form-label">Anticipo</label>
-                            <input type="number" class="form-control" id="anticipo" name="anticipo" step="0.01">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="adeudo" class="form-label">Adeudo</label>
-                            <input type="number" class="form-control" id="adeudo" name="adeudo" step="0.01" readonly>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary">Guardar Encargo</button>
-
-                    </form>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-    -->
-
+    
     <!-- Modal para agregar un nuevo encargo -->
     <div class="modal fade" id="modalAgregarEncargo" tabindex="-1" aria-labelledby="modalAgregarEncargoLabel" aria-hidden="true">
         <div class="modal-dialog">
+
             <div class="modal-content">
+
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalAgregarEncargoLabel">Agregar Nuevo Encargo</h5>
+                    <h5 class="modal-title" id="modalAgregarEncargoLabel">Agregar Encargo</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <div class="modal-body">
+
                     <form id="formAgregarEncargo">
+
                         {% csrf_token %}
+
                         <div class="mb-3">
                             <label for="folio" class="form-label">Folio</label>
                             <input type="text" class="form-control" id="folio" name="folio" readonly>
                         </div>
+
                         <div class="mb-3">
                             <label for="fecha_encargo" class="form-label">Fecha de Encargo</label>
                             <input type="date" class="form-control" id="fecha_encargo" name="fecha_encargo" value="{{ current_date }}" readonly>
                         </div>
+
                         <div class="mb-3">
                             <label for="fecha_entrega" class="form-label">Fecha de Entrega</label>
                             <input type="date" class="form-control" id="fecha_entrega" name="fecha_entrega">
                         </div>
+
                         <div class="mb-3">
                             <label for="costo" class="form-label">Costo</label>
                             <input type="number" class="form-control" id="costo" name="costo" step="0.01">
                         </div>
+
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="pagadoCheckbox" name="pagadoCheckbox">
                             <label class="form-check-label" for="pagadoCheckbox">¿Pagado?</label>
                         </div>
+
                         <div class="mb-3">
                             <label for="anticipo" class="form-label">Anticipo</label>
                             <input type="number" class="form-control" id="anticipo" name="anticipo" step="0.01">
                         </div>
+
                         <div class="mb-3">
                             <label for="adeudo" class="form-label">Adeudo</label>
                             <input type="number" class="form-control" id="adeudo" name="adeudo" step="0.01" readonly>
                         </div>
-                        <div class="mb-3">
-                            <label for="tipo_operacion" class="form-label">Tipo de Operación</label>
-                            <select class="form-select" id="tipo_operacion" name="tipo_operacion">
-                                <option value="ingreso">Ingreso</option>
-                                <option value="gasto">Gasto</option>
-                            </select>
-                        </div>
+
                         <button type="submit" class="btn btn-primary">Guardar Encargo</button>
+
                     </form>
                 </div>
+
             </div>
+
         </div>
     </div>
 
@@ -386,22 +323,108 @@
         </div>
     </div>
 
+    <!-- Script para agregar un nuevo encargo -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('formAgregarEncargo');
+            const folioInput = document.getElementById('folio');
+            const fechaEncargoInput = document.getElementById('fecha_encargo');
+        
+            // Generar el folio automáticamente
+            function generarFolio() {
+                const now = new Date();
+                const folio = now.getFullYear().toString() + 
+                              (now.getMonth() + 1).toString().padStart(2, '0') + 
+                              now.getDate().toString().padStart(2, '0') + 
+                              now.getHours().toString().padStart(2, '0') + 
+                              now.getMinutes().toString().padStart(2, '0') + 
+                              now.getSeconds().toString().padStart(2, '0');
+                folioInput.value = folio;
+            }
+        
+            // Generar el folio y llenar la fecha de encargo cuando se abre el modal
+            $('#modalAgregarEncargo').on('show.bs.modal', function() {
+                generarFolio();
+            });
+        
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                const formData = new FormData(form);
+                fetch('/guardar-encargo/', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const toastBody = document.getElementById('toastBody');
+                    toastBody.textContent = data.message;
+                    const toast = new bootstrap.Toast(document.getElementById('toastNotification'));
+                    toast.show();
+                    form.reset();
+                    $('#modalAgregarEncargo').modal('hide');
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });   
+    </script>
 
-    <!-- Toast de notificación 
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <!-- Scripts para manejar los cambios de estado -->
+    <script>
 
-        <div id="toastNotification" class="toast align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div id="toastBody" class="toast-body"></div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-        </div>
+        document.addEventListener('DOMContentLoaded', function() {
+            $('.btn-cambiar-proceso').on('click', function() {
+                var encargoId = $(this).data('id');
+    
+                $.ajax({
+                    type: 'POST',
+                    url: '/cambiar-estado-completado/' + encargoId + '/',
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Estado cambiado a Completado');
+                            location.reload(); 
+                        } else {
+                            alert('Error al cambiar el estado: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Error en la solicitud');
+                    }
+                });
+            });
+        });
 
-    </div> -->
+        document.addEventListener('DOMContentLoaded', function() {
+            $('.btn-cambiar-completado').on('click', function() {
+                var encargoId = $(this).data('id');
+    
+                $.ajax({
+                    type: 'POST',
+                    url: '/cambiar-estado-completado/' + encargoId + '/',
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Estado cambiado a Completado');
+                            location.reload(); 
+                        } else {
+                            alert('Error al cambiar el estado: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Error en la solicitud');
+                    }
+                });
+            });
+        });
+    </script>
 
     <!-- Script para manejar el cambio de estado -->
     <script>
-        /*
         document.addEventListener('DOMContentLoaded', function() {
             var btnCambiarEstado = document.querySelectorAll('.btn-cambiar-estado');
         
@@ -477,65 +500,12 @@
             document.getElementById('toastBody').innerText = message;
             document.getElementById('toastNotification').classList.add('bg-' + type);
             toast.show();
-        }*/
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('formAgregarEncargo');
-            const folioInput = document.getElementById('folio');
-            const fechaEncargoInput = document.getElementById('fecha_encargo');
-        
-            // Generar el folio automáticamente
-            function generarFolio() {
-                const now = new Date();
-                const folio = now.getFullYear().toString() + 
-                              (now.getMonth() + 1).toString().padStart(2, '0') + 
-                              now.getDate().toString().padStart(2, '0') + 
-                              now.getHours().toString().padStart(2, '0') + 
-                              now.getMinutes().toString().padStart(2, '0') + 
-                              now.getSeconds().toString().padStart(2, '0');
-                folioInput.value = folio;
-            }
-        
-            // Llenar el campo de fecha de encargo automáticamente
-            function llenarFechaEncargo() {
-                const now = new Date();
-                const fecha = now.toISOString().split('T')[0];
-                fechaEncargoInput.value = fecha;
-            }
-        
-            // Generar el folio y llenar la fecha de encargo cuando se abre el modal
-            $('#modalAgregarEncargo').on('show.bs.modal', function() {
-                generarFolio();
-                llenarFechaEncargo();
-            });
-        
-            form.addEventListener('submit', function(event) {
-                event.preventDefault();
-                
-                const formData = new FormData(form);
-                fetch('/guardar-encargo/', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const toastBody = document.getElementById('toastBody');
-                    toastBody.textContent = data.message;
-                    const toast = new bootstrap.Toast(document.getElementById('toastNotification'));
-                    toast.show();
-                    form.reset();
-                    $('#modalAgregarEncargo').modal('hide');
-                })
-                .catch(error => console.error('Error:', error));
-            });
-        });        
-        
+        }       
     </script>
 
 
     <!-- Control de acciones del formulario  -->
     <script>
-
         document.addEventListener('DOMContentLoaded', function() {
             var modal = new bootstrap.Modal(document.getElementById('modalAgregarEncargo'));
         
@@ -633,8 +603,6 @@
                 }
             });
         });
-        
-        
     </script>
 
 </body>
