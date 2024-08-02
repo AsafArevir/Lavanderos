@@ -121,8 +121,10 @@
                                 &#10060;
                                 {% endif %}
                             </td>
-                            <td>
+                            <td> 
+                                {% if encargo.entregado != 1 %}
                                 <button class="btn-cambiar-estado btn btn-primary" data-id="{{ encargo.id }}">Cambiar Estado</button>
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}

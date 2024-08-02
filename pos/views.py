@@ -26,6 +26,27 @@ def productos(request):
     clientes = Cliente.objects.all().order_by('nombre')
     return render(request, 'productos.html', {'productos': productos, 'clientes': clientes})
 
+@csrf_exempt
+def modificar_producto(request, producto_id):
+
+    if request.method == 'POST':
+
+        print('hi')
+
+        try:
+            producto = Producto.objects.get(id=producto_id)
+            data = json.loads(request.body)
+            producto.nombre = data.get('nombre', producto.nombre)
+            producto.precio = data.get('precio', producto.precio)
+            producto.codigo_barras = data.get('codigo_barras', producto.codigo_barras)
+            producto.save()
+            return JsonResponse({'success': True, 'message': 'Producto modificado correctamente'})
+        
+        except Producto.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'Producto no encontrado'})
+    
+    return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
+
 
 @login_required
 def clientes(request):
@@ -136,7 +157,6 @@ def cambiar_estado_encargo(request, encargo_id):
 def guardar_encargo(request):
 
     if request.method == 'POST':
-        print('hello')
 
         try:
             folio = request.POST.get('folio')
@@ -248,8 +268,7 @@ def guardar_activacion(request):
         # Devolver una respuesta de error si no se recibe una solicitud POST
         return JsonResponse({'error': 'Se esperaba una solicitud POST'}, status=400)
     
-    
-    
+
 from django.utils import timezone
 
 def pagar_venta(request):
