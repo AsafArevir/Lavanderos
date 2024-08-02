@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Corte de Caja</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
     <style>
         .centered-content {
             text-align: center; /* Center align text */
@@ -30,12 +33,25 @@
         }
     </style>
 </head>
+
 <body>
+
 
     {% load static %}
     {%include 'layouts/navbar.html'%}
+
     <div class="container mt-5">
+
         <h2 class="mb-4">Corte de Caja - {{ fecha_actual }}</h2>
+
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <p class="font-weight-bold">Total Ventas: ${{ total_ventas }}</p>
+                <p class="font-weight-bold">Total Encargos Entregados: ${{ total_encargos }}</p>
+                <p class="font-weight-bold">Saldo Inicial: ${{ saldo_inicial }}</p>
+                <p class="font-weight-bold">Saldo Final: ${{ saldo_final }}</p>
         <div class="row justify-content-center">
             <div class="col-md-6 ">
                 <p class="font-weight-bold">Total Ventas:<span class="blue-numbers">${{ total_ventas }}</span> </p>
@@ -58,9 +74,11 @@
                         <span class="gray-numbers">N/A</span>
                     {% endif %}
                 </p>
+                
             </div>
+
         </div>
     </div>
-</div>
+
 </body>
 </html>

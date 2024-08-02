@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+
     <meta charset="UTF-8">
     <title>Punto de Venta - Inicio</title>
     <!-- Enlaces a Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
     <!-- Agregar enlaces a Bootstrap y a tu archivo CSS personalizado -->
     <style>
         .mt-7, .my-7 {
@@ -20,7 +22,9 @@
             float: right;
         }
     </style>
+
 </head>
+
 <body>
 
     {% load static %}
@@ -28,10 +32,14 @@
 
     <!-- Contenido de la página -->
     <div class="container mt-7">
+
         <h1 class="mb-4">Dashboard</h1>
         <h4 class="mb-4">Punto de Venta</h4>
+
         <div class="row">
             <div class="col-md-4  mb-4">
+
+            <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
                         <img src="{% static 'img/icons8-productos-80.png' %}" alt="Productos">
@@ -42,6 +50,8 @@
                 </div>
             </div>
             <div class="col-md-4  mb-4">
+
+            <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
                         <img src="{% static 'img/icons8-lavadora-80.png' %}" alt="Lavadoras">
@@ -52,6 +62,8 @@
                 </div>
             </div>
             <div class="col-md-4  mb-4">
+            
+            <div class="col-md-4">
                 <div class="card">
                     <div class="card-body">
                         <img src="{% static 'img/icons8-historial-de-pedidos-80.png' %}" alt="Encargos">
@@ -61,7 +73,9 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
+
 </body>
 </html>

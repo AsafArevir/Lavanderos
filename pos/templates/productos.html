@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
     <meta charset="UTF-8">
     <title>Productos</title>
-    <style>
 
+    <style>
         .table th, .table td {
             vertical-align: middle;
         }
@@ -30,8 +32,11 @@
             color: rgb(0, 110, 255);
         }
     </style>
+
 </head>
+
 <body>
+
     {% include 'layouts/navbar.html' %}
 
     <div class="container mt-7">
@@ -45,20 +50,28 @@
         <button class="btn btn-primary mt-2" id='temporal' type="button" onclick="toggleFormularioTemporal()">Agregar Producto o Servicio Temporal</button>
 
         <div id="formularioTemporal" class="mt-4" style="display: none;">
+
             <h3>Agregar Producto o Servicio Temporal</h3>
+
             <div class="form-group">
                 <label for="id_nombre blue">Nombre:</label>
                 <input type="text" id="id_nombre" name="nombre" class="form-control">
             </div>
             <div class="form-group blue">
+
+            <div class="form-group">
                 <label for="id_precio">Precio:</label>
                 <input type="text" id="id_precio" name="precio" class="form-control">
             </div>
             <div class="form-group blue">
+
+            <div class="form-group">
                 <label for="id_cantidad">Cantidad:</label>
                 <input type="number" id="id_cantidad" name="cantidad" min="1" value="1" class="form-control">
             </div>
+
             <button class="btn btn-primary" id="agregarTemporal">Agregar Producto o Servicio Temporal</button>
+
         </div>
 
         <div id="nombreClienteSeleccionado" class="text-end mt-2"></div>
@@ -69,8 +82,12 @@
         </div>
 
         <h2 class="mt-4 ">Lista de productos y servicios seleccionados</h2>
+        <h2 class="mt-4">Lista de productos y servicios seleccionados</h2>
+
         <div class="table-responsive">
             <table class="table table-bordered mt-2" id="lista-productos color-blue">
+
+            <table class="table table-bordered mt-2" id="lista-productos">
                 <thead>
                     <tr>
                         <th class="color-blue">Nombre</th>
@@ -83,16 +100,24 @@
                 <tbody>
                 </tbody>
             </table>
+
         </div>
+
         <p class="total" id="totalprecio">Total: $0.00</p>
+
         <button type="submit" class="btn btn-success mt-2 float-end btn-lg" id="pagar" onclick="realizarPago()">Pagar</button>
         <button type="submit" name="vaciar_lista" class="btn btn-secondary">Vaciar Lista</button>
+
     </div>
 
     <div class="container mt-5">
+
         <h1>Productos disponibles</h1>
+
         <div class="row">
+
             {% for producto in productos %}
+
                 <div class="col-md-4 mb-4">
                     <div class="card">
                         <div class="card-body text-center">
@@ -100,43 +125,61 @@
                             <p class="card-text">
                                 <span class="color-price">Precio:</span> 
                                 <span class="color-green">${{ producto.precio }}</span></p>
+
+                        <div class="card-body">
+
+                            <h5 class="card-title">{{ producto.nombre }}</h5>
+                            <p class="card-text">Precio: ${{ producto.precio }}</p>
+
                             <!-- Agregar formulario para agregar el producto a la lista -->
-                            <button class="btn btn-primary agregar-producto" data-nombre="{{ producto.nombre }}" data-precio="{{ producto.precio }}">Agregar a la lista</button>
+                            <button class="btn btn-primary agregar-producto" data-nombre="{{ producto.nombre }}" data-precio="{{ producto.precio }}">Agregar</button>
+                            
+
                         </div>
                     </div>
                 </div>
+
             {% endfor %}
+
         </div>
     </div>
 
     <!-- Modal de búsqueda y selección de cliente -->
     <div class="modal fade" id="modalBuscarCliente" tabindex="-1" aria-labelledby="modalBuscarClienteLabel" aria-hidden="true">
+
         <div class="modal-dialog modal-lg">
+
             <div class="modal-content">
+
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalBuscarClienteLabel">Seleccionar Cliente</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <div class="modal-body">
                     <div class="mb-3">
+
                         <label for="cliente" class="form-label">Clientes</label>
                         <select class="form-select" id="cliente" name="cliente_id">
                             {% for cliente in clientes %}
                                 <option value="{{ cliente.id }}">{{ cliente.nombre }} {{ cliente.apellidos  }}</option>
                             {% endfor %}
                         </select>
+
                     </div>
                 </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <!-- Botón para seleccionar el cliente -->
                     <button type="button" class="btn btn-primary" id="seleccionarCliente">Seleccionar</button>
                 </div>
+
             </div>
         </div>
     </div>
 
     <script>
+
         // Pasar los datos de los productos al JavaScript
         const productos = [
             {% for producto in productos %}
@@ -149,15 +192,17 @@
         ];
 
         // Añadir evento de escucha para la combinación de teclas Alt + P
-    document.addEventListener('keydown', function(event) {
-        if (event.altKey && event.key === 'p') {
-            event.preventDefault();
-            document.getElementById('pagar').click();
-        }
-    });
+        document.addEventListener('keydown', function(event) {
+            if (event.altKey && event.key === 'p') {
+                event.preventDefault();
+                document.getElementById('pagar').click();
+            }
+        });
+
     </script>
 
     <script>
+
         // Función para autoenfocar el input de código de barras
         function autoEnfocarCodigoBarras() {
             const codigoBarrasInput = document.getElementById('codigoBarras');
@@ -240,9 +285,11 @@
             });
             document.getElementById('totalprecio').textContent = 'Total: $' + total.toFixed(2);
         }
+
     </script>
 
     <script>
+        
         function realizarPago() {
             var btnPagar = document.getElementById('pagar');
         
@@ -318,10 +365,12 @@
             });
             console.log(importe);
             return importe;
-        }        
+        }  
+
     </script>
 
     <script>
+
         function toggleFormularioTemporal() {
             var formularioTemporal = document.getElementById('formularioTemporal');
             var botonTemporal = document.getElementById('temporal');
@@ -462,6 +511,7 @@
             // Mostrar el nombre del cliente en el elemento correspondiente
             $('#nombreClienteSeleccionado').text(nombreCliente);
         });
+        
     </script>
 
 </body>
