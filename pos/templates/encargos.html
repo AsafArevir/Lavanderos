@@ -380,6 +380,7 @@
                         url: '/cambiar-estado-encargo/' + encargoId + '/',
                         data: {
                             entregado: entregado,
+                            ingreso: nuevoAdeudo,
                             nuevo_adeudo: adeudoFinal,
                             csrfmiddlewaretoken: '{{ csrf_token }}'
                         },
