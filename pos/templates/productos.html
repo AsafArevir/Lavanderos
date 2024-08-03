@@ -13,9 +13,22 @@
         .total {
             font-weight: bold;
         }
-
         .mt-7, .my-7 {
             margin-top: 3.8rem !important;
+        }
+        .color-blue {
+            color: #181864;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        .blue {
+            color: #181864;
+        }
+        .color-green {
+            color: #008000;
+        }
+        .color-price {
+            color: rgb(0, 110, 255);
         }
     </style>
 
@@ -41,7 +54,9 @@
 
             <div class="form-group">
                 <label for="id_nombre">Nombre:</label>
-                <input type="text" id="id_nombre" name="nombre" class="form-control">
+                <div class="color-blue">
+                    <input type="text" id="id_nombre" name="nombre" class="form-control">                
+                </div>
             </div>
 
             <div class="form-group">
@@ -53,9 +68,9 @@
                 <label for="id_cantidad">Cantidad:</label>
                 <input type="number" id="id_cantidad" name="cantidad" min="1" value="1" class="form-control">
             </div>
-
-            <button class="btn btn-primary" id="agregarTemporal">Agregar Producto o Servicio Temporal</button>
-
+            <div class="text-end">
+                <button class="btn btn-primary mt-2" id="agregarTemporal">Agregar Producto o Servicio Temporal</button>
+            </div>    
         </div>
 
         <div id="nombreClienteSeleccionado" class="text-end mt-2"></div>
@@ -103,15 +118,19 @@
                 <div class="col-md-4 mb-4">
                     <div class="card">
 
-                        <div class="card-body">
+                        <div class="card-body text-center">
 
-                            <h5 class="card-title">{{ producto.nombre }}</h5>
-                            <p class="card-text">Precio: ${{ producto.precio }}</p>
-
+                            <h5 class="card-title">
+                                <span class="color-blue">
+                                    {{ producto.nombre }}
+                                </span>
+                            </h5>
+                            <p class="card-text">
+                                <span class="color-green"> Precio: </span>
+                                <span class="color-price">${{ producto.precio }}</span>
+                            </p>
                             <!-- Agregar formulario para agregar el producto a la lista -->
                             <button class="btn btn-primary agregar-producto" data-nombre="{{ producto.nombre }}" data-precio="{{ producto.precio }}">Agregar</button>
-                            
-
                         </div>
                     </div>
                 </div>

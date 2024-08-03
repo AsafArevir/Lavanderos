@@ -9,19 +9,44 @@
         .mt-7, .my-7 {
             margin-top: 3.8rem !important;
         }
+        .input-group-prepend .input-group-text img {
+            max-width: 80px;
+            max-height: 80px;
+        }
+        .form-group img {
+            max-width: 80px;
+            max-height: 80px;
+            float: left;
+            margin-right: 10px;
+        }
     </style>
 </head>
 <body>
+    {%load static%}
     {%include 'layouts/navbar.html'%}
+
     <div class="container mt-7">
         <h2 class="mb-4">Ingresar Saldo Final del Día</h2>
+        
         <form method="post">
             {% csrf_token %}
-            <div class="form-group">
-                <label for="saldo_final">Saldo Final:</label>
-                <input type="number" class="form-control" id="saldo_final" name="saldo_final" required step="0.01">
+            <div class="form-group mb-3">
+                <div class="d-flex justify-content-center align-items-center">
+                    <img src="{% static 'img/icons8-bolsa-de-dinero-80.png' %}" alt="Icon">
+                    <label for="saldo_final">Saldo Final:</label>
+                    <input type="number" class="form-control" id="saldo_final" name="saldo_final" required step="0.01">
+                </div>
             </div>
-            <button type="submit" class="btn btn-primary">Guardar</button>
+            <div class="form-group mb-3">
+                <div class="d-flex justify-content-center align-items-center">
+                    <img src="{% static 'img/icons8-cambio-de-divisas-64.png' %}" alt="Icon">
+                    <label for="saldo_final">Corte:</label>
+                    <input type="number" class="form-control" id="corte" name="corte" required step="0.01">
+                </div>
+            </div>
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
         </form>
     </div>
 </body>
