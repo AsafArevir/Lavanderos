@@ -14,7 +14,6 @@ from escpos.printer import Usb
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from decimal import Decimal
 
 @login_required
 def inicio(request):
@@ -133,7 +132,6 @@ def cambiar_estado_encargo(request, encargo_id):
         entregado = request.POST.get('entregado') == 'true'
         nuevo_adeudo = float(request.POST.get('nuevo_adeudo'))
         anticipo = request.POST.get('ingreso')
-        nuevo_in = Decimal(data.get('ingreso'))
 
         encargo = get_object_or_404(Encargo, id=encargo_id)
         encargo.entregado = entregado
@@ -141,20 +139,20 @@ def cambiar_estado_encargo(request, encargo_id):
         encargo.ingreso = anticipo
         encargo.save()
 
-        """# Actualizar ControlPagoEncargos
+        # Actualizar ControlPagoEncargos
         control_pago_encargo = get_object_or_404(ControlPagoEncargos, encargo=encargo_id)
         # control_pago_encargo, created = ControlPagoEncargos.objects.get_or_create(encargo=encargo)
 
-        if nuevo_in != 0:
+        if anticipo != 0:
             control_pago_encargo.fecha_entregado = timezone.now().date()
-            control_pago_encargo.pago_recibido += nuevo_in 
-            control_pago_encargo.adeudo += 0
+            # control_pago_encargo.pago_recibido = anticipo 
+            # control_pago_encargo.adeudo = 0
 
         else:
             control_pago_encargo.fecha_entregado = timezone.now().date()
-            control_pago_encargo.pago_recibido += 0
+            # control_pago_encargo.pago_recibido = 0
            
-        control_pago_encargo.save()"""
+        control_pago_encargo.save()
 
         return JsonResponse({'success': True})
     
@@ -197,8 +195,8 @@ def guardar_encargo(request):
             ControlPagoEncargos.objects.create(
                 encargo=encargo,
                 fecha_encargo=fecha_encargo,
-                pago_recibido=costo if pagado else 0,
-                adeudo=ingreso,
+                pago_recibido=ingreso,
+                adeudo=adeudo,
             )
 
             return JsonResponse({'message': 'Encargo guardado correctamente'}, status=200)
