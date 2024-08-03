@@ -1,12 +1,17 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
+    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Iniciar sesión</title>
+
     <!-- Agregar enlaces a los archivos CSS de Bootstrap -->
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
     <style>
         /* Estilos adicionales */
         .card {
@@ -29,27 +34,46 @@
         }
     </style>
 </head>
+
 <body>
+    
+    <!--
     {%include 'layouts/navbar.html'%}
+    -->
+    
     <div style="height:100px;"></div>
+
     <div class="card">
+
         <h2 class="mb-4 text-center">Iniciar sesión</h2>
+
         <form method="post">
+
             {% csrf_token %}
+
             <!-- Campos del formulario dentro de la tarjeta -->
             <label>Usuario</label>
+
             <div class="form-group">
                 {{ form.username }}
             </div>
+
             <label>Contraseña</label>
+
             <div class="form-group">
                 {{ form.password }}
             </div>
+
             <!-- Botón de inicio de sesión dentro de la tarjeta -->
             <button type="submit" class="btn btn-primary btn-block">Iniciar sesión</button>
+
         </form>
+
     </div>
+
     <!-- Agregar enlaces a los archivos JavaScript de Bootstrap (opcional) -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
+
 </html>

@@ -1,69 +1,136 @@
 {% load static %}
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <a class="navbar-brand" href={%url 'home'%}>Lavanderos</a>
+
+<!-- Seccion del Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow-sm">
+
+    <div class="container-fluid">
+
+        <a class="navbar-brand" href="{% url 'home' %}">Lavanderos</a>
+
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
+
+            <ul class="navbar-nav mr-auto">
+                
+                <!-- Verificar si este elemento es nesesario o no-->
+                <!--
                 <li class="nav-item active">
-                    <a class="nav-link" href={%url 'home'%}>Inicio</a>
+                    <a class="nav-link" href="{% url 'home' %}">Inicio</a>
                 </li>
+                -->
+
                 <li class="nav-item">
-                    <a class="nav-link" href={%url 'productos'%}>Productos</a>
+                    <a class="nav-link" href="{% url 'productos' %}">Productos</a>
                 </li>
+
                 <li class="nav-item">
-                    <a class="nav-link" href={%url 'lavadoras'%}>Lavadoras</a>
+                    <a class="nav-link" href="{% url 'lavadoras' %}">Lavadoras</a>
                 </li>
+
                 <li class="nav-item">
-                    <a class="nav-link" href={%url 'encargos'%}>Encargos</a>
+                    <a class="nav-link" href="{% url 'encargos' %}">Encargos</a>
                 </li>
+
                 <li class="nav-item">
-                    <a class="nav-link" href={%url 'clientes'%}>Clientes</a>
+                    <a class="nav-link" href="{% url 'clientes' %}">Clientes</a>
                 </li>
+
                 <li class="nav-item">
-                    <a class="nav-link" href="{%url 'ingresar_saldo_final'%}">Caja</a>
+                    <a class="nav-link" href="{% url 'ingresar_saldo_final' %}">Caja</a>
                 </li>
+
                 <li class="nav-item">
-                    <a class="nav-link" href="{%url 'corte_caja'%}">Caja-Admin</a>
+                    <a class="nav-link" href="{% url 'corte_caja' %}">Caja-Admin</a>
                 </li>
+
                 <li class="nav-item">
                     <a class="nav-link" href="#">Consultas</a>
                 </li>
+
                 <li class="nav-item">
-                    <a class="nav-link" href={%url 'crear_producto'%}>Nuevo producto</a>
+                    <a class="nav-link" href="{% url 'crear_producto' %}">Nuevo producto</a>
                 </li>
-                <li>
-                    <form action="{% url 'logout' %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Cerrar sesión</button>
-                    </form>
-                </li>
+
             </ul>
+
+            <form class="form-inline" action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-light">Cerrar sesión</button>
+            </form>
+
         </div>
-    </nav>
 
-    <div id="nuevo_cliente" class="alert alert-success alert-dismissible fade show mt-7" role="alert" style="display: none;">
-        <strong>Éxito!</strong> El cliente se ha agregado correctamente.
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 
-    <div id="eliminar_cliente" class="alert alert-success alert-dismissible fade show mt-7" role="alert" style="display: none;">
-        <strong>Éxito!</strong> El cliente se ha eliminado correctamente.
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+</nav>
 
-    <!-- Scripts de Bootstrap y jQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+<!-- Alerta de funcionamiento del sistema-->
+<div id="nuevo_cliente" class="alert alert-success alert-dismissible fade show mt-7" role="alert" style="display: none;">
+    <strong>Éxito!</strong> El cliente se ha agregado correctamente.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
 
-    <style>
-        .mt-7, .my-7 {
+<div id="eliminar_cliente" class="alert alert-success alert-dismissible fade show mt-7" role="alert" style="display: none;">
+    <strong>Éxito!</strong> El cliente se ha eliminado correctamente.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+
+<!-- Scripts de Bootstrap y jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+<!-- Seccion de estilos para el navbar -->
+<style>
+
+    .mt-7, .my-7 {
         margin-top: 3.8rem !important;
-        }
-    </style>
+    }
+
+    .navbar-brand {
+        font-weight: bold;
+        font-size: 1.5rem;
+        transition: transform 0.3s;
+    }
+
+    .navbar-brand:hover {
+        transform: scale(1.1);
+    }
+
+    .nav-link {
+        font-size: 1.1rem;
+        padding-right: 1rem;
+        padding-left: 1rem;
+        transition: color 0.3s, background-color 0.3s;
+    }
+
+    .nav-link:hover {
+        color: #fff;
+        background-color: #343a40;
+        border-radius: 5px;
+    }
+
+    .btn-outline-light {
+        border-color: #fff;
+        color: #fff;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .btn-outline-light:hover {
+        background-color: #fff;
+        color: #343a40;
+    }
+
+    .navbar-dark .navbar-nav .nav-link.active {
+        color: #fff;
+        background-color: #343a40;
+        border-radius: 5px;
+    }
+
+</style>
