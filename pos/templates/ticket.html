@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket de Venta</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            width: 80mm;
+        }
+        .center {
+            text-align: center;
+        }
+        .line {
+            border-top: 1px dashed black;
+            margin: 10px 0;
+        }
+        .item {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            window.print();
+            window.onafterprint = function() {
+                window.close();
+            };
+        }
+    </script>
+</head>
+<body>
+    <div class="center">
+        <img src="{% static 'img/icons8-lavadora-80.png' %}" alt="Logo">
+        <h2>LAVANDEROS</h2>
+        <p>WhatsApp: 7222947337</p>
+        <p>Teléfono: 7229365461</p>
+        <p>Calle Paseo de los Matlatzincas 235</p>
+        <p>Col. Lomas Altas, Toluca, México</p>
+    </div>
+    <div class="line"></div>
+    <p>Folio: {{ venta.id }}</p>
+    <div class="line"></div>
+    <p>Cliente: {{ venta.cliente }}</p>
+    <div class="line"></div>
+    <p>Atendió: {{ venta.usuario.username }}</p>
+    <div class="line"></div>
+    <p>Fecha: {{ venta.fecha_venta|date:"d-m-Y H:i:s" }}</p>
+    <div class="line"></div>
+    <div>
+        <p>Cant&nbsp;&nbsp;&nbsp;Descripción&nbsp;&nbsp;&nbsp;Importe</p>
+        <div class="line"></div>
+        {% for producto in productos %}
+        <div class="item">
+            <span>{{ producto.cantidad }}</span>
+            <span>{{ producto.nombre }}</span>
+            <span>${{ producto.precio|floatformat:2 }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="line"></div>
+    <p class="center">Total: ${{ venta.importe_total|floatformat:2 }}</p>
+    <div class="line"></div>
+    <p class="center">"Porque NO toda la ropa sucia se lava en casa"</p>
+</body>
+</html>

@@ -41,6 +41,25 @@
     <div class="container mt-7">
         <h1>Productos y Servicios</h1>
 
+        <!-- Modal para el ticket de venta -->
+        <div class="modal fade" id="modalTicket" tabindex="-1" aria-labelledby="modalTicketLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalTicketLabel">Ticket de Venta</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="ticketContent">
+                        <!-- El contenido del ticket se generará dinámicamente -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="printTicket()">Imprimir</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Botón de búsqueda de cliente -->
         <button class="btn btn-primary mt-2" id="buscarCliente" type="button" data-bs-toggle="modal" data-bs-target="#modalBuscarCliente">Buscar Cliente</button>
 
@@ -320,10 +339,13 @@
                     // Manejar la respuesta del servidor
                     console.log('Pago realizado:', data);
                     // Aquí puedes realizar alguna acción después del pago, como mostrar un mensaje de éxito al usuario
-                    alert('¡Pago realizado correctamente!');
-                    setTimeout(function() {
-                        location.reload();
-                    }, 1000);
+
+                    // Generar el contenido del ticket
+                    generarTicket(productos, cliente, total);
+
+                    // Abrir el modal del ticket
+                    var modalTicket = new bootstrap.Modal(document.getElementById('modalTicket'));
+                    modalTicket.show();
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -331,6 +353,56 @@
                     alert('Error al realizar el pago. Por favor, inténtalo de nuevo.');
                 });
             });
+        }
+
+
+        // Función para generar el contenido del ticket
+        function generarTicket(productos, cliente, total) {
+            var ticketContent = document.getElementById('ticketContent');
+            ticketContent.innerHTML = `
+                <h2>LAVANDEROS</h2>
+                <p>WhatsApp: 7222947337</p>
+                <p>Teléfono: 7229365461</p>
+                <p>Calle Paseo de los Matlatzincas 235</p>
+                <p>Col. Lomas Altas, Toluca, México</p>
+                <h5>Cliente: ${cliente}</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                            <th>Importe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${productos.map(producto => `
+                            <tr>
+                                <td>${producto.nombre}</td>
+                                <td>${producto.precio.toFixed(2)}</td>
+                                <td>${producto.cantidad}</td>
+                                <td>${(producto.precio * producto.cantidad).toFixed(2)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                <p class="total">Total: $${parseFloat(total).toFixed(2)}</p>
+            `;
+        }
+
+        // Función para imprimir el ticket
+        function printTicket() {
+            var printContents = document.getElementById('ticketContent').innerHTML;
+            var originalContents = document.body.innerHTML;
+
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+
+            // Recargar la página después de imprimir
+            setTimeout(function() {
+                location.reload();
+            }, 1000);
         }
         
         // Función para obtener los productos de la tabla
