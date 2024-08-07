@@ -125,7 +125,7 @@
                             <label for="encargo" class="form-label">Seleccionar Encargo</label>
                             <select class="form-select" id="encargo" name="encargo">
                                 {% for encargo in encargos %}
-                                    <option value="{{ encargo.id }}">{{ encargo.cliente }}</option>
+                                    <option value="{{ encargo.id }}">{{ encargo.Folio }}</option>
                                 {% endfor %}
                             </select>
                         </div>

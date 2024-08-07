@@ -35,12 +35,14 @@ class Encargo(models.Model):
     Folio = models.CharField(max_length=30) 
     fecha_encargo = models.DateField(auto_now_add=True,editable=False)
     fecha_entrega = models.DateField()
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, default=1)
     estado = models.CharField(max_length=20, choices=ESTADOS_CHOICES, default='ENCARGO')
     costo = models.DecimalField(max_digits=10, decimal_places=2)
     adeudo = models.DecimalField(max_digits=10, decimal_places=2)
     ingreso = models.DecimalField(max_digits=10, decimal_places=2)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     entregado = models.BooleanField(default=False)
+    observaciones = models.TextField(blank=True, null=True)
 
 # Tabla activacion
 class Activacion(models.Model):

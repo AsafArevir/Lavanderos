@@ -14,6 +14,8 @@ from escpos.printer import Usb
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.http import JsonResponse
+from django.utils import timezone
 
 @login_required
 def inicio(request):
@@ -97,7 +99,7 @@ def encargo(request):
         'encargos_proceso': encargos_proceso,
         'encargos_completado': encargos_completado,
         #'encargos_entregados': encargos_entregados,
-        #'clientes': clientes,
+        'clientes': clientes,
     }
 
     return render(request, 'encargos.html', context)
@@ -172,22 +174,26 @@ def guardar_encargo(request):
             folio = request.POST.get('folio')
             fecha_encargo = request.POST.get('fecha_encargo')
             fecha_entrega = request.POST.get('fecha_entrega')
+            cliente_id = request.POST.get('cliente_id')
             costo = request.POST.get('costo')
             pagado = request.POST.get('pagadoCheckbox') == 'on'
             anticipo = request.POST.get('anticipo')
             adeudo = request.POST.get('adeudo')
             ingreso = request.POST.get('anticipo')
+            observaciones = request.POST.get('observaciones')
 
             encargo = Encargo(
                 Folio=folio,
                 fecha_encargo=fecha_encargo,
                 fecha_entrega=fecha_entrega,
+                cliente_id=cliente_id,
                 estado='ENCARGO',
                 costo=costo,
                 adeudo=adeudo,
                 ingreso=ingreso,
                 usuario=request.user,
-                entregado=False
+                entregado=False,
+                observaciones=observaciones
             )
             encargo.save()
 
@@ -291,23 +297,18 @@ def pagar_venta(request):
         # Extraer los datos del JSON
         productos_comprados = data.get('productos', [])
         cliente = data.get('cliente', 'Publico General')
+        
         importe_total = float(data.get('total'))
         usuario = request.user
 
         # Si cliente tiene un valor válido, proceder con la creación de la venta
         if cliente:
-
             fecha_venta = timezone.now()
-
             # Crear la venta en la base de datos
             venta = Ventas.objects.create(cliente=cliente, productos=productos_comprados,importe_total=importe_total, fecha_venta=fecha_venta)
             
-            # Imprimir el ticket
             #imprimir_ticket(venta)
-            
-            # Devolver una respuesta JSON indicando que la venta ha sido realizada correctamente
             return JsonResponse({'message': 'Venta realizada correctamente'})
-        
         else:
             # Si el cliente no está especificado, utilizar "Publico General" por defecto
             cliente = "Publico General"
@@ -320,17 +321,16 @@ def pagar_venta(request):
             #imprimir_ticket(venta)
             
             # Devolver una respuesta JSON indicando que la venta ha sido realizada correctamente
+            # return JsonResponse({'message': 'Venta realizada correctamente con cliente por defecto (Publico General)'})
             return JsonResponse({'message': 'Venta realizada correctamente con cliente por defecto (Publico General)'})
-        
     else:
         # Devolver una respuesta de error si no se recibe una solicitud POST
         return JsonResponse({'error': 'Se esperaba una solicitud POST'}, status=400)
     
     
 def imprimir_ticket(venta):
-
     # Configura la impresora (ajusta los parámetros según tu impresora)
-    p = Usb(0x04b8, 0x0202, 0)  # Reemplaza con el Vendor ID y Product ID de tu impresora
+    p = Usb(0x0416, 0x5011, 0)  # Reemplaza con el Vendor ID y Product ID de tu impresora
 
     # Imprimir el logo (suponiendo que el logo está en el mismo directorio y se llama 'logo.png')
     p.set(align='center')
@@ -362,8 +362,6 @@ def imprimir_ticket(venta):
     p.text("================================\n")
 
     p.cut()
-
-    # Cerrar conexión con la impresora
     p.close()
 
 class CustomLoginView(LoginView):

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 
@@ -41,6 +42,25 @@
     <div class="container mt-7">
         <h1>Productos y Servicios</h1>
 
+        <!-- Modal para el ticket de venta -->
+        <div class="modal fade" id="modalTicket" tabindex="-1" aria-labelledby="modalTicketLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalTicketLabel">Ticket de Venta</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="ticketContent">
+                        <!-- El contenido del ticket se generará dinámicamente -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="printTicket()">Imprimir</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Botón de búsqueda de cliente -->
         <button class="btn btn-primary mt-2" id="buscarCliente" type="button" data-bs-toggle="modal" data-bs-target="#modalBuscarCliente">Buscar Cliente</button>
 
@@ -79,7 +99,7 @@
             <label for="codigoBarras">Escanear Código de Barras:</label>
             <input type="text" id="codigoBarras" class="form-control">
         </div>
-
+        
         <h2 class="mt-4">Lista de productos y servicios seleccionados</h2>
 
         <div class="table-responsive">
@@ -320,10 +340,13 @@
                     // Manejar la respuesta del servidor
                     console.log('Pago realizado:', data);
                     // Aquí puedes realizar alguna acción después del pago, como mostrar un mensaje de éxito al usuario
-                    alert('¡Pago realizado correctamente!');
-                    setTimeout(function() {
-                        location.reload();
-                    }, 1000);
+
+                    // Generar el contenido del ticket
+                    generarTicket(productos, cliente, total);
+
+                    // Abrir el modal del ticket
+                    var modalTicket = new bootstrap.Modal(document.getElementById('modalTicket'));
+                    modalTicket.show();
                 })
                 .catch(error => {
                     console.error('Error:', error);
@@ -331,6 +354,82 @@
                     alert('Error al realizar el pago. Por favor, inténtalo de nuevo.');
                 });
             });
+        }
+
+
+        // Función para generar el contenido del ticket
+        function generarTicket(productos, cliente, total, descripcion) {
+            var ticketContent = document.getElementById('ticketContent');
+            ticketContent.innerHTML = `
+                <div style="text-align: right;">
+                 <img src={% static 'img/LAVANDEROS.ico' %} alt="Lavanderos" style="width: 100px; height: auto;"/>
+                </div>
+                <h2 style="text-align: center;">Lavanderos</h2>
+                <p>WhatsApp: 7222947337</p>
+                <p>Teléfono: 7229365461</p>
+                <p>Calle Paseo de los Matlatzincas 235</p>
+                <p>Col. Lomas Altas, Toluca, México</p>
+                <h5>Cliente: ${cliente}</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;">Producto</th>
+                            <th style="text-align: center;">Precio</th>
+                            <th style="text-align: center;">Cantidad</th>
+                            <th style="text-align: center;">Importe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${productos.map(producto => `
+                            <tr>
+                                <td style="font-size: 0.8em; text-align: center;">${producto.nombre}</td>
+                                <td style="font-size: 0.9em; text-align: center;">${producto.precio.toFixed(2)}</td>
+                                <td style="font-size: 1.0em; text-align: center;">${producto.cantidad}</td>
+                                <td style="font-size: 0.9em; text-align: center;">${(producto.precio * producto.cantidad).toFixed(2)}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                    <p>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</p>
+                </table>
+                <p class="total" style="text-align: right;">Total: $${parseFloat(total).toFixed(2)}</p>
+                <p>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</p>
+                <p style="font-size: 0.8em;">Descripción: ${descripcion}</p>
+                <p>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</p>
+                <p style="font-style: italic; text-align: center;">"Porque NO toda la ropa sucia se lava en casa"</p>
+                <p style="font-size: 0.8em; text-align: center;"><i>"Lavanderos"</i>,después de <b> 2 meses</b> la empresa no se hace responsable de las prendas. Por su comprensión, gracias.</p>
+            `;
+        }
+
+// Function to print the ticket
+        function printTicket() {
+            var printContents = document.getElementById('ticketContent').innerHTML;
+            var originalContents = document.body.innerHTML;
+
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+
+            // Reload the page after printing
+            setTimeout(function() {
+                location.reload();
+            }, 1000);
+        }
+
+// Function to obtain the products from the table
+
+        // Función para imprimir el ticket
+        function printTicket() {
+            var printContents = document.getElementById('ticketContent').innerHTML;
+            var originalContents = document.body.innerHTML;
+
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+
+            // Recargar la página después de imprimir
+            setTimeout(function() {
+                location.reload();
+            }, 1000);
         }
         
         // Función para obtener los productos de la tabla
