@@ -99,7 +99,7 @@ def encargo(request):
         'encargos_proceso': encargos_proceso,
         'encargos_completado': encargos_completado,
         #'encargos_entregados': encargos_entregados,
-        #'clientes': clientes,
+        'clientes': clientes,
     }
 
     return render(request, 'encargos.html', context)
@@ -174,22 +174,26 @@ def guardar_encargo(request):
             folio = request.POST.get('folio')
             fecha_encargo = request.POST.get('fecha_encargo')
             fecha_entrega = request.POST.get('fecha_entrega')
+            cliente_id = request.POST.get('cliente_id')
             costo = request.POST.get('costo')
             pagado = request.POST.get('pagadoCheckbox') == 'on'
             anticipo = request.POST.get('anticipo')
             adeudo = request.POST.get('adeudo')
             ingreso = request.POST.get('anticipo')
+            observaciones = request.POST.get('observaciones')
 
             encargo = Encargo(
                 Folio=folio,
                 fecha_encargo=fecha_encargo,
                 fecha_entrega=fecha_entrega,
+                cliente_id=cliente_id,
                 estado='ENCARGO',
                 costo=costo,
                 adeudo=adeudo,
                 ingreso=ingreso,
                 usuario=request.user,
-                entregado=False
+                entregado=False,
+                observaciones=observaciones
             )
             encargo.save()
 
