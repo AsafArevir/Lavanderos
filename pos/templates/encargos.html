@@ -194,10 +194,23 @@
                             <label for="folio" class="form-label">Folio</label>
                             <input type="text" class="form-control" id="folio" name="folio" readonly>
                         </div>
+
+                        <div class="mb-3">
+
+                            <label for="cliente" class="form-label">Clientes</label>
+                            <select class="form-select" id="cliente" name="cliente_id">
+                                {% for cliente in clientes %}
+                                    <option value="{{ cliente.id }}">{{ cliente.nombre }} {{ cliente.apellidos  }}</option>
+                                {% endfor %}
+                            </select>
+    
+                        </div>
+
                         <div class="mb-3">
                             <label for="fecha_encargo" class="form-label">Fecha de Encargo</label>
                             <input type="date" class="form-control" id="fecha_encargo" name="fecha_encargo" value="{{ current_date }}" readonly>
                         </div>
+
                         <div class="mb-3">
                             <label for="fecha_entrega" class="form-label">Fecha de Entrega</label>
                             <input type="date" class="form-control" id="fecha_entrega" name="fecha_entrega">
@@ -217,6 +230,10 @@
                         <div class="mb-3">
                             <label for="adeudo" class="form-label">Adeudo</label>
                             <input type="number" class="form-control" id="adeudo" name="adeudo" step="0.01" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="observaciones" class="form-label">Observaciones</label>
+                            <textarea class="form-control" id="observaciones" name="observaciones" rows="3">{{ encargo.observaciones }}</textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">Guardar</button>
                     </form>
