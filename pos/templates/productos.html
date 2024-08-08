@@ -358,7 +358,7 @@
 
 
         // Función para generar el contenido del ticket
-        function generarTicket(productos, cliente, total, descripcion) {
+        function generarTicket(productos, cliente, total, descripcion,folio) {
             var ticketContent = document.getElementById('ticketContent');
             ticketContent.innerHTML = `
                 <div style="text-align: right;">
@@ -369,7 +369,8 @@
                 <p>Teléfono: 7229365461</p>
                 <p>Calle Paseo de los Matlatzincas 235</p>
                 <p>Col. Lomas Altas, Toluca, México</p>
-                <h5>Cliente: ${cliente}</h5>
+                <h4>Cliente: ${cliente}</h4>
+                <h5>Folio: ${folio} </h5>
                 <table class="table">
                     <thead>
                         <tr>
