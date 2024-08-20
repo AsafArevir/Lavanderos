@@ -5,6 +5,7 @@
 
     <div class="container-fluid">
 
+        <img src="{% static 'img/LAVANDEROS_sinfrondo.png' %}" alt="Lavanderos" style="height: 60px; width: 60px; margin-right: 10px;">
         <a class="navbar-brand" href="{% url 'home' %}">Lavanderos</a>
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,7 +24,7 @@
                 -->
 
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'productos' %}">Productos</a>
+                    <a class="nav-link" href="{% url 'productos' %}">Ventas</a>
                 </li>
 
                 <li class="nav-item">
@@ -112,7 +113,7 @@
 
     .nav-link:hover {
         color: #fff;
-        background-color: #343a40;
+        background-color: #043363;
         border-radius: 5px;
     }
 
@@ -124,12 +125,12 @@
 
     .btn-outline-light:hover {
         background-color: #fff;
-        color: #343a40;
+        color: #043363;
     }
 
     .navbar-dark .navbar-nav .nav-link.active {
         color: #fff;
-        background-color: #343a40;
+        background-color: #043363;
         border-radius: 5px;
     }
 
