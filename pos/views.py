@@ -299,13 +299,14 @@ def pagar_venta(request):
         cliente = data.get('cliente', 'Publico General')
         
         importe_total = float(data.get('total'))
+        metodo_pago = data.get('metodo_pago', "Efectivo")
         usuario = request.user
 
         # Si cliente tiene un valor válido, proceder con la creación de la venta
         if cliente:
             fecha_venta = timezone.now()
             # Crear la venta en la base de datos
-            venta = Ventas.objects.create(cliente=cliente, productos=productos_comprados,importe_total=importe_total, fecha_venta=fecha_venta)
+            venta = Ventas.objects.create(cliente=cliente, productos=productos_comprados,importe_total=importe_total, fecha_venta=fecha_venta, metodo_pago=metodo_pago, )
             
             #imprimir_ticket(venta)
             return JsonResponse({'message': 'Venta realizada correctamente'})
@@ -315,7 +316,7 @@ def pagar_venta(request):
             fecha_venta = timezone.now()
 
             # Crear la venta en la base de datos
-            venta = Ventas.objects.create(cliente=cliente, productos=productos_comprados,importe_total=importe_total, fecha_venta=fecha_venta, usuario=usuario)
+            venta = Ventas.objects.create(cliente=cliente, productos=productos_comprados,importe_total=importe_total, fecha_venta=fecha_venta, usuario=usuario, metodo_pago=metodo_pago,)
             
             # Imprimir el ticket
             #imprimir_ticket(venta)

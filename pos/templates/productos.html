@@ -122,6 +122,15 @@
 
         <p class="total" id="totalprecio">Total: $0.00</p>
 
+        <div class="form-group mb-3">
+            <label for="metodoPago" class="mb-2">Método de Pago:</label>
+            <select class="form-select" id="metodoPago" name="metodo_pago" required placeholder="Seleccione una opción">
+
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+            </select>
+        </div>
+
         <button type="submit" class="btn btn-success mt-2 float-end btn-lg" id="pagar" onclick="realizarPago()">Pagar</button>
         <button type="submit" name="vaciar_lista" class="btn btn-secondary">Vaciar Lista</button>
 
@@ -308,6 +317,21 @@
         
         function realizarPago() {
             var btnPagar = document.getElementById('pagar');
+            
+            function generarFolio() {
+                const now = new Date();
+            
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0'); // Mes (de 0 a 11) + 1 y se asegura que sea de 2 dígitos
+                const day = String(now.getDate()).padStart(2, '0'); // Día del mes
+                const hour = String(now.getHours()).padStart(2, '0'); // Hora
+                const minute = String(now.getMinutes()).padStart(2, '0'); // Minutos
+                const second = String(now.getSeconds()).padStart(2, '0'); // Segundos
+                const millisecond = String(now.getMilliseconds()).padStart(3, '0'); // Milisegundos
+            
+                const folio = `${year}${month}${day}${hour}${minute}${second}${millisecond}`;
+                return folio;
+            }
         
             btnPagar.addEventListener('click', function() {
                 // Obtener los datos de la venta
@@ -315,6 +339,16 @@
                 var clienteElement = document.getElementById('nombreClienteSeleccionado');
                 var cliente = clienteElement ? clienteElement.textContent.trim() : "Público General";
                 var total = actualizarTotal2().toString();
+                const selectElement = document.getElementById('metodoPago');
+                const metodoPagoSeleccionado = selectElement.value;
+                const folio = generarFolio();
+                const descripcion = "Venta en general";
+        
+                // Verificar si se ha seleccionado un método de pago
+                if (!metodoPago) {
+                    alert('Por favor, seleccione un método de pago.');
+                    return;
+                }
                 // Enviar solicitud de pago al servidor
                 fetch('{% url "pagar_venta" %}', {
                     method: 'POST',
@@ -325,7 +359,8 @@
                     body: JSON.stringify({
                         productos: productos,
                         cliente: cliente,
-                        total: total
+                        total: total,
+                        metodo_pago: metodoPagoSeleccionado // Enviar el método de pago al servidor
                     })
 
                     
@@ -340,9 +375,10 @@
                     // Manejar la respuesta del servidor
                     console.log('Pago realizado:', data);
                     // Aquí puedes realizar alguna acción después del pago, como mostrar un mensaje de éxito al usuario
+                    console.log(metodoPagoSeleccionado)
 
                     // Generar el contenido del ticket
-                    generarTicket(productos, cliente, total);
+                    generarTicket(productos, cliente, total, metodoPagoSeleccionado, descripcion, folio);
 
                     // Abrir el modal del ticket
                     var modalTicket = new bootstrap.Modal(document.getElementById('modalTicket'));
@@ -358,7 +394,7 @@
 
 
         // Función para generar el contenido del ticket
-        function generarTicket(productos, cliente, total, descripcion,folio) {
+        function generarTicket(productos, cliente, total, metodoPagoSeleccionado, descripcion,folio) {
             var ticketContent = document.getElementById('ticketContent');
             ticketContent.innerHTML = `
                 <div style="text-align: right;">
@@ -370,7 +406,8 @@
                 <p>Calle Paseo de los Matlatzincas 235</p>
                 <p>Col. Lomas Altas, Toluca, México</p>
                 <h4>Cliente: ${cliente}</h4>
-                <h5>Folio: ${folio} </h5>
+                <p>Folio: ${folio} </p>
+                <p>Método de Pago: ${metodoPagoSeleccionado}</p>
                 <table class="table">
                     <thead>
                         <tr>

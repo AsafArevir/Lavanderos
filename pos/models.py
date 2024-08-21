@@ -77,6 +77,11 @@ class Ventas(models.Model):
     importe_total = models.DecimalField(max_digits=10, decimal_places=2)
     fecha_venta = models.DateField()
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    METODO_PAGO_CHOICES = (
+        ('Efectivo', 'Efectivo'),
+        ('Tarjeta', 'Tarjeta'),
+    )
+    metodo_pago = models.CharField(max_length=20, choices=METODO_PAGO_CHOICES)
     
 # Tabla control del pago encargo    
 class ControlPagoEncargos(models.Model):
