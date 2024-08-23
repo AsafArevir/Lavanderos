@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,6 +28,7 @@
         }
     </style>
 </head>
+
 <body>
 
     {% load static %}
@@ -49,50 +51,64 @@
             <li class="nav-item">
                 <a class="nav-link" id="completado-tab" data-toggle="tab" href="#completado" role="tab" aria-controls="completado" aria-selected="false">Completado</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" id="entregado-tab" data-toggle="tab" href="#entregado" role="tab" aria-controls="entregado" aria-selected="false">Pedidos Entregados</a>
+            </li>
         </ul>
 
         <div class="tab-content" id="contenidoEncargos">
+
             <div class="tab-pane fade show active" id="encargo" role="tabpanel" aria-labelledby="encargo-tab">
                 <table class="table">
+
                     <thead>
                         <tr>
                             <th class="color-grey">Folio del Encargo</th>
-                            <th>Fecha de Encargo</th>
+                            <th >Fecha de Encargo</th>
                             <th>Fecha de Entrega</th>
+                            <th>cliente</th>
                             <th class="color-price">Costo</th>
+                            <th>Observaciones</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         {% for encargo in encargos_encargo %}
                         <tr>
                             <td class="color-grey">{{ encargo.Folio }}</td>
                             <td>{{ encargo.fecha_encargo }}</td>
                             <td>{{ encargo.fecha_entrega }}</td>
+                            <td>{{ encargo.cliente }}</td>
                             <td>{{ encargo.costo }}</td>
-                            <td>
-                                <button class="btn-cambiar-proceso btn btn-success" data-id="{{ encargo.id }}">Cambiar Estado</button>
-                            </td>
+                            <td>{{ encargo.observaciones }}</td>
+                            <td><button class="btn-cambiar-proceso btn btn-success" data-id="{{ encargo.id }}">Cambiar Estado</button></td>
                         </tr>
                         {% endfor %}
                     </tbody>
+
                 </table>
             </div>
+
             <div class="tab-pane fade" id="proceso" role="tabpanel" aria-labelledby="proceso-tab">
                 <table class="table">
+
                     <thead>
                         <tr>
                             <th class="color-grey">Folio del Encargo</th>
+                            <th>cliente</th>
                             <th>Fecha de Encargo</th>
                             <th>Fecha de Entrega</th>
                             <th>Costo</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         {% for encargo in encargos_proceso %}
                         <tr>
                             <td class="color-grey">{{ encargo.Folio }}</td>
+                            <td>{{ encargo.cliente }}</td>
                             <td>{{ encargo.fecha_encargo }}</td>
                             <td>{{ encargo.fecha_entrega }}</td>
                             <td>{{ encargo.costo }}</td>
@@ -102,13 +118,49 @@
                         </tr>
                         {% endfor %}
                     </tbody>
+
                 </table>
             </div>
-            <div class="tab-pane fade" id="completado" role="tabpanel" aria-labelledby="completado-tab">
+
+            <div class="tab-pane fade" id="completado" role="tabpanel" aria-labelledby="proceso-tab">
                 <table class="table">
+
                     <thead>
                         <tr>
                             <th class="color-grey">Folio del Encargo</th>
+                            <th>cliente</th>
+                            <th>Fecha de Encargo</th>
+                            <th>Fecha de Entrega</th>
+                            <th>Costo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for encargo in encargos_proceso %}
+                        <tr>
+                            <td class="color-grey">{{ encargo.Folio }}</td>
+                            <td>{{ encargo.cliente }}</td>
+                            <td>{{ encargo.fecha_encargo }}</td>
+                            <td>{{ encargo.fecha_entrega }}</td>
+                            <td>{{ encargo.costo }}</td>
+                            <td>
+                                <button class="btn-cambiar-entregado btn btn-success" data-id="{{ encargo.id }}">Cambiar Estado</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+            <div class="tab-pane fade" id="entregado" role="tabpanel" aria-labelledby="completado-tab">
+                <table class="table">
+
+                    <thead>
+                        <tr>
+                            <th class="color-grey">Folio del Encargo</th>
+                            <th>cliente</th>
                             <th>Fecha de Entrega</th>
                             <th>Costo</th>
                             <th>Estado de Pago</th>
@@ -116,10 +168,12 @@
                             <th>Actualizar Pago</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         {% for encargo in encargos_completado %}
                         <tr>
                             <td class="color-grey">{{ encargo.Folio }}</td>
+                            <td>{{ encargo.cliente }}</td>
                             <td>{{ encargo.fecha_entrega }}</td>
                             <td>{{ encargo.costo }}</td>
                             <td>
@@ -138,26 +192,32 @@
                             </td>
                             <td> 
                                 {% if encargo.entregado != 1 %}
-                                <button class="btn-cambiar-estado btn btn-primary" data-id="{{ encargo.id }}">Cambiar Estado</button>
+                                <button class="btn-cambiar-estado btn btn-primary" data-id="{{ encargo.id }}">Validar encargo</button>
                                 {% endif %}
                             </td>
                         </tr>
                         {% endfor %}
                     </tbody>
+
                 </table>
             </div>
+
         </div>
     </div>
 
     <div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-labelledby="modalCambiarEstadoLabel" aria-hidden="true">
         <div class="modal-dialog">
+
             <div class="modal-content">
+
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalCambiarEstadoLabel">Cambiar Estado del Encargo</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <div class="modal-body">
                     <form id="formCambiarEstado">
+
                         <div class="mb-3">
                             <label for="estadoEntrega" class="form-label">Estado de Entrega</label>
                             <select class="form-select" id="estadoEntrega">
@@ -165,30 +225,40 @@
                                 <option value="entregado">Entregado</option>
                             </select>
                         </div>
+
                         <div class="mb-3" id="estadoPagoContainer">
                             <label for="estadoPago" class="form-label">Adeudo del Encargo</label>
                             <input type="number" class="form-control" id="estadoPago" name="estadoPago" step="0.01" readonly>
                         </div>
+
                         <div class="mb-3" id="nuevoAdeudoContainer">
                             <label for="nuevoAdeudo" class="form-label">Ingreso del Pago</label>
                             <input type="number" class="form-control" id="nuevoAdeudo" name="nuevoAdeudo" step="0.01">
                         </div>
+
                         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+
                     </form>
                 </div>
+
             </div>
+
         </div>
     </div>
 
     <div class="modal fade" id="modalAgregarEncargo" tabindex="-1" aria-labelledby="modalAgregarEncargoLabel" aria-hidden="true">
         <div class="modal-dialog">
+
             <div class="modal-content">
+
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalAgregarEncargoLabel">Agregar Encargo</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+
                 <div class="modal-body">
                     <form id="formAgregarEncargo">
+
                         {% csrf_token %}
                         <div class="mb-3">
                             <label for="folio" class="form-label">Folio</label>
@@ -196,16 +266,14 @@
                         </div>
 
                         <div class="mb-3">
-
                             <label for="cliente" class="form-label">Clientes</label>
                             <select class="form-select" id="cliente" name="cliente_id">
                                 {% for cliente in clientes %}
                                     <option value="{{ cliente.id }}">{{ cliente.nombre }} {{ cliente.apellidos  }}</option>
                                 {% endfor %}
                             </select>
-    
                         </div>
-
+                        
                         <div class="mb-3">
                             <label for="fecha_encargo" class="form-label">Fecha de Encargo</label>
                             <input type="date" class="form-control" id="fecha_encargo" name="fecha_encargo" value="{{ current_date }}" readonly>
@@ -215,43 +283,55 @@
                             <label for="fecha_entrega" class="form-label">Fecha de Entrega</label>
                             <input type="date" class="form-control" id="fecha_entrega" name="fecha_entrega">
                         </div>
+
                         <div class="mb-3">
                             <label for="costo" class="form-label">Costo</label>
                             <input type="number" class="form-control" id="costo" name="costo" step="0.01">
                         </div>
+
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="pagadoCheckbox" name="pagadoCheckbox">
                             <label class="form-check-label" for="pagadoCheckbox">¿Pagado?</label>
                         </div>
+
                         <div class="mb-3">
                             <label for="anticipo" class="form-label">Anticipo</label>
                             <input type="number" class="form-control" id="anticipo" name="anticipo" step="0.01">
                         </div>
+
                         <div class="mb-3">
                             <label for="adeudo" class="form-label">Adeudo</label>
                             <input type="number" class="form-control" id="adeudo" name="adeudo" step="0.01" readonly>
                         </div>
+
                         <div class="mb-3">
                             <label for="observaciones" class="form-label">Observaciones</label>
                             <textarea class="form-control" id="observaciones" name="observaciones" rows="3">{{ encargo.observaciones }}</textarea>
                         </div>
+
                         <button type="submit" class="btn btn-primary">Guardar</button>
+
                     </form>
                 </div>
+
             </div>
+
         </div>
     </div>
 
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
         <div id="toastNotification" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+
             <div class="toast-header">
                 <strong class="me-auto">Notificación</strong>
                 <small>Ahora</small>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
+
             <div class="toast-body" id="toastBody">
                 Mensaje de notificación aquí.
             </div>
+
         </div>
     </div>
 
@@ -260,6 +340,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const formAgregarEncargo = document.getElementById('formAgregarEncargo');
@@ -351,6 +432,7 @@
                     }
                 });
             });
+            
 
             $('.btn-cambiar-completado').on('click', function() {
                 const encargoId = $(this).data('id');
@@ -358,6 +440,29 @@
                 $.ajax({
                     type: 'POST',
                     url: '/cambiar-estado-completado/' + encargoId + '/',
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            showToast('Estado cambiado a Completado', 'success');
+                            setTimeout(() => location.reload(), 2000);
+                        } else {
+                            showToast('Error al cambiar el estado: ' + response.message, 'error');
+                        }
+                    },
+                    error: function() {
+                        showToast('Error en la solicitud', 'error');
+                    }
+                });
+            });
+
+            $('.btn-cambiar-encargo').on('click', function() {
+                const encargoId = $(this).data('id');
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/cambiar-estado-entregado/' + encargoId + '/',
                     data: {
                         csrfmiddlewaretoken: '{{ csrf_token }}'
                     },

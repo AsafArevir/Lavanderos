@@ -30,6 +30,7 @@ class Encargo(models.Model):
         ('ENCARGO', 'Encargo'),
         ('EN_PROCESO', 'En proceso'),
         ('COMPLETADO', 'Completado'),
+        ('ENTREGADO','Entregado'),
     )
 
     Folio = models.CharField(max_length=30) 
@@ -96,3 +97,8 @@ class SaldoFinalDiario(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     saldo_final = models.DecimalField(max_digits=10, decimal_places=2)
     fecha = models.DateField()
+
+# Tabla para el control de la lista de precios de encargos
+class lista_precios(models.Model):
+    Descripcion = models.CharField(max_length=50)
+    precio = models.DecimalField(max_digits=10, decimal_places=2)

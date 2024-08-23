@@ -92,13 +92,14 @@ def encargo(request):
     encargos_encargo = Encargo.objects.filter(estado='ENCARGO')
     encargos_proceso = Encargo.objects.filter(estado='EN_PROCESO')
     encargos_completado = Encargo.objects.filter(estado='COMPLETADO')
+    encargos_entregados = Encargo.objects.filter(estado='ENTREGADO')
     clientes = Cliente.objects.all()
     
     context = {
         'encargos_encargo': encargos_encargo,
         'encargos_proceso': encargos_proceso,
         'encargos_completado': encargos_completado,
-        #'encargos_entregados': encargos_entregados,
+        'encargos_entregados': encargos_entregados,
         'clientes': clientes,
     }
 
@@ -115,7 +116,7 @@ def cambiar_estado_proceso(request, encargo_id):
     
     except Encargo.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'Encargo no encontrado'})
-
+    
 @csrf_exempt
 def cambiar_estado_completado(request, encargo_id):
 
@@ -127,6 +128,18 @@ def cambiar_estado_completado(request, encargo_id):
     
     except Encargo.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'Encargo no encontrado'})
+    
+@csrf_exempt
+def cambiar_estado_entregado(request, encargo_id):
+
+    try:
+        encargo = Encargo.objects.get(id=encargo_id)
+        encargo.estado = 'ENTREGADO'
+        encargo.save()
+        return JsonResponse({'success' : True, 'message' : 'Estado cambiado a Entregado'})
+    
+    except Encargo.DoesNotExist:
+        return JsonResponse({'success' : False, 'message' : 'Encargo no encontrado' })
 
 @csrf_exempt
 def cambiar_estado_encargo(request, encargo_id):
