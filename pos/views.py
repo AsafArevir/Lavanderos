@@ -124,7 +124,7 @@ def cambiar_estado_completado(request, encargo_id):
         encargo = Encargo.objects.get(id=encargo_id)
         encargo.estado = 'COMPLETADO'
         encargo.save()
-        return JsonResponse({'success': True, 'message': 'Estado cambiado a Completado'})
+        return JsonResponse({'success': True, 'message': 'Estado cambiado a Pedidos Entregados'})
     
     except Encargo.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'Encargo no encontrado'})
@@ -149,11 +149,15 @@ def cambiar_estado_encargo(request, encargo_id):
         anticipo = request.POST.get('ingreso')
 
         encargo = get_object_or_404(Encargo, id=encargo_id)
+        #print(encargo.entregado)
+        #print(encargo.adeudo)
+        #print(encargo.ingreso)
+
         encargo.entregado = entregado
         encargo.adeudo = nuevo_adeudo
         encargo.ingreso = anticipo
         encargo.save()
-
+        
         # Actualizar ControlPagoEncargos
         control_pago_encargo = get_object_or_404(ControlPagoEncargos, encargo=encargo_id)
         # control_pago_encargo, created = ControlPagoEncargos.objects.get_or_create(encargo=encargo)
