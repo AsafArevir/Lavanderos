@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from .models import Producto, Cliente, Encargo, Activacion, Ventas, ControlPagoEncargos, SaldoFinalDiario
+from .models import Producto, Cliente, Encargo, Activacion, Ventas, ControlPagoEncargos, SaldoFinalDiario, lista_precios
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_http_methods
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 import requests, json
@@ -10,7 +10,7 @@ from .decorators import superusuario_required
 from django.contrib.auth import logout
 from django.shortcuts import redirect
 from django.db.models import Sum
-from escpos.printer import Usb
+#from escpos.printer import Usb
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -30,10 +30,7 @@ def productos(request):
 
 @csrf_exempt
 def modificar_producto(request, producto_id):
-
     if request.method == 'POST':
-
-        print('hi')
 
         try:
             producto = Producto.objects.get(id=producto_id)
@@ -57,7 +54,6 @@ def clientes(request):
 
 
 def agregar_cliente(request):
-    
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
         apellidos = request.POST.get('apellidos')
@@ -71,7 +67,6 @@ def agregar_cliente(request):
         return JsonResponse({'error': 'Se esperaba una solicitud POST'}, status=400)
 
 def eliminar_cliente(request, cliente_id):
-
     if request.method == 'POST':
 
         try:
@@ -88,11 +83,11 @@ def eliminar_cliente(request, cliente_id):
 
 @login_required
 def encargo(request):
-
     encargos_encargo = Encargo.objects.filter(estado='ENCARGO')
     encargos_proceso = Encargo.objects.filter(estado='EN_PROCESO')
     encargos_completado = Encargo.objects.filter(estado='COMPLETADO')
     encargos_entregados = Encargo.objects.filter(estado='ENTREGADO')
+    encargos_incidentes = Encargo.objects.filter(estado='INCIDENTES')
     clientes = Cliente.objects.all()
     
     context = {
@@ -100,6 +95,7 @@ def encargo(request):
         'encargos_proceso': encargos_proceso,
         'encargos_completado': encargos_completado,
         'encargos_entregados': encargos_entregados,
+        'encargos_incidentes': encargos_incidentes,
         'clientes': clientes,
     }
 
@@ -107,7 +103,6 @@ def encargo(request):
 
 @csrf_exempt
 def cambiar_estado_proceso(request, encargo_id):
-
     try:
         encargo = Encargo.objects.get(id=encargo_id)
         encargo.estado = 'EN_PROCESO'
@@ -119,7 +114,6 @@ def cambiar_estado_proceso(request, encargo_id):
     
 @csrf_exempt
 def cambiar_estado_completado(request, encargo_id):
-
     try:
         encargo = Encargo.objects.get(id=encargo_id)
         encargo.estado = 'COMPLETADO'
@@ -131,7 +125,6 @@ def cambiar_estado_completado(request, encargo_id):
     
 @csrf_exempt
 def cambiar_estado_entregado(request, encargo_id):
-
     try:
         encargo = Encargo.objects.get(id=encargo_id)
         encargo.estado = 'ENTREGADO'
@@ -149,10 +142,6 @@ def cambiar_estado_encargo(request, encargo_id):
         anticipo = request.POST.get('ingreso')
 
         encargo = get_object_or_404(Encargo, id=encargo_id)
-        #print(encargo.entregado)
-        #print(encargo.adeudo)
-        #print(encargo.ingreso)
-
         encargo.entregado = entregado
         encargo.adeudo = nuevo_adeudo
         encargo.ingreso = anticipo
@@ -164,12 +153,8 @@ def cambiar_estado_encargo(request, encargo_id):
 
         if anticipo != 0:
             control_pago_encargo.fecha_entregado = timezone.now().date()
-            # control_pago_encargo.pago_recibido = anticipo 
-            # control_pago_encargo.adeudo = 0
-
         else:
             control_pago_encargo.fecha_entregado = timezone.now().date()
-            # control_pago_encargo.pago_recibido = 0
            
         control_pago_encargo.save()
 
@@ -184,9 +169,7 @@ def cambiar_estado_encargo(request, encargo_id):
     
 @csrf_exempt
 def guardar_encargo(request):
-
     if request.method == 'POST':
-
         try:
             folio = request.POST.get('folio')
             fecha_encargo = request.POST.get('fecha_encargo')
@@ -238,7 +221,6 @@ def lavadoras(request):
     return render(request, 'lavadoras.html', {'encargos': encargos, 'activaciones': activaciones})
 
 def guardar_activacion(request):
-
     if request.method == 'POST':
         lavadora = request.POST.get('lavadora')
         motivo = request.POST.get('motivo')
@@ -266,19 +248,14 @@ def guardar_activacion(request):
             ip = '192.168.0.201'
         elif lavadora == 'Lavadora 2':
             ip = '192.168.0.202'
-        
         elif lavadora == 'Lavadora 3':
-            ip = '192.168.0.203'
-            
+            ip = '192.168.0.203' 
         elif lavadora == 'Lavadora 4':
             ip = '192.168.0.204'
-            
         elif lavadora == 'Lavadora 5':
             ip = '192.168.0.205'
-            
         elif lavadora == 'Lavadora 6':
             ip = '192.168.1.206'
-            
         elif lavadora == 'Lavadora 7':
             ip = '192.168.0.207'
         
@@ -305,9 +282,7 @@ def guardar_activacion(request):
 from django.utils import timezone
 
 def pagar_venta(request):
-
     if request.method == 'POST':
-
         # Obtener el JSON enviado en el cuerpo de la solicitud
         data = json.loads(request.body)
         
@@ -393,7 +368,6 @@ def logout_view(request):
 
 @superusuario_required
 def crear_producto(request):
-
     productos = Producto.objects.all()
 
     if request.method == 'POST':
@@ -413,7 +387,6 @@ def crear_producto(request):
         return render(request, 'producto.html', {'productos': productos})
 
 def eliminar_producto(request, producto_id):
-
     if request.method == 'DELETE':
         # Obtener el producto por su ID
         producto = Producto.objects.get(id=producto_id)
@@ -425,6 +398,55 @@ def eliminar_producto(request, producto_id):
     else:
         # Si la solicitud no es DELETE, devolver un error
         return JsonResponse({'error': 'Se esperaba una solicitud DELETE'}, status=400)
+    
+""" Acciones de la lista de precios """
+@superusuario_required
+def nuevo_precio(request):
+    precios = lista_precios.objects.all()
+
+    if request.method == 'POST':
+        # Obtener los datos del formulario enviado
+        nombre = request.POST.get('nombre')
+        descripcion = request.POST.get('descripcion')
+        precio = request.POST.get('precio')
+
+        # Guardar los datos en el modelo
+        new_price = lista_precios(Nombre=nombre, Descripcion=descripcion, Precio=precio)
+        new_price.save()
+
+        # Redirigir a la página de productos
+        return redirect('nuevo_precio')
+    
+    return render(request, 'encargo.html', {'precios': precios})
+
+
+def eliminar_precio(request, precio_id):
+    if request.method == 'DELETE':
+        precio = get_object_or_404(lista_precios, id=precio_id)
+        precio.delete()
+        return JsonResponse({'message': 'Precio eliminado correctamente'})
+    
+    else:
+        # Si la solicitud no es DELETE, devolver un error
+        return JsonResponse({'error': 'Se esperaba una solicitud DELETE'}, status=400)
+
+@csrf_exempt
+def modificar_precio(request, precio_id):
+    try:
+        precio = get_object_or_404(lista_precios, id=precio_id)
+        nombre = request.POST.get('nombre')
+        descripcion = request.POST.get('descripcion')
+        nuevo_precio = request.POST.get('precio')
+
+        precio.Nombre = nombre
+        precio.Descripcion = descripcion
+        precio.Precio = nuevo_precio
+        precio.save()
+
+        return JsonResponse({'message': 'Precio modificado correctamente'})
+    except lista_precios.DoesNotExist:
+        return JsonResponse({'error': 'Precio no encontrado'}, status=404)
+    
     
 
 @superusuario_required

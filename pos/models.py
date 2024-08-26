@@ -31,6 +31,12 @@ class Encargo(models.Model):
         ('EN_PROCESO', 'En proceso'),
         ('COMPLETADO', 'Completado'),
         ('ENTREGADO','Entregado'),
+        ('INCIDENTE','Incidente'),
+    )
+
+    OPCION_PAGO = (
+        ('Efectivo', 'Efectivo'),
+        ('Tarjeta', 'Tarjeta'),
     )
 
     Folio = models.CharField(max_length=30) 
@@ -41,12 +47,14 @@ class Encargo(models.Model):
     costo = models.DecimalField(max_digits=10, decimal_places=2)
     adeudo = models.DecimalField(max_digits=10, decimal_places=2)
     ingreso = models.DecimalField(max_digits=10, decimal_places=2)
+    forma_pago = models.CharField(max_length=20, choices=OPCION_PAGO, default='Efectivo')
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     entregado = models.BooleanField(default=False)
     observaciones = models.TextField(blank=True, null=True)
 
 # Tabla activacion
 class Activacion(models.Model):
+
     LAVADORA_CHOICES = (
         ('Lavadora 1', 'Lavadora 1'),
         ('Lavadora 2', 'Lavadora 2'),
@@ -78,10 +86,12 @@ class Ventas(models.Model):
     importe_total = models.DecimalField(max_digits=10, decimal_places=2)
     fecha_venta = models.DateField()
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+
     METODO_PAGO_CHOICES = (
         ('Efectivo', 'Efectivo'),
         ('Tarjeta', 'Tarjeta'),
     )
+
     metodo_pago = models.CharField(max_length=20, choices=METODO_PAGO_CHOICES)
     
 # Tabla control del pago encargo    
@@ -100,5 +110,6 @@ class SaldoFinalDiario(models.Model):
 
 # Tabla para el control de la lista de precios de encargos
 class lista_precios(models.Model):
+    Nombre = models.CharField(max_length=50)
     Descripcion = models.CharField(max_length=50)
-    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    Precio = models.DecimalField(max_digits=10, decimal_places=2)

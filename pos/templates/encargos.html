@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabla de Encargos</title>
+    <title>Seccion de Encargos</title>
     <style>
         .mt-7, .my-7 {
             margin-top: 3.8rem !important;
@@ -34,6 +34,7 @@
     {% load static %}
     {% include 'layouts/navbar.html' %}
 
+    <!-- Contenedor para la tabla principal (Control de encargos) -->
     <div class="container mt-7">
         <h1>Tabla de Encargos</h1>
 
@@ -53,6 +54,9 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" id="entregado-tab" data-toggle="tab" href="#entregado" role="tab" aria-controls="entregado" aria-selected="false">Pedidos Entregados</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="incidente-tab" data-toggle="tab" href="#incidente" role="tab" aria-controls="incidente" aria-selected="false">Incidentes</a>
             </li>
         </ul>
 
@@ -135,7 +139,7 @@
                             <th>Fecha de Entrega</th>
                             <!-- <th>Costo</th> -->
                             <th>Estado de Pago</th>
-                            <th>Acciones</th>
+                            <th>Actualizar Encargo</th>
                         </tr>
                     </thead>
 
@@ -155,7 +159,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <button class="btn-cambiar-entregado btn btn-success" data-id="{{ encargo.id }}">Cambiar Estado</button>
+                                <button class="btn-cambiar-entregado btn btn-primary" data-id="{{ encargo.id }}">Cambiar Estado</button>
                             </td>
                         </tr>
                         {% endfor %}
@@ -213,11 +217,61 @@
                 </table>
             </div>
 
+            <!-- data -->
+            <div class="tab-pane fade" id="incidente" role="tabpanel" aria-labelledby="incidente-tab">
+                <table class="table">
+
+                    <thead>
+                        <tr>
+                            <th class="color-grey">Folio del Encargo</th>
+
+                            <th>cliente</th>
+                            <th>Fecha de Encargo</th>
+                            <th>Fecha de Entrega</th>
+                            <th>Costo</th>
+                            <th>Adeudo</th>
+                            <th>Observaciones</th>
+                            <th>Actualizar Pago</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for encargo in encargos_entregados %}
+                        <tr>
+                            <td class="color-grey">{{ encargo.Folio }}</td>
+                            <td>{{ encargo.cliente }}</td>
+                            <td>{{ encargo.fecha_entrega }}</td>
+                            <td>{{ encargo.costo }}</td>
+                            <td>
+                                {% if encargo.adeudo == 0 %}
+                                <img src="{% static 'img/icons8-comprobado-30.png' %}" alt="comprobado">
+                                {% else %}
+                                <img src="{% static 'img/icons8-no-30.png' %}" alt="no">
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if encargo.entregado %}
+                                <img src="{% static 'img/icons8-comprobado-30.png' %}" alt="comprobado">
+                                {% else %}
+                                <img src="{% static 'img/icons8-no-30.png' %}" alt="no">
+                                {% endif %}
+                            </td>
+                            <td> 
+                                {% if encargo.entregado != 1 %}
+                                <button class="btn-cambiar-estado btn btn-primary" data-id="{{ encargo.id }}">Validar encargo</button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
         </div>
     </div>
 
     <!-- Seccion de los modal para el funcionamiento de la pagina -->
-
     <!-- Modal para cambiar el estado  del encargo -->
     <div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-labelledby="modalCambiarEstadoLabel" aria-hidden="true">
         <div class="modal-dialog">
