@@ -55,9 +55,6 @@
             <li class="nav-item">
                 <a class="nav-link" id="entregado-tab" data-toggle="tab" href="#entregado" role="tab" aria-controls="entregado" aria-selected="false">Pedidos Entregados</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" id="incidente-tab" data-toggle="tab" href="#incidente" role="tab" aria-controls="incidente" aria-selected="false">Incidentes</a>
-            </li>
         </ul>
 
         <div class="tab-content" id="contenidoEncargos">
@@ -217,57 +214,6 @@
                 </table>
             </div>
 
-            <!-- data -->
-            <div class="tab-pane fade" id="incidente" role="tabpanel" aria-labelledby="incidente-tab">
-                <table class="table">
-
-                    <thead>
-                        <tr>
-                            <th class="color-grey">Folio del Encargo</th>
-
-                            <th>cliente</th>
-                            <th>Fecha de Encargo</th>
-                            <th>Fecha de Entrega</th>
-                            <th>Costo</th>
-                            <th>Adeudo</th>
-                            <th>Observaciones</th>
-                            <th>Actualizar Pago</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {% for encargo in encargos_entregados %}
-                        <tr>
-                            <td class="color-grey">{{ encargo.Folio }}</td>
-                            <td>{{ encargo.cliente }}</td>
-                            <td>{{ encargo.fecha_entrega }}</td>
-                            <td>{{ encargo.costo }}</td>
-                            <td>
-                                {% if encargo.adeudo == 0 %}
-                                <img src="{% static 'img/icons8-comprobado-30.png' %}" alt="comprobado">
-                                {% else %}
-                                <img src="{% static 'img/icons8-no-30.png' %}" alt="no">
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if encargo.entregado %}
-                                <img src="{% static 'img/icons8-comprobado-30.png' %}" alt="comprobado">
-                                {% else %}
-                                <img src="{% static 'img/icons8-no-30.png' %}" alt="no">
-                                {% endif %}
-                            </td>
-                            <td> 
-                                {% if encargo.entregado != 1 %}
-                                <button class="btn-cambiar-estado btn btn-primary" data-id="{{ encargo.id }}">Validar encargo</button>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-
-                </table>
-            </div>
-
         </div>
     </div>
 
@@ -374,6 +320,14 @@
                         </div>
 
                         <div class="mb-3">
+                            <label for="forma_pago" class="form-label">Metodo de Pago</label>
+                            <select class="form-select" id="forma_pago" name="forma_pago">
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="Tarjeta">Tarjeta</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
                             <label for="observaciones" class="form-label">Observaciones</label>
                             <textarea class="form-control" id="observaciones" name="observaciones" rows="3">{{ encargo.observaciones }}</textarea>
                         </div>
@@ -419,6 +373,7 @@
             const costoInput = document.getElementById('costo');
             const adeudoInput = document.getElementById('adeudo');
             const pagadoCheckbox = document.getElementById('pagadoCheckbox');
+            const forma_pago = document.getElementById('forma_pago');
 
             function generarFolio() {
                 const now = new Date();
@@ -452,6 +407,7 @@
                 generarFolio();
                 fechaEncargoInput.valueAsDate = new Date();
                 manejarCheckboxPagado();
+                
             });
 
             anticipoInput.addEventListener('input', actualizarAdeudo);

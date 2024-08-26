@@ -87,7 +87,7 @@ def encargo(request):
     encargos_proceso = Encargo.objects.filter(estado='EN_PROCESO')
     encargos_completado = Encargo.objects.filter(estado='COMPLETADO')
     encargos_entregados = Encargo.objects.filter(estado='ENTREGADO')
-    encargos_incidentes = Encargo.objects.filter(estado='INCIDENTES')
+    #encargos_incidentes = Encargo.objects.filter(estado='INCIDENTES')
     clientes = Cliente.objects.all()
     
     context = {
@@ -95,7 +95,7 @@ def encargo(request):
         'encargos_proceso': encargos_proceso,
         'encargos_completado': encargos_completado,
         'encargos_entregados': encargos_entregados,
-        'encargos_incidentes': encargos_incidentes,
+        #'encargos_incidentes': encargos_incidentes,
         'clientes': clientes,
     }
 
@@ -181,6 +181,7 @@ def guardar_encargo(request):
             adeudo = request.POST.get('adeudo')
             ingreso = request.POST.get('anticipo')
             observaciones = request.POST.get('observaciones')
+            forma_pago = request.POST.get('forma_pago')
 
             encargo = Encargo(
                 Folio=folio,
@@ -193,7 +194,8 @@ def guardar_encargo(request):
                 ingreso=ingreso,
                 usuario=request.user,
                 entregado=False,
-                observaciones=observaciones
+                observaciones=observaciones,
+                forma_pago=forma_pago
             )
             encargo.save()
 
@@ -429,24 +431,6 @@ def eliminar_precio(request, precio_id):
     else:
         # Si la solicitud no es DELETE, devolver un error
         return JsonResponse({'error': 'Se esperaba una solicitud DELETE'}, status=400)
-
-@csrf_exempt
-def modificar_precio(request, precio_id):
-    try:
-        precio = get_object_or_404(lista_precios, id=precio_id)
-        nombre = request.POST.get('nombre')
-        descripcion = request.POST.get('descripcion')
-        nuevo_precio = request.POST.get('precio')
-
-        precio.Nombre = nombre
-        precio.Descripcion = descripcion
-        precio.Precio = nuevo_precio
-        precio.save()
-
-        return JsonResponse({'message': 'Precio modificado correctamente'})
-    except lista_precios.DoesNotExist:
-        return JsonResponse({'error': 'Precio no encontrado'}, status=404)
-    
     
 
 @superusuario_required
