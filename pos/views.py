@@ -101,6 +101,7 @@ def encargo(request):
 
     return render(request, 'encargos.html', context)
 
+"""
 @csrf_exempt
 def cambiar_estado_proceso(request, encargo_id):
     try:
@@ -133,6 +134,27 @@ def cambiar_estado_entregado(request, encargo_id):
     
     except Encargo.DoesNotExist:
         return JsonResponse({'success' : False, 'message' : 'Encargo no encontrado' })
+"""
+    
+@csrf_exempt
+def cambio_de_estadoP(request, encargo_id):
+    if request.method == 'POST':
+
+        nuevo_estado = request.POST.get('estado')
+        
+        # Obtener el encargo correspondiente
+        encargo = get_object_or_404(Encargo, id=encargo_id)
+        encargo.estado = nuevo_estado
+        encargo.save()
+        
+        return JsonResponse({'success': True})
+    
+    elif request.method == 'GET':
+        encargo = get_object_or_404(Encargo, id=encargo_id)
+        return JsonResponse({'estado': encargo.estado})
+    
+    else:
+        return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
 
 @csrf_exempt
 def cambiar_estado_encargo(request, encargo_id):

@@ -53,7 +53,7 @@
                 <a class="nav-link" id="completado-tab" data-toggle="tab" href="#completado" role="tab" aria-controls="completado" aria-selected="false">Completado</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="entregado-tab" data-toggle="tab" href="#entregado" role="tab" aria-controls="entregado" aria-selected="false">Pedidos Entregados</a>
+                <a class="nav-link" id="entregado-tab" data-toggle="tab" href="#entregado" role="tab" aria-controls="entregado" aria-selected="false">Entregados</a>
             </li>
         </ul>
 
@@ -83,7 +83,10 @@
                             <td>{{ encargo.fecha_entrega }}</td>
                             <!-- <td>{{ encargo.costo }}</td> -->
                             <td>{{ encargo.observaciones }}</td>
-                            <td><button class="btn-cambiar-proceso btn btn-success" data-id="{{ encargo.id }}">Cambiar Estado</button></td>
+                            <!--<td><button class="btn-cambiar-proceso btn btn-success" data-id="{{ encargo.id }}">Cambiar Estado</button></td>-->
+                            <td>
+                                <button class="btn-cambiar btn btn-success" data-id="{{ encargo.id }}">Cambiar Estado</button>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -116,7 +119,8 @@
                             <!-- <td>{{ encargo.costo }}</td> -->
                             <td>{{ encargo.observaciones }}</td>
                             <td>
-                                <button class="btn-cambiar-completado btn btn-success" data-id="{{ encargo.id }}">Cambiar Estado</button>
+                               <!-- <button class="btn-cambiar-completado btn btn-success" data-id="{{ encargo.id }}">Cambiar Estado</button>-->
+                                <button class="btn-cambiar btn btn-success" data-id="{{ encargo.id }}">Cambiar Estado</button>
                             </td>
                         </tr>
                         {% endfor %}
@@ -156,7 +160,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <button class="btn-cambiar-entregado btn btn-primary" data-id="{{ encargo.id }}">Cambiar Estado</button>
+                                <button class="btn-cambiar btn btn-success" data-id="{{ encargo.id }}">Cambiar Estado</button>
                             </td>
                         </tr>
                         {% endfor %}
@@ -204,7 +208,7 @@
                             </td>
                             <td> 
                                 {% if encargo.entregado != 1 %}
-                                <button class="btn-cambiar-estado btn btn-primary" data-id="{{ encargo.id }}">Validar encargo</button>
+                                <button class="btn-cambiar-encargo btn btn-primary" data-id="{{ encargo.id }}">Validar encargo</button>
                                 {% endif %}
                             </td>
                         </tr>
@@ -218,19 +222,56 @@
     </div>
 
     <!-- Seccion de los modal para el funcionamiento de la pagina -->
-    <!-- Modal para cambiar el estado  del encargo -->
-    <div class="modal fade" id="modalCambiarEstado" tabindex="-1" aria-labelledby="modalCambiarEstadoLabel" aria-hidden="true">
+
+    <!-- Modal para cambiar estado -->
+    <div class="modal fade" id="alteraestado" tabindex="-1" aria-labelledby="alteraestadoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="alteraestadoLabel">Cambiar Estado</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+
+            <div class="modal-body">
+                <form id="formEstado">
+
+                    <div class="mb-3">
+                        <label for="selectEstado" class="form-label">Seleccione el nuevo estado</label>
+                        <select class="form-select" id="selectEstado">
+                            <option value="ENCARGO">Encargo</option>
+                            <option value="EN_PROCESO">En Proceso</option>
+                            <option value="COMPLETADO">Completado</option>
+                            <option value="ENTREGADO">Entregado</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Aceptar</button>
+
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+  
+
+    <!-- Modal para cambiar el estado de entrega del encargo -->
+    <div class="modal fade" id="CambiarEstado" tabindex="-1" aria-labelledby="CambiarEstadoLabel" aria-hidden="true">
         <div class="modal-dialog">
 
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalCambiarEstadoLabel">Cambiar Estado del Encargo</h5>
+                    <h5 class="modal-title" id="CambiarEstadoLabel">Cambiar Estado del Encargo</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body">
-                    <form id="formCambiarEstado">
+                    <form id="CambiarEstado">
 
                         <div class="mb-3">
                             <label for="estadoEntrega" class="form-label">Estado de Entrega</label>
@@ -365,7 +406,11 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 
     <script>
+
+        // Operaciones de la seccion encargos
         document.addEventListener('DOMContentLoaded', function() {
+
+            //Variables de los datos a agregar en el control de encargos.
             const formAgregarEncargo = document.getElementById('formAgregarEncargo');
             const folioInput = document.getElementById('folio');
             const fechaEncargoInput = document.getElementById('fecha_encargo');
@@ -435,53 +480,51 @@
                 .catch(error => console.error('Error:', error));
             });
 
-            $('.btn-cambiar-proceso').on('click', function() {
+            // Cambio de estado
+            $('.btn-cambiar').on('click', function() {
                 const encargoId = $(this).data('id');
+                const modal = $('#alteraestado');
+                modal.modal('show');
 
                 $.ajax({
-                    type: 'POST',
-                    url: '/cambiar-estado-proceso/' + encargoId + '/',
-                    data: {
-                        csrfmiddlewaretoken: '{{ csrf_token }}'
-                    },
+                    type: 'GET',
+                    url: '/cambio-de-estadoP/' + encargoId + '/', 
                     success: function(response) {
-                        if (response.success) {
-                            showToast('Estado cambiado a Proceso', 'success');
-                            setTimeout(() => location.reload(), 2000);
-                        } else {
-                            showToast('Error al cambiar el estado: ' + response.message, 'error');
-                        }
+                        console.log(response)
                     },
-                    error: function() {
-                        showToast('Error en la solicitud', 'error');
+                    error: function(xhr, errmsg, err) {
+                        console.error('Error en la petición:', errmsg);
                     }
                 });
-            });
+
+                $('#formEstado').off('submit').on('submit', function(e) {
+                    e.preventDefault();
+        
+                    const estadoP = $('#selectEstado').val();
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/cambio-de-estadoP/' + encargoId + '/',
+                        data: {
+                            estado: estadoP,
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        success: function(response) {
+                            modal.modal('hide');
+                            showToast('Encargo actualizado', 'success');
+                            setTimeout(() => location.reload(), 3000);
+                        },
+                        error: function(xhr, errmsg, err) {
+                            console.log(xhr.status + ": " + xhr.responseText);
+                            showToast('Error al actualizar el encargo', 'error');
+                        }
             
-            $('.btn-cambiar-completado').on('click', function() {
-                const encargoId = $(this).data('id');
-
-                $.ajax({
-                    type: 'POST',
-                    url: '/cambiar-estado-completado/' + encargoId + '/',
-                    data: {
-                        csrfmiddlewaretoken: '{{ csrf_token }}'
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            showToast('Estado cambiado a Completado', 'success');
-                            setTimeout(() => location.reload(), 2000);
-                        } else {
-                            showToast('Error al cambiar el estado: ' + response.message, 'error');
-                        }
-                    },
-                    error: function() {
-                        showToast('Error en la solicitud', 'error');
-                    }
+                    });
                 });
+
             });
 
-            $('.btn-cambiar-entregado').on('click', function() {
+            /*$('.btn-cambiar-entregado').on('click', function() {
                 const encargoId = $(this).data('id');
 
                 $.ajax({
@@ -502,11 +545,12 @@
                         showToast('Error en la solicitud', 'error');
                     }
                 });
-            });
+            });*/
 
-            $('.btn-cambiar-estado').on('click', function() {
+            // Validacion de los datos de encargo
+            $('.btn-cambiar-encargo').on('click', function() {
                 const encargoId = $(this).data('id');
-                const modal = $('#modalCambiarEstado');
+                const modal = $('#CambiarEstado');
                 modal.modal('show');
 
                 $.ajax({
@@ -527,7 +571,7 @@
                     }
                 });
 
-                $('#formCambiarEstado').off('submit').on('submit', function(e) {
+                $('#CambiarEstado').off('submit').on('submit', function(e) {
                     e.preventDefault();
                     const nuevoAdeudo = parseFloat($('#nuevoAdeudo').val()) || 0;
                     const estadoPago = parseFloat($('#estadoPago').val());
