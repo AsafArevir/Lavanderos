@@ -159,35 +159,45 @@ def cambio_de_estadoP(request, encargo_id):
 @csrf_exempt
 def cambiar_estado_encargo(request, encargo_id):
     if request.method == 'POST':
-        entregado = request.POST.get('entregado') == 'true'
-        nuevo_adeudo = float(request.POST.get('nuevo_adeudo'))
-        anticipo = request.POST.get('ingreso')
+        estado = request.POST.get('estado', '')  # Asegúrate de que este campo coincida con el del formulario
+        nuevo_adeudo = float(request.POST.get('nuevo_adeudo', 0))  # Valor por defecto de 0
+        anticipo = float(request.POST.get('ingreso', 0))  # Valor por defecto de 0
+
+        # Imprime los datos recibidos en el log del servidor
+        print(f"Estado recibido: {estado}")
+        print(f"Nuevo Adeudo recibido: {nuevo_adeudo}")
+        print(f"Anticipo recibido: {anticipo}")
 
         encargo = get_object_or_404(Encargo, id=encargo_id)
-        encargo.entregado = entregado
-        encargo.adeudo = nuevo_adeudo
-        encargo.ingreso = anticipo
-        encargo.save()
         
-        # Actualizar ControlPagoEncargos
-        control_pago_encargo = get_object_or_404(ControlPagoEncargos, encargo=encargo_id)
-        # control_pago_encargo, created = ControlPagoEncargos.objects.get_or_create(encargo=encargo)
+        # Actualiza el estado del encargo
+        encargo.estado = estado
 
+        if estado == 'ENTREGADO':
+            encargo.adeudo = nuevo_adeudo
+            encargo.ingreso = anticipo
+        else:
+            # Solo actualiza el ingreso, no el adeudo, si el estado no es 'ENTREGADO'
+            encargo.ingreso = anticipo
+
+        encargo.save()
+
+        # Actualiza ControlPagoEncargos
+        control_pago_encargo = get_object_or_404(ControlPagoEncargos, encargo=encargo)
         if anticipo != 0:
             control_pago_encargo.fecha_entregado = timezone.now().date()
-        else:
-            control_pago_encargo.fecha_entregado = timezone.now().date()
-           
+
         control_pago_encargo.save()
 
         return JsonResponse({'success': True})
-    
+
     elif request.method == 'GET':
         encargo = get_object_or_404(Encargo, id=encargo_id)
-        return JsonResponse({'adeudo': encargo.adeudo})
-    
+        return JsonResponse({'adeudo': encargo.adeudo, 'estado': encargo.estado})
+
     else:
         return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
+
     
 @csrf_exempt
 def guardar_encargo(request):
@@ -215,7 +225,7 @@ def guardar_encargo(request):
                 adeudo=adeudo,
                 ingreso=ingreso,
                 usuario=request.user,
-                entregado=False,
+                #entregado=False,
                 observaciones=observaciones,
                 forma_pago=forma_pago
             )

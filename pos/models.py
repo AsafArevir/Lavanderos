@@ -49,7 +49,7 @@ class Encargo(models.Model):
     ingreso = models.DecimalField(max_digits=10, decimal_places=2)
     forma_pago = models.CharField(max_length=20, choices=OPCION_PAGO, default='Efectivo')
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
-    entregado = models.BooleanField(default=False)
+    #entregado = models.BooleanField(default=False)
     observaciones = models.TextField(blank=True, null=True)
 
 # Tabla activacion

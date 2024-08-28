@@ -85,7 +85,7 @@
                             <td>{{ encargo.observaciones }}</td>
                             <!--<td><button class="btn-cambiar-proceso btn btn-success" data-id="{{ encargo.id }}">Cambiar Estado</button></td>-->
                             <td>
-                                <button class="btn-cambiar btn btn-success" data-id="{{ encargo.id }}">Cambiar Estado</button>
+                                <button class="btn-cambiar-encargo btn btn-primary" data-id="{{ encargo.id }}">Cambiar Encargo</button>
                             </td>
                         </tr>
                         {% endfor %}
@@ -120,7 +120,7 @@
                             <td>{{ encargo.observaciones }}</td>
                             <td>
                                <!-- <button class="btn-cambiar-completado btn btn-success" data-id="{{ encargo.id }}">Cambiar Estado</button>-->
-                                <button class="btn-cambiar btn btn-success" data-id="{{ encargo.id }}">Cambiar Estado</button>
+                                <<button class="btn-cambiar-encargo btn btn-primary" data-id="{{ encargo.id }}">Cambiar Encargo</button>
                             </td>
                         </tr>
                         {% endfor %}
@@ -160,7 +160,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <button class="btn-cambiar btn btn-success" data-id="{{ encargo.id }}">Cambiar Estado</button>
+                                <button class="btn-cambiar-encargo btn btn-primary" data-id="{{ encargo.id }}">Cambiar Encargo</button>
                             </td>
                         </tr>
                         {% endfor %}
@@ -222,44 +222,7 @@
     </div>
 
     <!-- Seccion de los modal para el funcionamiento de la pagina -->
-
     <!-- Modal para cambiar estado -->
-    <div class="modal fade" id="alteraestado" tabindex="-1" aria-labelledby="alteraestadoLabel" aria-hidden="true">
-        <div class="modal-dialog">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h5 class="modal-title" id="alteraestadoLabel">Cambiar Estado</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-
-            <div class="modal-body">
-                <form id="formEstado">
-
-                    <div class="mb-3">
-                        <label for="selectEstado" class="form-label">Seleccione el nuevo estado</label>
-                        <select class="form-select" id="selectEstado">
-                            <option value="ENCARGO">Encargo</option>
-                            <option value="EN_PROCESO">En Proceso</option>
-                            <option value="COMPLETADO">Completado</option>
-                            <option value="ENTREGADO">Entregado</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Aceptar</button>
-
-                </form>
-
-            </div>
-
-        </div>
-    </div>
-  
-
-    <!-- Modal para cambiar el estado de entrega del encargo -->
     <div class="modal fade" id="CambiarEstado" tabindex="-1" aria-labelledby="CambiarEstadoLabel" aria-hidden="true">
         <div class="modal-dialog">
 
@@ -273,11 +236,13 @@
                 <div class="modal-body">
                     <form id="CambiarEstado">
 
-                        <div class="mb-3">
-                            <label for="estadoEntrega" class="form-label">Estado de Entrega</label>
-                            <select class="form-select" id="estadoEntrega">
-                                <option value="no_entregado">No entregado</option>
-                                <option value="entregado">Entregado</option>
+                        <div class="mb-3" id="choseeContainer">
+                            <label for="selectEstado" class="form-label">Seleccione el nuevo estado</label>
+                            <select class="form-select" id="selectEstadot" name="estado">
+                                <option value="ENCARGO">Encargo</option>
+                                <option value="EN_PROCESO">En Proceso</option>
+                                <option value="COMPLETADO">Completado</option>
+                                <option value="ENTREGADO">Entregado</option>
                             </select>
                         </div>
 
@@ -480,74 +445,7 @@
                 .catch(error => console.error('Error:', error));
             });
 
-            // Cambio de estado
-            $('.btn-cambiar').on('click', function() {
-                const encargoId = $(this).data('id');
-                const modal = $('#alteraestado');
-                modal.modal('show');
-
-                $.ajax({
-                    type: 'GET',
-                    url: '/cambio-de-estadoP/' + encargoId + '/', 
-                    success: function(response) {
-                        console.log(response)
-                    },
-                    error: function(xhr, errmsg, err) {
-                        console.error('Error en la petición:', errmsg);
-                    }
-                });
-
-                $('#formEstado').off('submit').on('submit', function(e) {
-                    e.preventDefault();
-        
-                    const estadoP = $('#selectEstado').val();
-
-                    $.ajax({
-                        type: 'POST',
-                        url: '/cambio-de-estadoP/' + encargoId + '/',
-                        data: {
-                            estado: estadoP,
-                            csrfmiddlewaretoken: '{{ csrf_token }}'
-                        },
-                        success: function(response) {
-                            modal.modal('hide');
-                            showToast('Encargo actualizado', 'success');
-                            setTimeout(() => location.reload(), 3000);
-                        },
-                        error: function(xhr, errmsg, err) {
-                            console.log(xhr.status + ": " + xhr.responseText);
-                            showToast('Error al actualizar el encargo', 'error');
-                        }
-            
-                    });
-                });
-
-            });
-
-            /*$('.btn-cambiar-entregado').on('click', function() {
-                const encargoId = $(this).data('id');
-
-                $.ajax({
-                    type: 'POST',
-                    url: '/cambiar-estado-entregado/' + encargoId + '/',
-                    data: {
-                        csrfmiddlewaretoken: '{{ csrf_token }}'
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            showToast('Estado cambiado a Completado', 'success');
-                            setTimeout(() => location.reload(), 2000);
-                        } else {
-                            showToast('Error al cambiar el estado: ' + response.message, 'error');
-                        }
-                    },
-                    error: function() {
-                        showToast('Error en la solicitud', 'error');
-                    }
-                });
-            });*/
-
-            // Validacion de los datos de encargo
+            // Validación de los datos de encargo
             $('.btn-cambiar-encargo').on('click', function() {
                 const encargoId = $(this).data('id');
                 const modal = $('#CambiarEstado');
@@ -558,12 +456,24 @@
                     url: '/cambiar-estado-encargo/' + encargoId + '/',
                     success: function(response) {
                         const adeudo = response.adeudo;
+                        const estado = response.estado;
                         $('#estadoPago').val(adeudo);
 
                         if (adeudo > 0) {
                             $('#nuevoAdeudoContainer').show();
                         } else {
                             $('#nuevoAdeudoContainer').hide();
+                        }
+
+                    
+                        if (estado === 'ENTREGADO') {
+                            $('#choseeContainer').hide(); 
+                            $('#nuevoAdeudoContainer').show(); 
+                            $('#estadoPagoContainer').show(); 
+                        } else {
+                            $('#choseeContainer').show();
+                            $('#nuevoAdeudoContainer').hide(); 
+                            $('#estadoPagoContainer').hide(); 
                         }
                     },
                     error: function(xhr, errmsg, err) {
@@ -573,17 +483,20 @@
 
                 $('#CambiarEstado').off('submit').on('submit', function(e) {
                     e.preventDefault();
+                
                     const nuevoAdeudo = parseFloat($('#nuevoAdeudo').val()) || 0;
                     const estadoPago = parseFloat($('#estadoPago').val());
-                    const entregado = $('#estadoEntrega').val() === 'entregado';
-
-                    const adeudoFinal = estadoPago - nuevoAdeudo;
-
+                    const estadoSeleccionado = $('#selectEstadot').val(); 
+                    const entregado = estadoSeleccionado === 'ENTREGADO'; 
+                
+                    // Solo calculamos nuevo adeudo si estamos en estado 'ENTREGADO'
+                    const adeudoFinal = estadoSeleccionado === 'ENTREGADO' ? estadoPago - nuevoAdeudo : estadoPago;
+                
                     $.ajax({
                         type: 'POST',
                         url: '/cambiar-estado-encargo/' + encargoId + '/',
                         data: {
-                            entregado: entregado,
+                            estado: estadoSeleccionado,
                             ingreso: nuevoAdeudo,
                             nuevo_adeudo: adeudoFinal,
                             csrfmiddlewaretoken: '{{ csrf_token }}'
@@ -597,10 +510,11 @@
                             console.log(xhr.status + ": " + xhr.responseText);
                             showToast('Error al actualizar el encargo', 'error');
                         }
-            
                     });
                 });
+                
             });
+
 
             function showToast(message, type) {
                 const toastBody = document.getElementById('toastBody');
