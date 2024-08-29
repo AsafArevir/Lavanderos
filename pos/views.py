@@ -1,3 +1,4 @@
+# Librerias e importacion de elementos en django
 from django.shortcuts import render
 from .models import Producto, Cliente, Encargo, Activacion, Ventas, ControlPagoEncargos, SaldoFinalDiario, lista_precios
 from django.http import JsonResponse
@@ -17,17 +18,20 @@ from django.utils import timezone
 from django.http import JsonResponse
 from django.utils import timezone
 
+# Vista de la muestra la pagina de inicio 
 @login_required
 def inicio(request):
     return render(request, 'inicio.html')
 
-
+# Vista de la vista para obtener los productos 
 @login_required
 def productos(request):
     productos = Producto.objects.all().order_by('nombre')
     clientes = Cliente.objects.all().order_by('nombre')
+
     return render(request, 'productos.html', {'productos': productos, 'clientes': clientes})
 
+# Vista para modificar los productos 
 @csrf_exempt
 def modificar_producto(request, producto_id):
     if request.method == 'POST':
@@ -39,6 +43,7 @@ def modificar_producto(request, producto_id):
             producto.precio = data.get('precio', producto.precio)
             producto.codigo_barras = data.get('codigo_barras', producto.codigo_barras)
             producto.save()
+
             return JsonResponse({'success': True, 'message': 'Producto modificado correctamente'})
         
         except Producto.DoesNotExist:
@@ -46,13 +51,14 @@ def modificar_producto(request, producto_id):
     
     return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
 
-
+# Vista para obtener los clientes y mostrarlos
 @login_required
 def clientes(request):
     clientes = Cliente.objects.all()
+
     return render(request, 'clientes.html', {'clientes': clientes})
 
-
+# Vista para agregar un cliente
 def agregar_cliente(request):
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
@@ -61,17 +67,20 @@ def agregar_cliente(request):
         correo = request.POST.get('correo')
         cliente = Cliente(nombre=nombre, apellidos=apellidos, telefono=telefono, correo=correo)
         cliente.save()
+
         return JsonResponse({'mensaje': 'Cliente agregado correctamente'}, status=201)
     
     else:  
         return JsonResponse({'error': 'Se esperaba una solicitud POST'}, status=400)
 
+# Vista para eliminar un cliente
 def eliminar_cliente(request, cliente_id):
     if request.method == 'POST':
-
         try:
+
             cliente = Cliente.objects.get(pk=cliente_id)
             cliente.delete()
+
             return JsonResponse({'mensaje': 'Cliente eliminado correctamente'})
         
         except Cliente.DoesNotExist:
@@ -80,14 +89,13 @@ def eliminar_cliente(request, cliente_id):
     else:
         return JsonResponse({'error': 'Se esperaba una solicitud POST'}, status=400)
 
-
+# Vista de encargo
 @login_required
 def encargo(request):
     encargos_encargo = Encargo.objects.filter(estado='ENCARGO')
     encargos_proceso = Encargo.objects.filter(estado='EN_PROCESO')
     encargos_completado = Encargo.objects.filter(estado='COMPLETADO')
     encargos_entregados = Encargo.objects.filter(estado='ENTREGADO')
-    #encargos_incidentes = Encargo.objects.filter(estado='INCIDENTES')
     clientes = Cliente.objects.all()
     
     context = {
@@ -95,101 +103,48 @@ def encargo(request):
         'encargos_proceso': encargos_proceso,
         'encargos_completado': encargos_completado,
         'encargos_entregados': encargos_entregados,
-        #'encargos_incidentes': encargos_incidentes,
         'clientes': clientes,
     }
 
     return render(request, 'encargos.html', context)
 
-"""
-@csrf_exempt
-def cambiar_estado_proceso(request, encargo_id):
-    try:
-        encargo = Encargo.objects.get(id=encargo_id)
-        encargo.estado = 'EN_PROCESO'
-        encargo.save()
-        return JsonResponse({'success': True, 'message': 'Estado cambiado a Completado'})
-    
-    except Encargo.DoesNotExist:
-        return JsonResponse({'success': False, 'message': 'Encargo no encontrado'})
-    
-@csrf_exempt
-def cambiar_estado_completado(request, encargo_id):
-    try:
-        encargo = Encargo.objects.get(id=encargo_id)
-        encargo.estado = 'COMPLETADO'
-        encargo.save()
-        return JsonResponse({'success': True, 'message': 'Estado cambiado a Pedidos Entregados'})
-    
-    except Encargo.DoesNotExist:
-        return JsonResponse({'success': False, 'message': 'Encargo no encontrado'})
-    
-@csrf_exempt
-def cambiar_estado_entregado(request, encargo_id):
-    try:
-        encargo = Encargo.objects.get(id=encargo_id)
-        encargo.estado = 'ENTREGADO'
-        encargo.save()
-        return JsonResponse({'success' : True, 'message' : 'Estado cambiado a Entregado'})
-    
-    except Encargo.DoesNotExist:
-        return JsonResponse({'success' : False, 'message' : 'Encargo no encontrado' })
-"""
-    
-@csrf_exempt
-def cambio_de_estadoP(request, encargo_id):
-    if request.method == 'POST':
-
-        nuevo_estado = request.POST.get('estado')
-        
-        # Obtener el encargo correspondiente
-        encargo = get_object_or_404(Encargo, id=encargo_id)
-        encargo.estado = nuevo_estado
-        encargo.save()
-        
-        return JsonResponse({'success': True})
-    
-    elif request.method == 'GET':
-        encargo = get_object_or_404(Encargo, id=encargo_id)
-        return JsonResponse({'estado': encargo.estado})
-    
-    else:
-        return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
-
+# Vista para cambiar el estado del encargo
 @csrf_exempt
 def cambiar_estado_encargo(request, encargo_id):
     if request.method == 'POST':
-        estado = request.POST.get('estado', '')  # Asegúrate de que este campo coincida con el del formulario
-        nuevo_adeudo = float(request.POST.get('nuevo_adeudo', 0))  # Valor por defecto de 0
-        anticipo = float(request.POST.get('ingreso', 0))  # Valor por defecto de 0
+        estado = request.POST.get('estado', '')  
+        nuevo_adeudo = float(request.POST.get('nuevo_adeudo', 0))  
+        anticipo = float(request.POST.get('ingreso', 0))  
 
         # Imprime los datos recibidos en el log del servidor
-        print(f"Estado recibido: {estado}")
-        print(f"Nuevo Adeudo recibido: {nuevo_adeudo}")
-        print(f"Anticipo recibido: {anticipo}")
+        #print(f"Estado recibido: {estado}")
+        #print(f"Nuevo Adeudo recibido: {nuevo_adeudo}")
+        #print(f"Anticipo recibido: {anticipo}")
 
-        encargo = get_object_or_404(Encargo, id=encargo_id)
+        if estado:
+
+            encargo = get_object_or_404(Encargo, id=encargo_id)
+            encargo.estado = estado
+
+            if estado == 'ENTREGADO':
+                #encargo.estado = 'ENTREGADO'
+                encargo.adeudo = nuevo_adeudo
+                encargo.ingreso = anticipo
+
+            else:
+                encargo.ingreso = anticipo
+
+            encargo.save()
+
+            control_pago_encargo = get_object_or_404(ControlPagoEncargos, encargo=encargo)
+            if anticipo != 0:
+                control_pago_encargo.fecha_entregado = timezone.now().date()
+
+            control_pago_encargo.save()
+            return JsonResponse({'success': True})
         
-        # Actualiza el estado del encargo
-        encargo.estado = estado
-
-        if estado == 'ENTREGADO':
-            encargo.adeudo = nuevo_adeudo
-            encargo.ingreso = anticipo
         else:
-            # Solo actualiza el ingreso, no el adeudo, si el estado no es 'ENTREGADO'
-            encargo.ingreso = anticipo
-
-        encargo.save()
-
-        # Actualiza ControlPagoEncargos
-        control_pago_encargo = get_object_or_404(ControlPagoEncargos, encargo=encargo)
-        if anticipo != 0:
-            control_pago_encargo.fecha_entregado = timezone.now().date()
-
-        control_pago_encargo.save()
-
-        return JsonResponse({'success': True})
+            return JsonResponse({'success': False, 'message': 'Estado no proporcionado'}, status=400)
 
     elif request.method == 'GET':
         encargo = get_object_or_404(Encargo, id=encargo_id)
@@ -198,7 +153,7 @@ def cambiar_estado_encargo(request, encargo_id):
     else:
         return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
 
-    
+# Vista para guardar un encargo    
 @csrf_exempt
 def guardar_encargo(request):
     if request.method == 'POST':
@@ -225,7 +180,6 @@ def guardar_encargo(request):
                 adeudo=adeudo,
                 ingreso=ingreso,
                 usuario=request.user,
-                #entregado=False,
                 observaciones=observaciones,
                 forma_pago=forma_pago
             )
@@ -248,12 +202,15 @@ def guardar_encargo(request):
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
 
+# Funcion para el manejo de lavadoras
 @login_required
 def lavadoras(request):
     activaciones = Activacion.objects.order_by('-fecha')
     encargos = Encargo.objects.filter(estado='EN_PROCESO')
+
     return render(request, 'lavadoras.html', {'encargos': encargos, 'activaciones': activaciones})
 
+# Funcion para activar una lavadora
 def guardar_activacion(request):
     if request.method == 'POST':
         lavadora = request.POST.get('lavadora')
@@ -296,20 +253,20 @@ def guardar_activacion(request):
         """Añadir más condiciones para las otras lavadoras si es necesario"""
 
         try:
-            url = f'http://{ip}:80'  # Construir la URL completa con el puerto
+            # Construir la URL completa con el puerto
+            url = f'http://{ip}:80'  
             payload = {'activar': 1}
             response = requests.post(url, json=payload)
-            response.raise_for_status()  # Lanza una excepción si la solicitud no fue exitosa
+            # Lanza una excepción si la solicitud no fue exitosa
+            response.raise_for_status() 
             message = 'Activación guardada correctamente y solicitud enviada al ESP32.'
 
         except requests.RequestException as e:
             message = f'Error al enviar la solicitud al ESP32: {str(e)}'
 
-        # Devolver una respuesta JSON indicando que la activación ha sido guardada
         return JsonResponse({'message': message})
     
     else:
-        # Devolver una respuesta de error si no se recibe una solicitud POST
         return JsonResponse({'error': 'Se esperaba una solicitud POST'}, status=400)
     
 
@@ -390,6 +347,43 @@ def imprimir_ticket(venta):
 
     p.cut()
     p.close()
+
+# Imprimir ticket de encargo
+def encargo_tiket(encargo):
+    # Configura la impresora (ajusta los parámetros según tu impresora)
+    p = Usb(0x0416, 0x5011, 0)  # Reemplaza con el Vendor ID y Product ID de tu impresora
+
+    # Imprimir el logo (suponiendo que el logo está en el mismo directorio y se llama 'logo.png')
+    p.set(align='center')
+    p.image('img/icons8-lavadora-80.png')
+    p.text("========== LAVANDEROS ==========\n")
+    p.text("WhatsApp: 7222947337\n")
+    p.text("Teléfono: 7229365461\n")
+    p.text("Calle Paseo de los Matlatzincas 235\n")
+    p.text("Col. Lomas Altas, Toluca, México\n")
+    p.text("================================\n")
+    p.text("Folio: {}\n".format(encargo.Folio))
+    p.text("================================\n")
+    p.text("Atendió: {}\n".format(encargo.usuario))
+    p.text("================================\n")
+    p.text("Fecha: {}\n".format(encargo.fecha_encargo.strftime("%d-%m-%Y %H:%M:%S")))
+    p.text("================================\n")
+    p.text("Cant    Descripción      Importe\n")
+    p.text("--------------------------------\n")
+
+    for encargo in encargo. venta.productos:
+        p.text("{: <8}{: <15} ${:.2f}\n".format(producto['cantidad'], producto['nombre'], producto['precio']))
+
+
+    p.text("================================\n")
+    p.text("Total: ${:.2f}\n".format())
+    p.text("================================\n")
+    p.text("\"Porque NO toda la ropa sucia se lava en casa\"\n")
+    p.text("================================\n")
+
+    p.cut()
+    p.close()
+
 
 class CustomLoginView(LoginView):
     template_name = 'login.html'
@@ -527,4 +521,5 @@ def ingresar_saldo_final(request):
             return redirect('login')  # Redirigir a la página de inicio de sesión
         
     return render(request, 'ingresar_saldo_final.html')
+
 

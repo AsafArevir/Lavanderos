@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
     
@@ -138,7 +140,7 @@
                             <th>cliente</th>
                             <!-- <th>Fecha de Encargo</th> -->
                             <th>Fecha de Entrega</th>
-                            <!-- <th>Costo</th> -->
+                            <th>Adeudo</th>
                             <th>Estado de Pago</th>
                             <th>Actualizar Encargo</th>
                         </tr>
@@ -151,7 +153,7 @@
                             <td>{{ encargo.cliente }}</td>
                             <!-- <td>{{ encargo.fecha_encargo }}</td> -->
                             <td>{{ encargo.fecha_entrega }}</td>
-                            <!-- <td>{{ encargo.costo }}</td> -->
+                            <td>{{ encargo.adeudo }}</td>
                             <td>
                                 {% if encargo.adeudo == 0 %}
                                 <img src="{% static 'img/icons8-comprobado-30.png' %}" alt="comprobado">
@@ -180,8 +182,7 @@
                             <th>Fecha de Entrega</th>
                             <th>Costo</th>
                             <th>Estado de Pago</th>
-                            <th>Entregado</th>
-                            <th>Actualizar Pago</th>
+                            <th></th>
                         </tr>
                     </thead>
 
@@ -199,15 +200,8 @@
                                 <img src="{% static 'img/icons8-no-30.png' %}" alt="no">
                                 {% endif %}
                             </td>
-                            <td>
-                                {% if encargo.entregado %}
-                                <img src="{% static 'img/icons8-comprobado-30.png' %}" alt="comprobado">
-                                {% else %}
-                                <img src="{% static 'img/icons8-no-30.png' %}" alt="no">
-                                {% endif %}
-                            </td>
                             <td> 
-                                {% if encargo.entregado != 1 %}
+                                {% if encargo.adeudo != 0 %}
                                 <button class="btn-cambiar-encargo btn btn-primary" data-id="{{ encargo.id }}">Validar encargo</button>
                                 {% endif %}
                             </td>
@@ -348,6 +342,31 @@
         </div>
     </div>
 
+    <!-- Modal para generar un ticket -->
+    <div class="modal fade" id="modalTicket" tabindex="-1" aria-labelledby="modalTicketLabel" aria-hidden="true">
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTicketLabel">Ticket de Venta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body" id="ticketContent">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" onclick="printTicket()">Imprimir</button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Seccion de notificasion -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
         <div id="toastNotification" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
 
@@ -444,6 +463,7 @@
                 })
                 .catch(error => console.error('Error:', error));
             });
+            
 
             // Validación de los datos de encargo
             $('.btn-cambiar-encargo').on('click', function() {
@@ -467,7 +487,7 @@
 
                     
                         if (estado === 'ENTREGADO') {
-                            $('#choseeContainer').hide(); 
+                            $('#choseeContainer').show(); 
                             $('#nuevoAdeudoContainer').show(); 
                             $('#estadoPagoContainer').show(); 
                         } else {
@@ -514,7 +534,6 @@
                 });
                 
             });
-
 
             function showToast(message, type) {
                 const toastBody = document.getElementById('toastBody');

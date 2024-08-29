@@ -56,11 +56,10 @@
     <div>
         <p>Cant&nbsp;&nbsp;&nbsp;Descripción&nbsp;&nbsp;&nbsp;Importe</p>
         <div class="line"></div>
-        {% for producto in productos %}
+        {% for encargo in Encargo %}
         <div class="item">
-            <span>{{ producto.cantidad }}</span>
-            <span>{{ producto.nombre }}</span>
-            <span>${{ producto.precio|floatformat:2 }}</span>
+            <span>{{ encargo.observaciones }}</span>
+            <span>${{ encargo.costo|floatformat:2 }}</span>
         </div>
         {% endfor %}
     </div>
