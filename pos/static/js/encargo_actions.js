@@ -83,23 +83,28 @@ document.addEventListener('DOMContentLoaded', function() {
     function generarTicket(folioInput, fechaEncargoInput, forma_pago, costoInput, anticipoInput, observacionesInput) {
         var ticketContent = document.getElementById('ticketContent');
         ticketContent.innerHTML = `
-            <div style="text-align: right;">
-            <img src={% static 'img/LAVANDEROS.ico' %} alt="Lavanderos" style="width: 100px; height: auto;"/>
+            <div style="text-align: right;, font-family: 'Semibold', Courier, monospace">
+                <img src={% static 'img/LAVANDEROS.ico' %} alt="Lavanderos" style="width: 100px; height: auto;"/>
             </div>
+            
             <h2 style="text-align: center;">Lavanderos</h2>
             <p>WhatsApp: 7222947337</p>
             <p>Teléfono: 7229365461</p>
             <p>Calle Paseo de los Matlatzincas 235</p>
             <p>Col. Lomas Altas, Toluca, México</p>
+
             <h4>Informacion del encargo:</h4>
-            <p>Fecha de emision: ${fechaEncargoInput}</p>
             <p>Folio: ${folioInput} </p>
-            <p>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</p>
             <p>Método de Pago: ${forma_pago}</p>
-            <p>Descripcion: ${observacionesInput} </p>
+            <p>Descripcion: ${observacionesInput}</p>
+
+            <p>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</p>
+
             <p>Cantidad cubierta: ${anticipoInput}</p>
             <p class="total" style="text-align: right;">Total: $${parseFloat(costoInput).toFixed(2)}</p>
+
             <p>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</p>
+            
             <p style="font-style: italic; text-align: center;">"Porque NO toda la ropa sucia se lava en casa"</p>
             <p style="font-size: 0.8em; text-align: justify;"><i>"Lavanderos"</i>,después de <b> 2 meses</b> la empresa no se hace responsable de las prendas. Por su comprensión, gracias.</p>
         `;
