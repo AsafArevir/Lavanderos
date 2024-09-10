@@ -90,6 +90,7 @@ class Ventas(models.Model):
     METODO_PAGO_CHOICES = (
         ('Efectivo', 'Efectivo'),
         ('Tarjeta', 'Tarjeta'),
+        ('Transferencia', 'Transferencia'),
     )
 
     metodo_pago = models.CharField(max_length=20, choices=METODO_PAGO_CHOICES)
