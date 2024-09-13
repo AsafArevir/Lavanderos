@@ -203,7 +203,7 @@
         </div>
 
         <div class="form-group">
-          <label for="id_cantidad">Cantidad:</label>
+          <label for="id_cantidad">Cantidad/Kg:</label>
           <input
             type="number"
             id="id_cantidad"
@@ -227,50 +227,122 @@
     </div>
 
     <div class="container mt-5">
-      <h1>Productos disponibles</h1>
-
-      <div class="row">
-        {% for producto in productos %}
-        <div class="col-md-4 mb-4">
-          <div class="card">
-            <div class="card-body text-center">
-              <h5 class="card-title">
-                <span class="color-blue"> {{ producto.nombre }} </span>
-              </h5>
-              <p class="card-text">
-                <span class="color-green">Precio:</span>
-                <span class="color-price">${{ producto.precio }}</span>
-              </p>
-
-              <!-- Agregar campo de entrada para cantidad -->
-              <div class="form-group">
-                <input
-                  type="number"
-                  class="form-control cantidad-input"
-                  data-precio="{{ producto.precio }}"
-                  placeholder="Cantidad"
-                  min="1"
-                  step="1"
-                />
-                <small class="form-text text-muted total-preview">
-                  Total: $0.00
-                </small>
+      <!-- Navegación de pestañas -->
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <a class="nav-link active" id="productos-tab" data-bs-toggle="tab" href="#productos" role="tab" aria-controls="productos" aria-selected="true">Productos</a>
+        </li>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" id="servicios-tab" data-bs-toggle="tab" href="#servicios" role="tab" aria-controls="servicios" aria-selected="false">Servicios</a>
+        </li>
+      </ul>
+    
+      <!-- Contenido de pestañas -->
+      <div class="tab-content" id="myTabContent">
+        <!-- Productos -->
+        <div class="tab-pane fade show active" id="productos" role="tabpanel" aria-labelledby="productos-tab">
+          <div class="container mt-5">
+            <h1>Productos disponibles</h1>
+    
+            <div class="row">
+              {% for producto in productos %}
+              {% if producto.tipo == 'producto' %}
+              <div class="col-md-4 mb-4">
+                <div class="card">
+                  <div class="card-body text-center">
+                    <h5 class="card-title">
+                      <span class="color-blue"> {{ producto.nombre }} </span>
+                    </h5>
+                    <p class="card-text">
+                      <span class="color-green">Precio:</span>
+                      <span class="color-price">${{ producto.precio }}</span>
+                    </p>
+    
+                    <!-- Campo de entrada para cantidad -->
+                    <div class="form-group">
+                      <input
+                        type="number"
+                        class="form-control cantidad-input"
+                        data-precio="{{ producto.precio }}"
+                        placeholder="Cantidad/Kg"
+                        min="1"
+                        step="1"
+                      />
+                      <small class="form-text text-muted total-preview">
+                        Total: $0.00
+                      </small>
+                    </div>
+    
+                    <!-- Botón para agregar producto -->
+                    <button
+                      class="btn btn-primary agregar-producto"
+                      data-nombre="{{ producto.nombre }}"
+                      data-precio="{{ producto.precio }}"
+                    >
+                      Agregar
+                    </button>
+                  </div>
+                </div>
               </div>
-
-              <!-- Agregar formulario para agregar el producto a la lista -->
-              <button
-                class="btn btn-primary agregar-producto"
-                data-nombre="{{ producto.nombre }}"
-                data-precio="{{ producto.precio }}"
-              >
-                Agregar
-              </button>
+              {% endif %}
+              {% endfor %}
             </div>
           </div>
         </div>
-        {% endfor %}
+    
+        <!-- Servicios -->
+        <div class="tab-pane fade" id="servicios" role="tabpanel" aria-labelledby="servicios-tab">
+          <div class="container mt-5">
+            <h1>Servicios disponibles</h1>
+    
+            <div class="row">
+              {% for producto in productos %}
+              {% if producto.tipo == 'servicio' %}
+              <div class="col-md-4 mb-4">
+                <div class="card">
+                  <div class="card-body text-center">
+                    <h5 class="card-title">
+                      <span class="color-blue"> {{ producto.nombre }} </span>
+                    </h5>
+                    <p class="card-text">
+                      <span class="color-green">Precio:</span>
+                      <span class="color-price">${{ producto.precio }}</span>
+                    </p>
+    
+                    <!-- Campo de entrada para cantidad -->
+                    <div class="form-group">
+                      <input
+                        type="number"
+                        class="form-control cantidad-input"
+                        data-precio="{{ producto.precio }}"
+                        placeholder="Cantidad"
+                        min="1"
+                        step="1"
+                      />
+                      <small class="form-text text-muted total-preview">
+                        Total: $0.00
+                      </small>
+                    </div>
+    
+                    <!-- Botón para agregar producto -->
+                    <button
+                      class="btn btn-primary agregar-producto"
+                      data-nombre="{{ producto.nombre }}"
+                      data-precio="{{ producto.precio }}"
+                    >
+                      Agregar
+                    </button>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+
 
     <!-- Modal de búsqueda y selección de cliente -->
     <div

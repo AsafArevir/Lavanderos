@@ -42,6 +42,7 @@ def modificar_producto(request, producto_id):
             producto.nombre = data.get('nombre', producto.nombre)
             producto.precio = data.get('precio', producto.precio)
             producto.codigo_barras = data.get('codigo_barras', producto.codigo_barras)
+            producto.tipo = data.get('tipo', producto.tipo)
             producto.save()
 
             return JsonResponse({'success': True, 'message': 'Producto modificado correctamente'})
@@ -403,9 +404,10 @@ def crear_producto(request):
         nombre = request.POST.get('nombre')
         precio = request.POST.get('precio')
         codigo_barras = request.POST.get('codigo_barras')
+        tipo = request.POST.get('tipo')
 
         # Guardar los datos en el modelo Producto
-        producto = Producto(nombre=nombre, precio=precio, codigo_barras=codigo_barras)
+        producto = Producto(nombre=nombre, precio=precio, codigo_barras=codigo_barras, tipo=tipo)
         producto.save()
 
         # Redirigir a la página de productos

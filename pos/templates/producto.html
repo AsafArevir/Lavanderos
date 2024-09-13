@@ -1,252 +1,575 @@
 <!DOCTYPE html>
 <html lang="es">
-
-<head>
-
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Punto de Venta - Inicio</title>
 
     <!-- Agregar enlaces a Bootstrap y a tu archivo CSS personalizado -->
     <style>
-        .mt-7, .my-7 {
-            margin-top: 3.8rem !important;
-        }
-        .table th, .table td {
-            vertical-align: middle;
-        }
-        .color-blue {
-            color: #0c4de6;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-        .blue {
-            color: #181864;
-        }
-        .color-green {
-            color: #008000;
-        }
-        .color-price {
-            color: rgb(0, 110, 255);
-        }
-        .color-grey {
-            color: gray;
-        }
+      .mt-7,
+      .my-7 {
+        margin-top: 3.8rem !important;
+      }
+      .table th,
+      .table td {
+        vertical-align: middle;
+      }
+      .color-blue {
+        color: #0c4de6;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+      .blue {
+        color: #181864;
+      }
+      .color-green {
+        color: #008000;
+      }
+      .color-price {
+        color: rgb(0, 110, 255);
+      }
+      .color-grey {
+        color: gray;
+      }
     </style>
-
-</head>
-<body>
-    
+  </head>
+  <body>
     {% include 'layouts/navbar.html' %}
 
     <!-- Contenido de la página -->
     <div class="container mt-7">
+      <h1 class="mt-5 mb-4">Gestión de Productos</h1>
 
-        <h1 class="mt-5 mb-4">Gestión de Productos</h1>
+      <!-- Formulario para crear un nuevo producto -->
+      <div class="card mb-4">
+        <div class="card-header color-blue">Crear Producto</div>
+        <div class="card-body">
+          <form action="{% url 'crear_producto' %}" method="post">
+            {% csrf_token %}
 
-        <!-- Formulario para crear un nuevo producto -->
-        <div class="card mb-4">
-
-            <div class="card-header color-blue">Crear Producto</div>
-            <div class="card-body">
-
-                <form action="{% url 'crear_producto' %}" method="post">
-
-                    {% csrf_token %}
-
-                    <div class="form-group blue">
-                        <label for="nombre">Nombre:</label>
-                        <input type="text" class="form-control" id="nombre" name="nombre" required>
-                    </div>
-
-                    <div class="form-group mb-3 blue">
-                        <label for="precio">Precio:</label>
-                        <input type="number" class="form-control" id="precio" name="precio" step="0.01" required>
-                    </div>
-
-                    <div class="form-group mb-3 blue">
-                        <label for="codigo_barras">Código de Barras:</label>
-                        <input type="text" class="form-control" id="codigo_barras" name="codigo_barras" >
-                    </div>
-
-                    <div class="text-end">
-                    <button type="submit" class="btn btn-primary">Crear</button>
-                    </div>
-                </form>
-
+            <div class="form-group blue">
+              <label for="nombre">Nombre:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="nombre"
+                name="nombre"
+                required
+              />
             </div>
+
+            <!-- Campo para seleccionar si es producto o servicio -->
+            <div class="form-group mb-3 blue">
+              <label for="tipo">Tipo:</label>
+              <select class="form-control" id="tipo" name="tipo" required>
+                <option value="producto">Producto</option>
+                <option value="servicio">Servicio</option>
+              </select>
+            </div>
+
+            <div class="form-group mb-3 blue">
+              <label for="precio">Precio:</label>
+              <input
+                type="number"
+                class="form-control"
+                id="precio"
+                name="precio"
+                step="0.01"
+                required
+              />
+            </div>
+
+            <div class="form-group mb-3 blue">
+              <label for="codigo_barras">Código de Barras:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="codigo_barras"
+                name="codigo_barras"
+              />
+            </div>
+
+            <div class="text-end">
+              <button type="submit" class="btn btn-primary">Crear</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <h2 class="mb-4">Listado de Productos y Servicios</h2>
+
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <a
+            class="nav-link active"
+            id="productos-tab"
+            data-bs-toggle="tab"
+            href="#productos"
+            role="tab"
+            aria-controls="productos"
+            aria-selected="true"
+            >Productos</a
+          >
+        </li>
+        <li class="nav-item" role="presentation">
+          <a
+            class="nav-link"
+            id="servicios-tab"
+            data-bs-toggle="tab"
+            href="#servicios"
+            role="tab"
+            aria-controls="servicios"
+            aria-selected="false"
+            >Servicios</a
+          >
+        </li>
+      </ul>
+
+      <div class="tab-content" id="myTabContent">
+        <!-- Productos -->
+        <div
+          class="tab-pane fade show active"
+          id="productos"
+          role="tabpanel"
+          aria-labelledby="productos-tab"
+        >
+          <!-- Tarjetas para mostrar los productos -->
+          <h2 class="mb-4">Productos</h2>
+
+          <div class="row">
+            <!-- Aquí se iterarán los productos y se mostrarán en tarjetas -->
+            {% for producto in productos %}
+            {% if producto.tipo == 'producto' %}
+            <div class="col-md-4 mb-3">
+              <div class="card">
+                <div class="card-body text-center mb-4">
+                  <h5 class="card-title">{{ producto.nombre }}</h5>
+                  <p class="card-text">
+                    <span class="color-price">Precio: </span>
+                    <span class="color-green">${{ producto.precio }}</span>
+                  </p>
+                  <p class="card-text">
+                    <span class="color-price">Código de Barras: </span>
+                    <span class="color-grey">{{ producto.codigo_barras }}</span>
+                  </p>
+                  <div class="text-center">
+                    <!-- Botones para actualizar y eliminar producto -->
+                    <button
+                      class="btn btn-danger"
+                      onclick="eliminarProducto({{ producto.id }})"
+                    >
+                      Eliminar
+                    </button>
+                    <button class="btn btn-primary modificar-producto">
+                      Modificar
+                    </button>
+                  </div>
+                  <div class="text-center"></div>
+                </div>
+              </div>
+            </div>
+
+            {% endif %}
+
+            {% endfor %}
+          </div>
         </div>
 
+      <!-- Servicios -->
+      <div
+        class="tab-pane fade"
+        id="servicios"
+        role="tabpanel"
+        aria-labelledby="servicios-tab"
+      >
         <!-- Tarjetas para mostrar los productos -->
         <h2 class="mb-4">Productos</h2>
 
         <div class="row">
-
-            <!-- Aquí se iterarán los productos y se mostrarán en tarjetas -->
-            {% for producto in productos %}
-
-            <div class="col-md-4 mb-3">
-                <div class="card">
-
-                    <div class="card-body text-center mb-4 ">
-
-                        <h5 class="card-title">{{ producto.nombre }}</h5>
-                        <p class="card-text">
-                            <span class="color-price">Precio: </span>
-                            <span class="color-green">${{ producto.precio }}</span>
-                        </p>
-                        <p class="card-text">
-                            <span class="color-price">Código de Barras: </span>
-                            <span class="color-grey">{{ producto.codigo_barras }}</span>
-                        </p>
-                        <div class="text-center">
-                            <!-- Botones para actualizar y eliminar producto -->
-                        <button class="btn btn-danger" onclick="eliminarProducto({{ producto.id }})">Eliminar</button>
-                        <button class="btn btn-primary modificar-producto">Modificar</button>
-                        </div>
-                        <div class="text-center">
-                        
-                        </div>
-
-                    </div>
-
+          <!-- Aquí se iterarán los productos y se mostrarán en tarjetas -->
+          {% for producto in productos %}
+          {% if producto.tipo == 'servicio' %}
+          <div class="col-md-4 mb-3">
+            <div class="card">
+              <div class="card-body text-center mb-4">
+                <h5 class="card-title">{{ producto.nombre }}</h5>
+                <p class="card-text">
+                  <span class="color-price">Precio: </span>
+                  <span class="color-green">${{ producto.precio }}</span>
+                </p>
+                <p class="card-text">
+                  <span class="color-price">Código de Barras: </span>
+                  <span class="color-grey">{{ producto.codigo_barras }}</span>
+                </p>
+                <div class="text-center">
+                  <!-- Botones para actualizar y eliminar producto -->
+                  <button
+                    class="btn btn-danger"
+                    onclick="eliminarProducto({{ producto.id }})"
+                  >
+                    Eliminar
+                  </button>
+                  <button class="btn btn-primary modificar-producto">
+                    Modificar
+                  </button>
                 </div>
+                <div class="text-center"></div>
+              </div>
             </div>
+          </div>
 
-            {% endfor %}
+          {% endif %}
 
+          {% endfor %}
         </div>
+      </div>
+    </div>
 
     </div>
+    
 
     <!-- Modal para actualizar el producto -->
-    <div class="modal fade" id="modalModificarProducto" tabindex="-1" role="dialog" aria-labelledby="modalModificarProductoLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+    <div
+      class="modal fade"
+      id="modalModificarProducto"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="modalModificarProductoLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalModificarProductoLabel">
+              Modificar Producto
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
 
-            <div class="modal-content">
+          <div class="modal-body">
+            <form id="formModificarProducto">
+              {% csrf_token %}
 
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalModificarProductoLabel">Modificar Producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
+              <input type="hidden" id="productoId" name="producto_id" />
 
-                <div class="modal-body">
-                    <form id="formModificarProducto">
+              <div class="form-group">
+                <label for="nombreModificar">Nombre:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="nombreModificar"
+                  name="nombre"
+                  required
+                />
+              </div>
 
-                        {% csrf_token %}
+              <div class="form-group">
+                <label for="precioModificar">Precio:</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="precioModificar"
+                  name="precio"
+                  step="0.01"
+                  required
+                />
+              </div>
 
-                        <input type="hidden" id="productoId" name="producto_id">
+              <div class="form-group">
+                <label for="codigoBarrasModificar">Código de Barras:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="codigoBarrasModificar"
+                  name="codigo_barras"
+                />
+              </div>
 
-                        <div class="form-group">
-                            <label for="nombreModificar">Nombre:</label>
-                            <input type="text" class="form-control" id="nombreModificar" name="nombre" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="precioModificar">Precio:</label>
-                            <input type="number" class="form-control" id="precioModificar" name="precio" step="0.01" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="codigoBarrasModificar">Código de Barras:</label>
-                            <input type="text" class="form-control" id="codigoBarrasModificar" name="codigo_barras">
-                        </div>
-
-                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-
-                    </form>
-                </div>
-
-            </div>
-
+              <button type="submit" class="btn btn-primary">
+                Guardar Cambios
+              </button>
+            </form>
+          </div>
         </div>
+      </div>
     </div>
 
-
+    <!-- Modal para actualizar producto o servicio -->
+    <div
+      class="modal fade"
+      id="modalModificarProducto"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="modalModificarProductoLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalModificarProductoLabel">
+              Modificar Producto o Servicio
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <ul class="nav nav-tabs" id="modalTabs" role="tablist">
+              <li class="nav-item">
+                <a
+                  class="nav-link active"
+                  id="modal-productos-tab"
+                  data-bs-toggle="tab"
+                  href="#modal-productos"
+                  role="tab"
+                  aria-controls="modal-productos"
+                  aria-selected="true"
+                  >Productos</a
+                >
+              </li>
+              <li class="nav-item">
+                <a
+                  class="nav-link"
+                  id="modal-servicios-tab"
+                  data-bs-toggle="tab"
+                  href="#modal-servicios"
+                  role="tab"
+                  aria-controls="modal-servicios"
+                  aria-selected="false"
+                  >Servicios</a
+                >
+              </li>
+            </ul>
+            <div class="tab-content">
+              <!-- Productos -->
+              <div
+                class="tab-pane fade show active"
+                id="modal-productos"
+                role="tabpanel"
+                aria-labelledby="modal-productos-tab"
+              >
+                <form id="formModificarProducto">
+                  {% csrf_token %}
+                  <input type="hidden" id="productoId" name="producto_id" />
+                  <div class="form-group">
+                    <label for="nombreModificar">Nombre:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="nombreModificar"
+                      name="nombre"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="precioModificar">Precio:</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="precioModificar"
+                      name="precio"
+                      step="0.01"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="codigoBarrasModificar">Código de Barras:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="codigoBarrasModificar"
+                      name="codigo_barras"
+                    />
+                  </div>
+                  <button type="submit" class="btn btn-primary">
+                    Guardar Cambios
+                  </button>
+                </form>
+              </div>
+              <!-- Servicios -->
+              <div
+                class="tab-pane fade"
+                id="modal-servicios"
+                role="tabpanel"
+                aria-labelledby="modal-servicios-tab"
+              >
+                <form id="formModificarServicio">
+                  {% csrf_token %}
+                  <input type="hidden" id="servicioId" name="servicio_id" />
+                  <div class="form-group">
+                    <label for="nombreModificarServicio">Nombre:</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="nombreModificarServicio"
+                      name="nombre"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="precioModificarServicio">Precio:</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="precioModificarServicio"
+                      name="precio"
+                      step="0.01"
+                      required
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="codigoBarrasModificarServicio"
+                      >Código de Barras:</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="codigoBarrasModificarServicio"
+                      name="codigo_barras"
+                    />
+                  </div>
+                  <button type="submit" class="btn btn-primary">
+                    Guardar Cambios
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script>
-
-        //Script para eliminar un producto
-        function eliminarProducto(productoId) {
-            if (confirm("¿Estás seguro de que deseas eliminar este producto?")) {
-                fetch(`/eliminar_producto/${productoId}/`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        // Si la eliminación fue exitosa, recargar la página para actualizar la lista de productos
-                        location.reload();
-                    } else {
-                        console.error('Error al eliminar el producto');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error al eliminar el producto:', error);
-                });
-            }
+      //Script para eliminar un producto
+      function eliminarProducto(productoId) {
+        if (confirm("¿Estás seguro de que deseas eliminar este producto?")) {
+          fetch(`/eliminar_producto/${productoId}/`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": "{{ csrf_token }}",
+            },
+          })
+            .then((response) => {
+              if (response.ok) {
+                // Si la eliminación fue exitosa, recargar la página para actualizar la lista de productos
+                location.reload();
+              } else {
+                console.error("Error al eliminar el producto");
+              }
+            })
+            .catch((error) => {
+              console.error("Error al eliminar el producto:", error);
+            });
         }
+      }
 
-        //Script para controlar las operaciones del modal
-        document.addEventListener('DOMContentLoaded', function() {
-            // Manejar el clic en el botón "Modificar"
-            document.querySelectorAll('.modificar-producto').forEach(button => {
-                button.addEventListener('click', function() {
-                    const card = this.closest('.card');
-                    const productoId = card.querySelector('.btn-danger').getAttribute('onclick').match(/\d+/)[0];
-                    const nombre = card.querySelector('.card-title').innerText;
-                    const precio = card.querySelector('.card-text').innerText.match(/\d+(\.\d+)?/)[0];
-                    const codigoBarras = card.querySelectorAll('.card-text')[1].innerText.replace('Código de Barras: ', '');
-    
-                    // Rellenar el modal con los datos del producto
-                    document.getElementById('productoId').value = productoId;
-                    document.getElementById('nombreModificar').value = nombre;
-                    document.getElementById('precioModificar').value = precio;
-                    document.getElementById('codigoBarrasModificar').value = codigoBarras;
-    
-                    // Mostrar el modal
-                    $('#modalModificarProducto').modal('show');
-                });
-            });
-    
-            // Manejar el envío del formulario del modal
-            document.getElementById('formModificarProducto').addEventListener('submit', function(event) {
-                event.preventDefault();
-    
-                const productoId = document.getElementById('productoId').value;
-                const nombre = document.getElementById('nombreModificar').value;
-                const precio = document.getElementById('precioModificar').value;
-                const codigoBarras = document.getElementById('codigoBarrasModificar').value;
-    
-                fetch(`/modificar_producto/${productoId}/`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: JSON.stringify({
-                        nombre: nombre,
-                        precio: precio,
-                        codigo_barras: codigoBarras
-                    })
-                })
-                .then(response => {
-                    if (response.ok) {
-                        $('#modalModificarProducto').modal('hide');
-                        location.reload(); // Recargar la página para actualizar la lista de productos
-                    } else {
-                        console.error('Error al modificar el producto');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error al modificar el producto:', error);
-                });
-            });
+      //Script para controlar las operaciones del modal
+      document.addEventListener("DOMContentLoaded", function () {
+        // Manejar el clic en el botón "Modificar"
+        document.querySelectorAll(".modificar-producto").forEach((button) => {
+          button.addEventListener("click", function () {
+            const card = this.closest(".card");
+            const productoId = card
+              .querySelector(".btn-danger")
+              .getAttribute("onclick")
+              .match(/\d+/)[0];
+            const nombre = card.querySelector(".card-title").innerText;
+            const precio = card
+              .querySelector(".card-text")
+              .innerText.match(/\d+(\.\d+)?/)[0];
+            const codigoBarras = card
+              .querySelectorAll(".card-text")[1]
+              .innerText.replace("Código de Barras: ", "");
+
+            // Rellenar el modal con los datos del producto
+            document.getElementById("productoId").value = productoId;
+            document.getElementById("nombreModificar").value = nombre;
+            document.getElementById("precioModificar").value = precio;
+            document.getElementById("codigoBarrasModificar").value =
+              codigoBarras;
+
+            // Mostrar el modal
+            $("#modalModificarProducto").modal("show");
+          });
         });
 
+        // Manejar el envío del formulario del modal
+        document
+          .getElementById("formModificarProducto")
+          .addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const productoId = document.getElementById("productoId").value;
+            const nombre = document.getElementById("nombreModificar").value;
+            const precio = document.getElementById("precioModificar").value;
+            const codigoBarras = document.getElementById(
+              "codigoBarrasModificar"
+            ).value;
+
+            fetch(`/modificar_producto/${productoId}/`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}",
+              },
+              body: JSON.stringify({
+                nombre: nombre,
+                precio: precio,
+                codigo_barras: codigoBarras,
+              }),
+            })
+              .then((response) => {
+                if (response.ok) {
+                  $("#modalModificarProducto").modal("hide");
+                  location.reload(); // Recargar la página para actualizar la lista de productos
+                } else {
+                  console.error("Error al modificar el producto");
+                }
+              })
+              .catch((error) => {
+                console.error("Error al modificar el producto:", error);
+              });
+          });
+      });
     </script>
 
-</body>
+    <!-- Script para manejar la modificación de productos o servicios -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const modalModificarProducto = new bootstrap.Modal(
+          document.getElementById("modalModificarProducto")
+        );
+
+        document.querySelectorAll(".modificar-producto").forEach((button) => {
+          button.addEventListener("click", function () {
+            const productoCard = this.closest(".card");
+            const nombre = productoCard.querySelector(".card-title").innerText;
+            const precio = productoCard
+              .querySelector(".card-text span")
+              .innerText.replace("$", "");
+            const codigoBarras = productoCard.querySelector(
+              ".card-text span:nth-child(2)"
+            ).innerText;
+
+            // Asignar valores al modal
+            document.getElementById("nombreModificar").value = nombre;
+            document.getElementById("precioModificar").value = precio;
+            document.getElementById("codigoBarrasModificar").value =
+              codigoBarras;
+
+            modalModificarProducto.show();
+          });
+        });
+      });
+    </script>
+  </body>
 </html>
