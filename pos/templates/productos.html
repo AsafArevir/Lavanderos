@@ -472,6 +472,13 @@
                 />
               </div>
 
+              <!-- Botón para ver servicios disponibles -->
+              <button type="button" class="btn btn-primary" style="background-color: rgb(0, 110, 255); border-color: rgb(0, 110, 255);" data-bs-toggle="modal" data-bs-target="#modalServiciosDisponibles">
+                Agregar servicios disponibles
+              </button>
+              
+
+
               <div class="mb-3">
                 <label for="costo" class="form-label">Costo</label>
                 <input
@@ -502,6 +509,7 @@
                   class="form-control"
                   id="anticipo"
                   name="anticipo"
+                  min="0"
                   step="0.01"
                 />
               </div>
@@ -550,6 +558,115 @@
       </div>
     </div>
 
+    <!-- Modal para Servicios Disponibles -->
+<div class="modal fade" id="modalServiciosDisponibles" tabindex="-1" aria-labelledby="modalServiciosDisponiblesLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" >
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalServiciosDisponiblesLabel" >Servicios Disponibles</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Vista previa del total en la esquina superior derecha -->
+      <div style="position: absolute; top: 10px; right: 50px; color: rgb(0, 110, 255); font-size: 18px;">
+        Total: $<span id="totalVistaPrevia" class="color-green">0.00</span>
+      </div>
+
+
+      <div class="modal-body">
+        <div class="container mt-4">
+          <h5>Servicios disponibles</h5>
+          <div class="row">
+            <!-- Iteración de productos que son de tipo 'servicio' -->
+            {% for producto in productos %}
+            {% if producto.tipo == 'servicio' %}
+            <div class="col-md-4 mb-4">
+              <div class="card">
+                <div class="card-body text-center">
+                  <h5 class="card-title">
+                    <span class="color-blue">{{ producto.nombre }}</span>
+                  </h5>
+                  <p class="card-text">
+                    <span class="color-green">Precio:</span>
+                    <span class="color-price">${{ producto.precio }}</span>
+                  </p>
+
+                  <!-- Input para cantidad -->
+                  <div class="form-group">
+                    <input type="number" class="form-control cantidad-input" data-precio="{{ producto.precio }}" placeholder="Cantidad" min="1" step="1" />
+                    <small class="form-text text-muted total-preview">
+                      Total: $0.00
+                    </small>
+                  </div>
+
+                  <!-- Botón para agregar servicio -->
+                  <button class="btn btn-primary agregar-producto" data-nombre="{{ producto.nombre }}" data-precio="{{ producto.precio }}">
+                    Agregar
+                  </button>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btnRegresarAgregarEncargo">Regresar</button>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    let total = 0; // Total acumulado
+
+    // Función para actualizar el total en la vista previa y en el campo de costo
+    function actualizarTotal() {
+      document.getElementById("totalVistaPrevia").textContent = total.toFixed(2); // Total acumulado
+      // Actualiza el campo de costo en el modal de agregar encargo
+      if (document.getElementById("costo")) {
+        document.getElementById("costo").value = total.toFixed(2);
+      }
+    }
+
+    // Añadir el evento a los botones para agregar productos
+    document.querySelectorAll('.agregar-producto').forEach(function(button) {
+      button.addEventListener('click', function() {
+        const precio = parseFloat(this.getAttribute('data-precio')); // Precio del servicio
+        const inputCantidad = this.closest('.card-body').querySelector('.cantidad-input'); // Input de cantidad
+        const cantidad = parseInt(inputCantidad.value) || 0; // Cantidad seleccionada
+        const subtotal = precio * cantidad; // Calcular subtotal
+
+        // Solo suma al total si hay cantidad
+        if (cantidad > 0) {
+          total += subtotal; // Acumula el total
+          actualizarTotal(); // Actualiza el total en la vista previa
+          
+          // Actualiza el total en la vista previa del servicio específico
+          this.closest('.card-body').querySelector('.total-servicio').textContent = subtotal.toFixed(2);
+        }
+      });
+    });
+
+    // Regresar al modal de agregar encargo
+    document.getElementById('btnRegresarAgregarEncargo').addEventListener('click', function() {
+      new bootstrap.Modal(document.getElementById('modalAgregarEncargo')).show();
+      document.getElementById('modalServiciosDisponibles').classList.remove('show');
+      document.querySelector('.modal-backdrop').remove();
+    });
+  });
+</script>
+
+
+
+
+
+
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         // Obtener todos los campos de entrada de cantidad
@@ -567,6 +684,29 @@
         });
       });
     </script>
+
+    <script>
+  document.addEventListener("DOMContentLoaded", function() {
+    let total = 0;
+
+    // Función para actualizar el total en la vista previa y en el campo de costo
+    function actualizarTotal() {
+      document.getElementById("totalVistaPrevia").textContent = total.toFixed(2);
+      document.getElementById("costo").value = total.toFixed(2); // Actualizar campo de costo en el modal de agregar encargo
+    }
+
+    // Añadir el evento a los botones para agregar productos
+    document.querySelectorAll('.agregar-producto').forEach(function(button) {
+      button.addEventListener('click', function() {
+        const precio = parseFloat(this.getAttribute('data-precio'));
+        const inputCantidad = this.closest('.card-body').querySelector('.cantidad-input');
+        const cantidad = parseInt(inputCantidad.value) || 0;
+        total += precio * cantidad;
+        actualizarTotal();
+      });
+    });
+  });
+</script>
 
     <script>
 
@@ -1108,5 +1248,17 @@
         $("#nombreClienteSeleccionado").text(nombreCliente);
       });
     </script>
+
+    //Script para controlar las operaciones de adeudos
+    <script>
+      
+    </script>
+
+
+
+
+
+
+
   </body>
 </html>
