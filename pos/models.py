@@ -38,6 +38,7 @@ class Encargo(models.Model):
     OPCION_PAGO = (
         ('Efectivo', 'Efectivo'),
         ('Tarjeta', 'Tarjeta'),
+        ('Transferencia','Transferencia'),
     )
 
     Folio = models.CharField(max_length=30) 
@@ -63,7 +64,11 @@ class Activacion(models.Model):
         ('Lavadora 4', 'Lavadora 4'),
         ('Lavadora 5', 'Lavadora 5'),
         ('Lavadora 6', 'Lavadora 6'),
-        ('Lavadora 7', 'Lavadora 7'),
+        ('Lavadora 8', 'Lavadora 8'),
+        ('Lavadora 9', 'Lavadora 9'),
+        ('Lavadora 10', 'Lavadora 10'),
+        ('Secadora 1', 'Secadora 1'),
+        ('Secadora 2', 'Secadora 2'),
     )
 
     MOTIVO_CHOICES = (
@@ -115,3 +120,9 @@ class lista_precios(models.Model):
     Nombre = models.CharField(max_length=50)
     Descripcion = models.CharField(max_length=50)
     Precio = models.DecimalField(max_digits=10, decimal_places=2)
+
+# Tabla para el control del pagado de encargos
+class PagosEncargos(models.Model):
+    encargoCompleto = models.ForeignKey(Encargo, on_delete=models.CASCADE)
+    fecha = models.DateField()
+    pago = models.DecimalField(max_digits=10, decimal_places=2)

@@ -135,12 +135,12 @@
           Buscar y Agregar Cliente
         </button>
         <button
-          type="button"
-          class="btn btn-primary mt-2"
-          data-bs-toggle="modal"
-          data-bs-target="#modalAgregarEncargo"
+            type="button"
+            class="btn btn-primary mt-2"
+            data-bs-toggle="modal"
+            data-bs-target="#modalSeleccionarProductosServicios5"
         >
-          Agregar Encargo
+            Agregar Encargo
         </button>
       </div>
 
@@ -160,9 +160,7 @@
       >
         Pagar
       </button>
-      <button type="submit" name="vaciar_lista" class="btn btn-secondary">
-        Vaciar Lista
-      </button>
+      
     </div>
 
     <div class="container mt-7">
@@ -399,156 +397,616 @@
       </div>
     </div>
 
-    <!-- Modal para generar el pago -->
+    <!-- Modal para Seleccionar Productos y Servicios -->
     <div
-      class="modal fade"
-      id="modalAgregarEncargo"
-      tabindex="-1"
-      aria-labelledby="modalAgregarEncargoLabel"
-      aria-hidden="true"
+    class="modal fade"
+    id="modalSeleccionarProductosServicios5"
+    tabindex="-1"
+    aria-labelledby="modalSeleccionarProductosServiciosLabel5"
+    aria-hidden="true"
     >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="modalAgregarEncargoLabel">
-              Agregar Encargo
-            </h5>
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalSeleccionarProductosServiciosLabel5">
+            Seleccionar Productos y Servicios
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="tab-content" id="myTabContent5">
+            <!-- Productos -->
+            <div
+              class="tab-pane fade"
+              id="productos5"
+              role="tabpanel"
+              aria-labelledby="productos5-tab"
+            >
+              <div class="container mt-3">
+                <h3>Productos Disponibles</h3>
+                <div class="row">
+                  {% for producto in productos %}
+                    {% if producto.tipo == 'producto' %}
+                      <div class="col-md-4 mb-4">
+                        <div class="card">
+                          <div class="card-body text-center">
+                            <h5 class="card-title">
+                              <span class="color-blue">{{ producto.nombre }}</span>
+                            </h5>
+                            <p class="card-text">
+                              <span class="color-green">Precio:</span>
+                              <span class="color-price">${{ producto.precio }}</span>
+                            </p>
+
+                            <!-- Campo de entrada para cantidad -->
+                            <div class="form-group mb-2">
+                              <input
+                                type="number"
+                                class="form-control cantidad-input5"
+                                data-precio="{{ producto.precio }}"
+                                placeholder="Cantidad/Kg"
+                                min="1"
+                                step="1"
+                              />
+                              <small class="form-text text-muted total-preview5">
+                                Total: $0.00
+                              </small>
+                            </div>
+
+                            <!-- Botón para agregar producto -->
+                            <button
+                              class="btn btn-primary agregar-producto5"
+                              data-nombre="{{ producto.nombre }}"
+                              data-precio="{{ producto.precio }}"
+                            >
+                              Agregar
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            <!-- Servicios -->
+            <div
+              class="tab-pane fade show active"
+              id="servicios5"
+              role="tabpanel"
+              aria-labelledby="servicios5-tab"
+            >
+              <div class="container mt-3">
+                <h3>Servicios Disponibles</h3>
+                <div class="row">
+                  {% for producto in productos %}
+                    {% if producto.tipo == 'servicio' %}
+                      <div class="col-md-4 mb-4">
+                        <div class="card">
+                          <div class="card-body text-center">
+                            <h5 class="card-title">
+                              <span class="color-blue">{{ producto.nombre }}</span>
+                            </h5>
+                            <p class="card-text">
+                              <span class="color-green">Precio:</span>
+                              <span class="color-price">${{ producto.precio }}</span>
+                            </p>
+
+                            <!-- Campo de entrada para cantidad -->
+                            <div class="form-group mb-2">
+                              <input
+                                type="number"
+                                class="form-control cantidad-input5"
+                                data-precio="{{ producto.precio }}"
+                                placeholder="Cantidad"
+                                min="1"
+                                step="1"
+                              />
+                              <small class="form-text text-muted total-preview5">
+                                Total: $0.00
+                              </small>
+                            </div>
+
+                            <!-- Botón para agregar servicio -->
+                            <button
+                              class="btn btn-primary agregar-producto5"
+                              data-nombre="{{ producto.nombre }}"
+                              data-precio="{{ producto.precio }}"
+                            >
+                              Agregar
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Navegación de pestañas -->
+          <ul class="nav nav-tabs" id="myTab5" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="productos5-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#productos5"
+                type="button"
+                role="tab"
+                aria-controls="productos5"
+                aria-selected="false"
+              >
+                Productos
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link active"
+                id="servicios5-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#servicios5"
+                type="button"
+                role="tab"
+                aria-controls="servicios5"
+                aria-selected="true"
+              >
+                Servicios
+              </button>
+            </li>
+          </ul>
+          <!-- Total y Botón Siguiente -->
+          <div class="mt-4 d-flex justify-content-between align-items-center">
+            <label for="total5">Total: $<span id="total5">0.00</span></label>
             <button
               type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-
-          <div class="modal-body">
-            <form id="formAgregarEncargo">
-              {% csrf_token %}
-              <div class="mb-3">
-                <label for="folio" class="form-label">Folio</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="folio"
-                  name="folio"
-                  readonly
-                />
-              </div>
-
-              <div class="mb-3">
-                <label for="cliente" class="form-label">Clientes</label>
-                <select class="form-select" id="cliente" name="cliente_id">
-                  {% for cliente in clientes %}
-                  <option value="{{ cliente.id }}">
-                    {{ cliente.nombre }} {{ cliente.apellidos }}
-                  </option>
-                  {% endfor %}
-                </select>
-              </div>
-
-              <div class="mb-3">
-                <label for="fecha_encargo" class="form-label"
-                  >Fecha de Encargo</label
-                >
-                <input
-                  type="date"
-                  class="form-control"
-                  id="fecha_encargo"
-                  name="fecha_encargo"
-                  value="{{ current_date }}"
-                  readonly
-                />
-              </div>
-
-              <div class="mb-3">
-                <label for="fecha_entrega" class="form-label"
-                  >Fecha de Entrega</label
-                >
-                <input
-                  type="date"
-                  class="form-control"
-                  id="fecha_entrega"
-                  name="fecha_entrega"
-                />
-              </div>
-
-              <div class="mb-3">
-                <label for="costo" class="form-label">Costo</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  id="costo"
-                  name="costo"
-                  step="0.01"
-                />
-              </div>
-
-              <div class="mb-3 form-check">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  id="pagadoCheckbox"
-                  name="pagadoCheckbox"
-                />
-                <label class="form-check-label" for="pagadoCheckbox"
-                  >¿Pagado?</label
-                >
-              </div>
-
-              <div class="mb-3">
-                <label for="anticipo" class="form-label">Anticipo</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  id="anticipo"
-                  name="anticipo"
-                  step="0.01"
-                />
-              </div>
-
-              <div class="mb-3">
-                <label for="adeudo" class="form-label">Adeudo</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  id="adeudo"
-                  name="adeudo"
-                  step="0.01"
-                  readonly
-                />
-              </div>
-
-              <div class="mb-3">
-                <label for="forma_pago" class="form-label"
-                  >Metodo de Pago</label
-                >
-                <select class="form-select" id="forma_pago" name="forma_pago">
-                  <option value="Efectivo">Efectivo</option>
-                  <option value="Tarjeta">Tarjeta</option>
-                  <option value="Transferencia">Transferencia</option>
-                </select>
-              </div>
-
-              <div class="mb-3">
-                <label for="observaciones" class="form-label"
-                  >Descripcion</label
-                >
-                <textarea
-                  class="form-control"
-                  id="observaciones"
-                  name="observaciones"
-                  rows="3"
-                >
-{{ encargo.observaciones }}</textarea
-                >
-              </div>
-
-              <button type="submit" class="btn btn-primary">Guardar</button>
-            </form>
+              class="btn btn-success"
+              id="siguienteModal5"
+            >
+              Siguiente
+            </button>
           </div>
         </div>
       </div>
     </div>
+    </div>
+
+
+    <!-- Modal para Agregar Encargo-->
+    <div
+    class="modal fade"
+    id="modalAgregarEncargo5"
+    tabindex="-1"
+    aria-labelledby="modalAgregarEncargoLabel5"
+    aria-hidden="true"
+    >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalAgregarEncargoLabel5">
+            Agregar Encargo
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+
+        <div class="modal-body">
+          <form id="formAgregarEncargo5">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="folio5" class="form-label">Folio</label>
+              <input
+                type="text"
+                class="form-control"
+                id="folio5"
+                name="folio"
+                readonly
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="cliente5" class="form-label">Clientes</label>
+              <select class="form-select" id="cliente5" name="cliente_id">
+                {% for cliente in clientes %}
+                  <option value="{{ cliente.id }}">
+                    {{ cliente.nombre }} {{ cliente.apellidos }}
+                  </option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="fecha_encargo5" class="form-label">Fecha de Encargo</label>
+              <input
+                type="date"
+                class="form-control"
+                id="fecha_encargo5"
+                name="fecha_encargo"
+                value="{{ current_date }}"
+                readonly
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="fecha_entrega5" class="form-label">Fecha de Entrega</label>
+              <input
+                type="date"
+                class="form-control"
+                id="fecha_entrega5"
+                name="fecha_entrega"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="costo5" class="form-label">Costo</label>
+              <input
+                type="number"
+                class="form-control"
+                id="costo5"
+                name="costo"
+                step="0.01"
+                readonly
+              />
+            </div>
+
+            <div class="mb-3 form-check">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="pagadoCheckbox5"
+                name="pagadoCheckbox"
+              />
+              <label class="form-check-label" for="pagadoCheckbox5">¿Pagado?</label>
+            </div>
+
+            <div class="mb-3">
+              <label for="anticipo5" class="form-label">Anticipo</label>
+              <input
+                type="number"
+                class="form-control"
+                id="anticipo5"
+                name="anticipo"
+                step="0.01"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="adeudo5" class="form-label">Adeudo</label>
+              <input
+                type="number"
+                class="form-control"
+                id="adeudo5"
+                name="adeudo"
+                step="0.01"
+                readonly
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="forma_pago5" class="form-label">Metodo de Pago</label>
+              <select class="form-select" id="forma_pago5" name="forma_pago">
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+                <option value="Transferencia">Transferencia</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="descuento5" class="form-label">Descuento (%)</label>
+              <input
+                type="number"
+                class="form-control"
+                id="descuento5"
+                name="descuento"
+                step="0.01"
+                value="0"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="observaciones5" class="form-label">Descripción</label>
+              <textarea
+                class="form-control"
+                id="observaciones5"
+                name="observaciones"
+                rows="3"
+              ></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    </div>
+    
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        let totalAcumulado = 0;
+    
+        // Manejar la actualización del total en cada producto/servicio
+        document.querySelectorAll(".cantidad-input5").forEach(function (input) {
+          input.addEventListener("input", function () {
+            const precio = parseFloat(this.getAttribute("data-precio"));
+            const cantidad = parseInt(this.value) || 0;
+            const totalPreview = this.nextElementSibling;
+            const total = precio * cantidad;
+            totalPreview.textContent = `Total: $${total.toFixed(2)}`;
+          });
+        });
+    
+        // Manejar la acción de agregar producto/servicio
+        document.querySelectorAll(".agregar-producto5").forEach(function (button) {
+          button.addEventListener("click", function () {
+            const nombre = this.getAttribute("data-nombre");
+            const precio = parseFloat(this.getAttribute("data-precio"));
+            const cantidadInput = this.parentElement.querySelector(".cantidad-input5");
+            const cantidad = parseInt(cantidadInput.value) || 0;
+    
+            if (cantidad > 0) {
+              const total = precio * cantidad;
+              totalAcumulado += total;
+    
+              // Actualizar el total acumulado en el modal
+              document.getElementById("total5").textContent = totalAcumulado.toFixed(2);
+    
+              // Resetear el campo de cantidad y total preview
+              cantidadInput.value = "";
+              cantidadInput.nextElementSibling.textContent = "Total: $0.00";
+            } else {
+              alert("Ingrese una cantidad válida.");
+            }
+          });
+        });
+    
+        // Generar automáticamente el folio cuando se abre el modal de agregar encargo
+        const modalAgregarEncargo = document.getElementById("modalAgregarEncargo5");
+        modalAgregarEncargo.addEventListener("show.bs.modal", function () {
+          const folioInput = document.getElementById("folio5");
+          const now = new Date();
+          const folio = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
+          folioInput.value = folio;
+    
+          // Establecer la fecha de encargo como la fecha actual
+          const fechaEncargoInput = document.getElementById("fecha_encargo5");
+          const fechaActual = now.toISOString().split('T')[0];
+          fechaEncargoInput.value = fechaActual;
+        });
+    
+        // Manejar el botón "Siguiente" para pasar al modal de agregar encargo
+        document.getElementById("siguienteModal5").addEventListener("click", function () {
+          // Asignar el total acumulado al campo de costo en el modal de agregar encargo
+          document.getElementById("costo5").value = totalAcumulado.toFixed(2);
+    
+          // Calcular el adeudo automáticamente
+          const anticipoInput = document.getElementById("anticipo5");
+          let anticipo = parseFloat(anticipoInput.value) || 0;
+          let adeudo = totalAcumulado - anticipo;
+          adeudo = adeudo < 0 ? 0 : adeudo; // Asegurar que el adeudo no sea negativo
+          document.getElementById("adeudo5").value = adeudo.toFixed(2);
+    
+          // Resetear el total acumulado
+          totalAcumulado = 0;
+          document.getElementById("total5").textContent = "0.00";
+    
+          // Cerrar el modal de selección y abrir el modal de agregar encargo
+          const modalSeleccionar = bootstrap.Modal.getInstance(
+            document.getElementById("modalSeleccionarProductosServicios5")
+          );
+          modalSeleccionar.hide();
+    
+          const modalAgregar = new bootstrap.Modal(
+            document.getElementById("modalAgregarEncargo5")
+          );
+          modalAgregar.show();
+        });
+    
+        // Manejar cambios en el campo de anticipo para recalcular el adeudo
+        document.getElementById("anticipo5").addEventListener("input", function () {
+          const anticipo = parseFloat(this.value) || 0;
+          const costo = parseFloat(document.getElementById("costo5").value) || 0;
+          const descuento = parseFloat(document.getElementById("descuento5").value) || 0;
+          
+          // Aplicar el descuento
+          const totalConDescuento = costo - (costo * (descuento / 100));
+          
+          let adeudo = totalConDescuento - anticipo;
+          adeudo = adeudo < 0 ? 0 : adeudo; // Asegurar que el adeudo no sea negativo
+          document.getElementById("adeudo5").value = adeudo.toFixed(2);
+        });
+
+        // Manejar cambios en el campo de descuento para recalcular el adeudo
+        document.getElementById("descuento5").addEventListener("input", function () {
+          const anticipo = parseFloat(document.getElementById("anticipo5").value) || 0;
+          const costo = parseFloat(document.getElementById("costo5").value) || 0;
+          const descuento = parseFloat(this.value) || 0;
+
+          // Aplicar el descuento
+          const totalConDescuento = costo - (costo * (descuento / 100));
+          
+          let adeudo = totalConDescuento - anticipo;
+          adeudo = adeudo < 0 ? 0 : adeudo; // Asegurar que el adeudo no sea negativo
+          document.getElementById("adeudo5").value = adeudo.toFixed(2);
+        });
+    
+        // Manejar el checkbox "¿Pagado?" para ajustar anticipo y adeudo
+        document.getElementById("pagadoCheckbox5").addEventListener("change", function () {
+          if (this.checked) {
+            const costo = parseFloat(document.getElementById("costo5").value) || 0;
+            document.getElementById("anticipo5").value = costo.toFixed(2);
+            document.getElementById("adeudo5").value = "0.00";
+    
+            // Hacer que el campo de anticipo sea de solo lectura
+            document.getElementById("anticipo5").readOnly = true;
+          } else {
+            // Si se desmarca, resetear anticipo y adeudo
+            document.getElementById("anticipo5").value = "";
+            const costo = parseFloat(document.getElementById("costo5").value) || 0;
+            document.getElementById("adeudo5").value = costo.toFixed(2);
+    
+            // Hacer que el campo de anticipo sea editable
+            document.getElementById("anticipo5").readOnly = false;
+          }
+        });
+    
+        // Establecer el estado inicial del campo de anticipo basado en el estado del checkbox
+        const pagadoCheckbox = document.getElementById("pagadoCheckbox5");
+        if (pagadoCheckbox.checked) {
+          const costoInicial = parseFloat(document.getElementById("costo5").value) || 0;
+          document.getElementById("anticipo5").value = costoInicial.toFixed(2);
+          document.getElementById("adeudo5").value = "0.00";
+          document.getElementById("anticipo5").readOnly = true;
+        }
+    
+        // Manejar el envío del formulario mediante AJAX
+        var modal = new bootstrap.Modal(document.getElementById('modalAgregarEncargo5'));
+    
+        document.getElementById('formAgregarEncargo5').addEventListener('submit', function(event) {
+          event.preventDefault();
+    
+          var formData = new FormData(this);
+          var url = 'guardar-encargo/'; // Usar la URL especificada en el atributo 'action' del formulario
+    
+          // Enviar la información al servidor por medio de AJAX
+          fetch(url, {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'X-CSRFToken': getCookie('csrftoken') // Añadir CSRF token
+            }
+          })
+          .then(response => {
+            if (response.ok) {
+              return response.json(); // Suponiendo que el servidor retorna un JSON con los datos del encargo
+            }
+            else {
+              throw new Error('Error al guardar el encargo');
+            }
+          })
+          .then(data => {
+            console.log('Encargo guardado:', data);
+            console.log(formData);
+            generarTicket2();
+            printTicket2();
+            modal.hide(); // Ocultar el modal después de guardar
+            resetForm(); // Llamar a la función para limpiar el formulario
+            
+          })
+          .catch(error => {data
+            console.error('Error:', error);
+            alert('Ocurrió un error al guardar el encargo.');
+          });
+        });
+    
+        // Función para limpiar el formulario después de guardar
+        function resetForm() {
+          document.getElementById('formAgregarEncargo5').reset();
+          document.getElementById("costo5").value = "";
+          document.getElementById("adeudo5").value = "";
+        }
+    
+        // Función para obtener el valor de una cookie por su nombre (para CSRF token)
+        function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              // Verificar si la cookie empieza con el nombre buscado
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+              }
+            }
+          }
+          return cookieValue;
+        }
+
+        function generarTicket2() {
+          const cliente = document.getElementById("cliente5").selectedOptions[0].text;
+          const folio = document.getElementById("folio5").value;
+          const fechaEncargo = document.getElementById("fecha_encargo5").value;
+          const fechaEntrega = document.getElementById("fecha_entrega5").value;
+          const costo = parseFloat(document.getElementById("costo5").value) || 0;
+          const anticipo = parseFloat(document.getElementById("anticipo5").value) || 0;
+          const adeudo = parseFloat(document.getElementById("adeudo5").value) || 0;
+          const metodoPagoSeleccionado = document.getElementById("forma_pago5").value;
+          const descripcion = document.getElementById("observaciones5").value;
+          const descuento = parseFloat(document.getElementById("descuento5").value) || 0;
+        
+          const ticketContent = document.getElementById("ticketContent");
+          ticketContent.innerHTML = `
+            <div style="font-family: 'Georgia', serif; font-size: 14px;">
+              <div style="text-align: right;">
+                <img src="{% static 'img/LAVANDEROS.ico' %}" alt="Lavanderos" style="width: 100px; height: auto;"/>
+              </div>
+              <h2 style="text-align: center;">Lavanderos</h2>
+              <p>WhatsApp: 7222947337</p>
+              <p>Teléfono: 7229365461</p>
+              <p>Calle Paseo de los Matlatzincas 235</p>
+              <p>Col. Lomas Altas, Toluca, México</p>
+              <h4>Folio: ${folio} </h4>
+              <h4>Cliente: ${cliente}</h4>
+              <p>Método de Pago: <span style="font-weight: bold">${metodoPagoSeleccionado}</span></p>
+              <p>Fecha de encargo: ${new Date(fechaEncargo).toLocaleString("es-ES")}</p>
+              <p>Fecha de entrega: ${new Date(fechaEntrega).toLocaleString("es-ES")}</p>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="text-align: center;">Servicio</th>
+                    <th style="text-align: center;">Costo</th>
+                    <th style="text-align: center;">Anticipo</th>
+                    <th style="text-align: center;">Adeudo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="font-size: 0.8em; text-align: center;">Encargo</td>
+                    <td style="font-size: 0.9em; text-align: center;">${costo.toFixed(2)}</td>
+                    <td style="font-size: 0.9em; text-align: center;">${anticipo.toFixed(2)}</td>
+                    <td style="font-size: 0.9em; text-align: center;">${adeudo.toFixed(2)}</td>
+                  </tr>
+                </tbody>
+              </table>
+              
+
+              <p style="font-size: 0.9em; text-align: right;">Descuento ${descuento.toFixed(2)}%</p>
+              <p style="font-size: 0.9em; text-align: right;">Descuento $${(costo * (descuento / 100)).toFixed(2)}</p>
+              <p style="font-size: 0.9em; text-align: right;">Costo con Descuento: $${(costo - (costo * (descuento / 100))).toFixed(2)}</p>
+
+              <p class="total" style="text-align: right; font-size: 1.5em;">Total: $${anticipo.toFixed(2)}</p>
+              <p style="font-size: 0.8em;">Descripción: ${descripcion}</p>
+              <p style="font-style: italic; text-align: center;">"Porque NO toda la ropa sucia se lava en casa"</p>
+              <p style="font-size: 1.1em; text-align: justify;"><i>"Lavanderos"</i>, después de <b style="font-size: 1.2em;">1 mes</b> la empresa no se hace responsable de las prendas. Por su comprensión, gracias.</p>
+            </div>
+          `;
+        }
+        // Función para imprimir el ticket
+          function printTicket2() {
+            var printContents = document.getElementById("ticketContent").innerHTML;
+            var originalContents = document.body.innerHTML;
+
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+
+            // Recargar la página después de imprimir
+            setTimeout(function () {
+              location.reload();
+            }, 1000);
+          }
+      });
+    </script>
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
@@ -1108,5 +1566,7 @@
         $("#nombreClienteSeleccionado").text(nombreCliente);
       });
     </script>
+
+    
   </body>
 </html>

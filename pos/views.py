@@ -1,6 +1,6 @@
 # Librerias e importacion de elementos en django
 from django.shortcuts import render
-from .models import Producto, Cliente, Encargo, Activacion, Ventas, ControlPagoEncargos, SaldoFinalDiario, lista_precios
+from .models import Producto, Cliente, Encargo, Activacion, Ventas, ControlPagoEncargos, SaldoFinalDiario, lista_precios, PagosEncargos
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_http_methods
 from django.contrib.auth.decorators import login_required
@@ -52,12 +52,14 @@ def modificar_producto(request, producto_id):
     
     return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
 
+
 # Vista para obtener los clientes y mostrarlos
 @login_required
 def clientes(request):
     clientes = Cliente.objects.all()
 
     return render(request, 'clientes.html', {'clientes': clientes})
+
 
 # Vista para agregar un cliente
 def agregar_cliente(request):
@@ -93,7 +95,7 @@ def eliminar_cliente(request, cliente_id):
 # Vista de encargo
 @login_required
 def encargo(request):
-    encargos_encargo = Encargo.objects.filter(estado='ENCARGO')
+    encargos_encargo = Encargo.objects.all().order_by('-fecha_encargo')[:80]
     encargos_proceso = Encargo.objects.filter(estado='EN_PROCESO')
     encargos_completado = Encargo.objects.filter(estado='COMPLETADO')
     encargos_entregados = Encargo.objects.filter(estado='ENTREGADO')
@@ -114,31 +116,20 @@ def encargo(request):
 def cambiar_estado_encargo(request, encargo_id):
     if request.method == 'POST':
         estado = request.POST.get('estado', '')  
-        nuevo_adeudo = float(request.POST.get('nuevo_adeudo', 0))  
-        anticipo = float(request.POST.get('ingreso', 0))  
-
-        # Imprime los datos recibidos en el log del servidor
-        #print(f"Estado recibido: {estado}")
-        #print(f"Nuevo Adeudo recibido: {nuevo_adeudo}")
-        #print(f"Anticipo recibido: {anticipo}")
+        nuevo_adeudo = float(request.POST.get('nuevo_adeudo', 0))
+        adeudo_original = float(request.POST.get('adeudo_original', 0)) 
 
         if estado:
 
             encargo = get_object_or_404(Encargo, id=encargo_id)
-            encargo.estado = estado
-
-            if estado == 'ENTREGADO':
-                #encargo.estado = 'ENTREGADO'
-                encargo.adeudo = nuevo_adeudo
-                encargo.ingreso = anticipo
-
-            else:
-                encargo.ingreso = anticipo
-
+            encargo.estado = 'ENTREGADO'
+            encargo.adeudo = nuevo_adeudo
+            encargo2 = PagosEncargos(encargoCompleto=encargo, fecha=timezone.now().date(), pago=adeudo_original)
+            encargo2.save()
             encargo.save()
 
             control_pago_encargo = get_object_or_404(ControlPagoEncargos, encargo=encargo)
-            if anticipo != 0:
+            if nuevo_adeudo == 0:
                 control_pago_encargo.fecha_entregado = timezone.now().date()
 
             control_pago_encargo.save()
@@ -176,7 +167,7 @@ def guardar_encargo(request):
                 fecha_encargo=fecha_encargo,
                 fecha_entrega=fecha_entrega,
                 cliente_id=cliente_id,
-                estado='ENCARGO',
+                estado='EN_PROCESO',
                 costo=costo,
                 adeudo=adeudo,
                 ingreso=ingreso,
@@ -194,7 +185,7 @@ def guardar_encargo(request):
                 adeudo=adeudo,
             )
 
-            return JsonResponse({'message': 'Encargo guardado correctamente'}, status=200)
+            return JsonResponse({'message': 'Encargo guardado correctamente', 'data': {'folio': folio, 'fecha_encargo': fecha_encargo, 'fecha_entrega': fecha_entrega, 'cliente_id': cliente_id, 'pagado': pagado, 'anticipo': anticipo, 'adeudo': adeudo, 'costo':costo, 'adeudo':adeudo}, 'id': encargo.id}, status=200)
         
         except Exception as e:
             print(f"Error al guardar el encargo: {e}")
@@ -223,6 +214,12 @@ def guardar_activacion(request):
 
         if encargo_id:
             encargo = Encargo.objects.get(id=encargo_id)
+            try:
+                encargo2 = Encargo.objects.get(id=encargo_id)
+                encargo2.estado = 'COMPLETADO'
+                encargo2.save(update_fields=['estado'])  # Solo actualizar el campo 'estado'
+            except Encargo.DoesNotExist:
+                return JsonResponse({'error': 'Encargo no encontrado'}, status=404)
         
         activacion = Activacion(
             lavadora=lavadora,
@@ -235,27 +232,35 @@ def guardar_activacion(request):
 
         activacion.save()
 
+        #IP server EPSP32
+        # 
+        ipServer='192.168.101.120'       
+
         # Enviar la solicitud HTTP al ESP32
         if lavadora == 'Lavadora 1':
-            ip = '192.168.0.201'
+            portRele = '1'
         elif lavadora == 'Lavadora 2':
-            ip = '192.168.0.202'
+            portRele = '2'
         elif lavadora == 'Lavadora 3':
-            ip = '192.168.0.203' 
+            portRele = '3' 
         elif lavadora == 'Lavadora 4':
-            ip = '192.168.0.204'
+            portRele = '4'
         elif lavadora == 'Lavadora 5':
-            ip = '192.168.0.205'
+            portRele = '6'
         elif lavadora == 'Lavadora 6':
-            ip = '192.168.1.206'
-        elif lavadora == 'Lavadora 7':
-            ip = '192.168.0.207'
+            portRele = '7'
+        elif lavadora == 'Lavadora 8':
+            portRele = '8'
+        elif lavadora == 'Lavadora 9':
+            portRele = '9'
+        elif lavadora == 'Lavadora 10':
+            portRele = '10'
         
         """Añadir más condiciones para las otras lavadoras si es necesario"""
 
         try:
             # Construir la URL completa con el puerto
-            url = f'http://{ip}:80'  
+            url = f'http://{ipServer}:80/{portRele}'  
             payload = {'activar': 1}
             response = requests.post(url, json=payload)
             # Lanza una excepción si la solicitud no fue exitosa

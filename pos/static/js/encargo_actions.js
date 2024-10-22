@@ -115,9 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Encargo guardado:', data);
             modal.hide(); // Ocultar el modal después de guardar
             resetForm(); // Llamar a la función para limpiar el formulario
-            setTimeout(function() {
-                location.reload(); // Recargar la página después de cierto tiempo para mostrar los nuevos resultados
-            }, 2000); // Recargar la página después de 2 segundos (ajustable según sea necesario)
+            // Recargar la página después de 2 segundos (ajustable según sea necesario)
         })
         .catch(error => {
             console.error('Error:', error);
@@ -172,6 +170,8 @@ document.addEventListener('DOMContentLoaded', function() {
             pagadoIcon.style.display = 'none'; // Ocultar el símbolo "✔"
         }
     });
+
+    
 });
 
 
