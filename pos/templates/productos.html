@@ -135,12 +135,12 @@
           Buscar y Agregar Cliente
         </button>
         <button
-          type="button"
-          class="btn btn-primary mt-2"
-          data-bs-toggle="modal"
-          data-bs-target="#modalAgregarEncargo"
+            type="button"
+            class="btn btn-primary mt-2"
+            data-bs-toggle="modal"
+            data-bs-target="#modalSeleccionarProductosServicios5"
         >
-          Agregar Encargo
+            Agregar Encargo
         </button>
       </div>
 
@@ -160,9 +160,7 @@
       >
         Pagar
       </button>
-      <button type="submit" name="vaciar_lista" class="btn btn-secondary">
-        Vaciar Lista
-      </button>
+      
     </div>
 
     <div class="container mt-7">
@@ -399,66 +397,245 @@
       </div>
     </div>
 
-    <!-- Modal para generar el pago -->
+    <!-- Modal para Seleccionar Productos y Servicios -->
     <div
-      class="modal fade"
-      id="modalAgregarEncargo"
-      tabindex="-1"
-      aria-labelledby="modalAgregarEncargoLabel"
-      aria-hidden="true"
+    class="modal fade"
+    id="modalSeleccionarProductosServicios5"
+    tabindex="-1"
+    aria-labelledby="modalSeleccionarProductosServiciosLabel5"
+    aria-hidden="true"
     >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="modalAgregarEncargoLabel">
-              Agregar Encargo
-            </h5>
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalSeleccionarProductosServiciosLabel5">
+            Seleccionar Productos y Servicios
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="tab-content" id="myTabContent5">
+            <!-- Productos -->
+            <div
+              class="tab-pane fade"
+              id="productos5"
+              role="tabpanel"
+              aria-labelledby="productos5-tab"
+            >
+              <div class="container mt-3">
+                <h3>Productos Disponibles</h3>
+                <div class="row">
+                  {% for producto in productos %}
+                    {% if producto.tipo == 'producto' %}
+                      <div class="col-md-4 mb-4">
+                        <div class="card">
+                          <div class="card-body text-center">
+                            <h5 class="card-title">
+                              <span class="color-blue">{{ producto.nombre }}</span>
+                            </h5>
+                            <p class="card-text">
+                              <span class="color-green">Precio:</span>
+                              <span class="color-price">${{ producto.precio }}</span>
+                            </p>
+
+                            <!-- Campo de entrada para cantidad -->
+                            <div class="form-group mb-2">
+                              <input
+                                type="number"
+                                class="form-control cantidad-input5"
+                                data-precio="{{ producto.precio }}"
+                                placeholder="Cantidad/Kg"
+                                min="1"
+                                step="1"
+                              />
+                              <small class="form-text text-muted total-preview5">
+                                Total: $0.00
+                              </small>
+                            </div>
+
+                            <!-- Botón para agregar producto -->
+                            <button
+                              class="btn btn-primary agregar-producto5"
+                              data-nombre="{{ producto.nombre }}"
+                              data-precio="{{ producto.precio }}"
+                            >
+                              Agregar
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            <!-- Servicios -->
+            <div
+              class="tab-pane fade show active"
+              id="servicios5"
+              role="tabpanel"
+              aria-labelledby="servicios5-tab"
+            >
+              <div class="container mt-3">
+                <h3>Servicios Disponibles</h3>
+                <div class="row">
+                  {% for producto in productos %}
+                    {% if producto.tipo == 'servicio' %}
+                      <div class="col-md-4 mb-4">
+                        <div class="card">
+                          <div class="card-body text-center">
+                            <h5 class="card-title">
+                              <span class="color-blue">{{ producto.nombre }}</span>
+                            </h5>
+                            <p class="card-text">
+                              <span class="color-green">Precio:</span>
+                              <span class="color-price">${{ producto.precio }}</span>
+                            </p>
+
+                            <!-- Campo de entrada para cantidad -->
+                            <div class="form-group mb-2">
+                              <input
+                                type="number"
+                                class="form-control cantidad-input5"
+                                data-precio="{{ producto.precio }}"
+                                placeholder="Cantidad"
+                                min="1"
+                                step="1"
+                              />
+                              <small class="form-text text-muted total-preview5">
+                                Total: $0.00
+                              </small>
+                            </div>
+
+                            <!-- Botón para agregar servicio -->
+                            <button
+                              class="btn btn-primary agregar-producto5"
+                              data-nombre="{{ producto.nombre }}"
+                              data-precio="{{ producto.precio }}"
+                            >
+                              Agregar
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Navegación de pestañas -->
+          <ul class="nav nav-tabs" id="myTab5" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link"
+                id="productos5-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#productos5"
+                type="button"
+                role="tab"
+                aria-controls="productos5"
+                aria-selected="false"
+              >
+                Productos
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button
+                class="nav-link active"
+                id="servicios5-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#servicios5"
+                type="button"
+                role="tab"
+                aria-controls="servicios5"
+                aria-selected="true"
+              >
+                Servicios
+              </button>
+            </li>
+          </ul>
+          <!-- Total y Botón Siguiente -->
+          <div class="mt-4 d-flex justify-content-between align-items-center">
+            <label for="total5">Total: $<span id="total5">0.00</span></label>
             <button
               type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
+              class="btn btn-success"
+              id="siguienteModal5"
+            >
+              Siguiente
+            </button>
           </div>
+        </div>
+      </div>
+    </div>
+    </div>
 
-          <div class="modal-body">
-            <form id="formAgregarEncargo">
-              {% csrf_token %}
-              <div class="mb-3">
-                <label for="folio" class="form-label">Folio</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="folio"
-                  name="folio"
-                  readonly
-                />
-              </div>
 
-              <div class="mb-3">
-                <label for="cliente" class="form-label">Clientes</label>
-                <select class="form-select" id="cliente" name="cliente_id">
-                  {% for cliente in clientes %}
+    <!-- Modal para Agregar Encargo-->
+    <div
+    class="modal fade"
+    id="modalAgregarEncargo5"
+    tabindex="-1"
+    aria-labelledby="modalAgregarEncargoLabel5"
+    aria-hidden="true"
+    >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalAgregarEncargoLabel5">
+            Agregar Encargo
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+
+        <div class="modal-body">
+          <form id="formAgregarEncargo5">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="folio5" class="form-label">Folio</label>
+              <input
+                type="text"
+                class="form-control"
+                id="folio5"
+                name="folio"
+                readonly
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="cliente5" class="form-label">Clientes</label>
+              <select class="form-select" id="cliente5" name="cliente_id">
+                {% for cliente in clientes %}
                   <option value="{{ cliente.id }}">
                     {{ cliente.nombre }} {{ cliente.apellidos }}
                   </option>
-                  {% endfor %}
-                </select>
-              </div>
+                {% endfor %}
+              </select>
+            </div>
 
-              <div class="mb-3">
-                <label for="fecha_encargo" class="form-label"
-                  >Fecha de Encargo</label
-                >
-                <input
-                  type="date"
-                  class="form-control"
-                  id="fecha_encargo"
-                  name="fecha_encargo"
-                  value="{{ current_date }}"
-                  readonly
-                />
-              </div>
+            <div class="mb-3">
+              <label for="fecha_encargo5" class="form-label">Fecha de Encargo</label>
+              <input
+                type="date"
+                class="form-control"
+                id="fecha_encargo5"
+                name="fecha_encargo"
+                value="{{ current_date }}"
+                readonly
+              />
+            </div>
 
               <div class="mb-3">
                 <label for="fecha_entrega" class="form-label"
@@ -472,35 +649,27 @@
                 />
               </div>
 
-              <!-- Botón para ver servicios disponibles -->
-              <button type="button" class="btn btn-primary" style="background-color: rgb(0, 110, 255); border-color: rgb(0, 110, 255);" data-bs-toggle="modal" data-bs-target="#modalServiciosDisponibles">
-                Agregar servicios disponibles
-              </button>
-              
+            <div class="mb-3">
+              <label for="costo5" class="form-label">Costo</label>
+              <input
+                type="number"
+                class="form-control"
+                id="costo5"
+                name="costo"
+                step="0.01"
+                readonly
+              />
+            </div>
 
-
-              <div class="mb-3">
-                <label for="costo" class="form-label">Costo</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  id="costo"
-                  name="costo"
-                  step="0.01"
-                />
-              </div>
-
-              <div class="mb-3 form-check">
-                <input
-                  type="checkbox"
-                  class="form-check-input"
-                  id="pagadoCheckbox"
-                  name="pagadoCheckbox"
-                />
-                <label class="form-check-label" for="pagadoCheckbox"
-                  >¿Pagado?</label
-                >
-              </div>
+            <div class="mb-3 form-check">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="pagadoCheckbox5"
+                name="pagadoCheckbox"
+              />
+              <label class="form-check-label" for="pagadoCheckbox5">¿Pagado?</label>
+            </div>
 
               <div class="mb-3">
                 <label for="anticipo" class="form-label">Anticipo</label>
@@ -509,163 +678,59 @@
                   class="form-control"
                   id="anticipo"
                   name="anticipo"
-                  min="0"
                   step="0.01"
                 />
               </div>
 
-              <div class="mb-3">
-                <label for="adeudo" class="form-label">Adeudo</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  id="adeudo"
-                  name="adeudo"
-                  step="0.01"
-                  readonly
-                />
-              </div>
-
-              <div class="mb-3">
-                <label for="forma_pago" class="form-label"
-                  >Metodo de Pago</label
-                >
-                <select class="form-select" id="forma_pago" name="forma_pago">
-                  <option value="Efectivo">Efectivo</option>
-                  <option value="Tarjeta">Tarjeta</option>
-                  <option value="Transferencia">Transferencia</option>
-                </select>
-              </div>
-
-              <div class="mb-3">
-                <label for="observaciones" class="form-label"
-                  >Descripcion</label
-                >
-                <textarea
-                  class="form-control"
-                  id="observaciones"
-                  name="observaciones"
-                  rows="3"
-                >
-{{ encargo.observaciones }}</textarea
-                >
-              </div>
-
-              <button type="submit" class="btn btn-primary">Guardar</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal para Servicios Disponibles -->
-<div class="modal fade" id="modalServiciosDisponibles" tabindex="-1" aria-labelledby="modalServiciosDisponiblesLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content" >
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalServiciosDisponiblesLabel" >Servicios Disponibles</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-
-      <!-- Vista previa del total en la esquina superior derecha -->
-      <div style="position: absolute; top: 10px; right: 50px; color: rgb(0, 110, 255); font-size: 18px;">
-        Total: $<span id="totalVistaPrevia" class="color-green">0.00</span>
-      </div>
-
-
-      <div class="modal-body">
-        <div class="container mt-4">
-          <h5>Servicios disponibles</h5>
-          <div class="row">
-            <!-- Iteración de productos que son de tipo 'servicio' -->
-            {% for producto in productos %}
-            {% if producto.tipo == 'servicio' %}
-            <div class="col-md-4 mb-4">
-              <div class="card">
-                <div class="card-body text-center">
-                  <h5 class="card-title">
-                    <span class="color-blue">{{ producto.nombre }}</span>
-                  </h5>
-                  <p class="card-text">
-                    <span class="color-green">Precio:</span>
-                    <span class="color-price">${{ producto.precio }}</span>
-                  </p>
-
-                  <!-- Input para cantidad -->
-                  <div class="form-group">
-                    <input type="number" class="form-control cantidad-input" data-precio="{{ producto.precio }}" placeholder="Cantidad" min="1" step="1" />
-                    <small class="form-text text-muted total-preview">
-                      Total: $0.00
-                    </small>
-                  </div>
-
-                  <!-- Botón para agregar servicio -->
-                  <button class="btn btn-primary agregar-producto" data-nombre="{{ producto.nombre }}" data-precio="{{ producto.precio }}">
-                    Agregar
-                  </button>
-                </div>
-              </div>
+            <div class="mb-3">
+              <label for="adeudo5" class="form-label">Adeudo</label>
+              <input
+                type="number"
+                class="form-control"
+                id="adeudo5"
+                name="adeudo"
+                step="0.01"
+                readonly
+              />
             </div>
-            {% endif %}
-            {% endfor %}
-          </div>
+
+            <div class="mb-3">
+              <label for="forma_pago5" class="form-label">Metodo de Pago</label>
+              <select class="form-select" id="forma_pago5" name="forma_pago">
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+                <option value="Transferencia">Transferencia</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="descuento5" class="form-label">Descuento (%)</label>
+              <input
+                type="number"
+                class="form-control"
+                id="descuento5"
+                name="descuento"
+                step="0.01"
+                value="0"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="observaciones5" class="form-label">Descripción</label>
+              <textarea
+                class="form-control"
+                id="observaciones5"
+                name="observaciones"
+                rows="3"
+              ></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </form>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" id="btnRegresarAgregarEncargo">Regresar</button>
-      </div>
-      </div>
     </div>
-  </div>
-</div>
-
-
-
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    let total = 0; // Total acumulado
-
-    // Función para actualizar el total en la vista previa y en el campo de costo
-    function actualizarTotal() {
-      document.getElementById("totalVistaPrevia").textContent = total.toFixed(2); // Total acumulado
-      // Actualiza el campo de costo en el modal de agregar encargo
-      if (document.getElementById("costo")) {
-        document.getElementById("costo").value = total.toFixed(2);
-      }
-    }
-
-    // Añadir el evento a los botones para agregar productos
-    document.querySelectorAll('.agregar-producto').forEach(function(button) {
-      button.addEventListener('click', function() {
-        const precio = parseFloat(this.getAttribute('data-precio')); // Precio del servicio
-        const inputCantidad = this.closest('.card-body').querySelector('.cantidad-input'); // Input de cantidad
-        const cantidad = parseInt(inputCantidad.value) || 0; // Cantidad seleccionada
-        const subtotal = precio * cantidad; // Calcular subtotal
-
-        // Solo suma al total si hay cantidad
-        if (cantidad > 0) {
-          total += subtotal; // Acumula el total
-          actualizarTotal(); // Actualiza el total en la vista previa
-          
-          // Actualiza el total en la vista previa del servicio específico
-          this.closest('.card-body').querySelector('.total-servicio').textContent = subtotal.toFixed(2);
-        }
-      });
-    });
-
-    // Regresar al modal de agregar encargo
-    document.getElementById('btnRegresarAgregarEncargo').addEventListener('click', function() {
-      new bootstrap.Modal(document.getElementById('modalAgregarEncargo')).show();
-      document.getElementById('modalServiciosDisponibles').classList.remove('show');
-      document.querySelector('.modal-backdrop').remove();
-    });
-  });
-</script>
-
-
-
-
-
+    </div>
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
@@ -1248,17 +1313,5 @@
         $("#nombreClienteSeleccionado").text(nombreCliente);
       });
     </script>
-
-    //Script para controlar las operaciones de adeudos
-    <script>
-      
-    </script>
-
-
-
-
-
-
-
   </body>
 </html>
