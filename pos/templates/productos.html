@@ -738,7 +738,7 @@
         document.querySelectorAll(".cantidad-input5").forEach(function (input) {
           input.addEventListener("input", function () {
             const precio = parseFloat(this.getAttribute("data-precio"));
-            const cantidad = parseInt(this.value) || 0;
+            const cantidad = parseFloat(this.value) || 0;
             const totalPreview = this.nextElementSibling;
             const total = precio * cantidad;
             totalPreview.textContent = `Total: $${total.toFixed(2)}`;
@@ -751,7 +751,7 @@
             const nombre = this.getAttribute("data-nombre");
             const precio = parseFloat(this.getAttribute("data-precio"));
             const cantidadInput = this.parentElement.querySelector(".cantidad-input5");
-            const cantidad = parseInt(cantidadInput.value) || 0;
+            const cantidad = parseFloat(cantidadInput.value) || 0;
     
             if (cantidad > 0) {
               const total = precio * cantidad;
@@ -946,11 +946,11 @@
         
           const ticketContent = document.getElementById("ticketContent");
           ticketContent.innerHTML = `
-            <div style="font-family: 'Georgia', serif; font-size: 14px;">
+            <div style="font-family: 'Monospace', serif; font-size: 18px;">
               <div style="text-align: right;">
                 <img src="{% static 'img/LAVANDEROS.ico' %}" alt="Lavanderos" style="width: 100px; height: auto;"/>
               </div>
-              <h2 style="text-align: center;">Lavanderos</h2>
+              <h2 style="text-align: center; font-size: 19px;">Lavanderos</h2>
               <p>WhatsApp: 7222947337</p>
               <p>Teléfono: 7229365461</p>
               <p>Calle Paseo de los Matlatzincas 235</p>
@@ -984,7 +984,7 @@
               <p style="font-size: 0.9em; text-align: right;">Descuento $${(costo * (descuento / 100)).toFixed(2)}</p>
               <p style="font-size: 0.9em; text-align: right;">Costo con Descuento: $${(costo - (costo * (descuento / 100))).toFixed(2)}</p>
 
-              <p class="total" style="text-align: right; font-size: 1.5em;">Total: $${anticipo.toFixed(2)}</p>
+              <p class="total" style="text-align: right; font-size: 1.5em;">Total/Anticipo: $${anticipo.toFixed(2)}</p>
               <p style="font-size: 0.8em;">Descripción: ${descripcion}</p>
               <p style="font-style: italic; text-align: center;">"Porque NO toda la ropa sucia se lava en casa"</p>
               <p style="font-size: 1.1em; text-align: justify;"><i>"Lavanderos"</i>, después de <b style="font-size: 1.2em;">1 mes</b> la empresa no se hace responsable de las prendas. Por su comprensión, gracias.</p>
@@ -1016,7 +1016,7 @@
         cantidadInputs.forEach(function (input) {
           input.addEventListener("input", function () {
             var precio = parseFloat(this.getAttribute("data-precio"));
-            var cantidad = parseInt(this.value) || 0;
+            var cantidad = parseFloat(this.value) || 0;
             var total = precio * cantidad;
 
             // Actualizar el texto de vista previa
@@ -1246,8 +1246,8 @@
       ) {
         var ticketContent = document.getElementById("ticketContent");
         ticketContent.innerHTML = `
-                <div style="font-family: 'Georgia', serif; font-size: 14px;" >
-                <div style="text-align: right;, font-family: 'Georgia', serif; font-size: 12px;">
+                <div style="font-family: 'Monospace', serif; font-size: 18px;" >
+                <div style="text-align: right;, font-family: 'Monospace', serif; font-size: 19px;">
                 <img src={% static 'img/LAVANDEROS.ico' %} alt="Lavanderos" style="width: 100px; height: auto;"/>
                 </div>
                 <h2 style="text-align: center;">Lavanderos</h2>
@@ -1367,7 +1367,7 @@
               .textContent.trim()
               .replace("$", "")
           );
-          var cantidad = parseInt(
+          var cantidad = parseFloat(
             fila.querySelector("td:nth-child(3)").textContent.trim()
           );
           productos.push({
@@ -1420,7 +1420,7 @@
           var precioProducto = parseFloat(boton.getAttribute("data-precio"));
           var cantidadInput =
             this.previousElementSibling.querySelector(".cantidad-input");
-          var cantidadProducto = parseInt(cantidadInput.value) || 0;
+          var cantidadProducto = parseFloat(cantidadInput.value) || 0;
           var totalProducto = precioProducto * cantidadProducto;
 
           if (cantidadProducto > 0) {
@@ -1504,7 +1504,7 @@
           var precioProducto = parseFloat(
             document.getElementById("id_precio").value
           );
-          var cantidadProducto = parseInt(
+          var cantidadProducto = parseFloat(
             document.getElementById("id_cantidad").value
           );
 
