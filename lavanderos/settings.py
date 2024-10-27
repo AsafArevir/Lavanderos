@@ -70,7 +70,7 @@ TEMPLATES = [
 ]
 
 LOGIN_URL = '/login'
-LOGIN_REDIRECT_URL = '/home'
+LOGIN_REDIRECT_URL = '/abrir-caja'
 
 WSGI_APPLICATION = 'lavanderos.wsgi.application'
 

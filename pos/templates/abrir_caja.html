@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <meta charset="UTF-8">
+    <title>Abrir Caja</title>
+
+    <!-- Agregar enlaces a Bootstrap y a tu archivo CSS personalizado -->
+    <style>
+        .mt-7, .my-7 {
+            margin-top: 3.8rem !important;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .card-body img {
+            max-width: 80px;
+            max-height: 80px;
+            float: right;
+        }
+        .arriba {
+            margin-top: 100px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+    
+    {%load static%}
+    {% include 'layouts/navbar.html' %}
+    <div class="arriba"></div>
+    <h1>Abrir Caja</h1>
+
+    <!-- Contenido de la página -->
+    <form id="formAbrirCaja" method="post" action="{% url 'abrir_caja' %}">
+        {% csrf_token %}
+        <label for="saldoInicial">Saldo Inicial:</label>
+        <input type="number" id="saldoInicial" name="saldo_inicial" step="0.01" required>
+        <button type="submit">Abrir Caja</button>
+      </form>
+      
+      <script>
+      document.getElementById('formAbrirCaja').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const saldoInicial = document.getElementById('saldoInicial').value;
+      
+        if (saldoInicial > 0) {
+          fetch('{% url "abrir_caja" %}', {
+            method: 'POST',
+            headers: {
+              'X-CSRFToken': '{{ csrf_token }}',
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `saldo_inicial=${saldoInicial}`,
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              alert(data.message);
+              // Opcional: Redirigir o cerrar modal después de abrir caja
+            } else {
+              alert(data.message);
+            }
+          });
+        } else {
+          alert('El saldo inicial debe ser mayor a 0');
+        }
+      });
+      </script>
+      
+
+</body>
+</html>

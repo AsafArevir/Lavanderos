@@ -1,6 +1,6 @@
 # Librerias e importacion de elementos en django
 from django.shortcuts import render
-from .models import Producto, Cliente, Encargo, Activacion, Ventas, ControlPagoEncargos, SaldoFinalDiario, lista_precios, PagosEncargos
+from .models import Producto, Cliente, Encargo, Activacion, Ventas, ControlPagoEncargos, SaldoFinalDiario, lista_precios, PagosEncargos, TurnoCaja
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_http_methods
 from django.contrib.auth.decorators import login_required
@@ -230,32 +230,57 @@ def guardar_activacion(request):
             encargo=encargo
         )
 
-        activacion.save()
-
-        #IP server EPSP32
-        # 
-        ipServer='192.168.101.120'       
+        activacion.save()     
 
         # Enviar la solicitud HTTP al ESP32
         if lavadora == 'Lavadora 1':
             portRele = '1'
+            ipServer ='192.168.0.121' 
         elif lavadora == 'Lavadora 2':
             portRele = '2'
+            ipServer ='192.168.0.121' 
         elif lavadora == 'Lavadora 3':
-            portRele = '3' 
+            portRele = '3'
+            ipServer ='192.168.0.121'
         elif lavadora == 'Lavadora 4':
             portRele = '4'
+            ipServer ='192.168.0.121'
         elif lavadora == 'Lavadora 5':
-            portRele = '6'
+            portRele = '5'
+            ipServer ='192.168.0.121'
         elif lavadora == 'Lavadora 6':
+            portRele = '6'
+            ipServer ='192.168.0.121'
+        elif lavadora == 'Lavadora 7':
             portRele = '7'
+            ipServer ='192.168.0.121'
         elif lavadora == 'Lavadora 8':
-            portRele = '8'
+            portRele = '1'
+            ipServer = '192.168.0.122'
         elif lavadora == 'Lavadora 9':
-            portRele = '9'
+            portRele = '2'
+            ipServer = '192.168.0.122'
         elif lavadora == 'Lavadora 10':
-            portRele = '10'
-        
+            portRele = '3'
+            ipServer = '192.168.0.122'
+        elif lavadora == 'Secadora 1':
+            portRele = '1'
+            ipServer = '192.168.0.123'
+        elif lavadora == 'Secadora 2':
+            portRele = '2'
+            ipServer = '192.168.0.123'
+        elif lavadora == 'Secadora 3':
+            portRele = '3'
+            ipServer = '192.168.0.123'
+        elif lavadora == 'Secadora 4':
+            portRele = '4'
+            ipServer = '192.168.0.123'
+        elif lavadora == 'Secadora 5':
+            portRele = '5'
+            ipServer = '192.168.0.123'
+        elif lavadora == 'Secadora 6':
+            portRele = '6'
+            ipServer = '192.168.0.123'
         """Añadir más condiciones para las otras lavadoras si es necesario"""
 
         try:
@@ -529,4 +554,39 @@ def ingresar_saldo_final(request):
         
     return render(request, 'ingresar_saldo_final.html')
 
+
+@login_required
+def abrir_caja(request):
+    if request.method == 'POST':
+        saldo_inicial = request.POST.get('saldo_inicial')
+        if saldo_inicial:
+            # Crear un nuevo turno de caja con el saldo inicial y el vendedor actual (usuario)
+            turno = TurnoCaja.objects.create(
+                vendedor=request.user,
+                saldo_inicial=saldo_inicial,
+                saldo_final=None,  # Se registrará más tarde
+                fecha_apertura=timezone.now()
+            )
+            return JsonResponse({'success': True, 'message': 'Caja abierta con éxito'})
+        else:
+            return JsonResponse({'success': False, 'message': 'El saldo inicial es requerido'})
+
+    return render(request, 'abrir_caja.html')
+
+
+@login_required
+def cerrar_caja(request):
+    if request.method == 'POST':
+        saldo_final = request.POST.get('saldo_final')
+        try:
+            # Obtener el último turno de caja del usuario que aún está abierto (sin saldo final)
+            turno = TurnoCaja.objects.filter(vendedor=request.user, saldo_final__isnull=True).latest('fecha_apertura')
+            turno.saldo_final = saldo_final
+            turno.fecha_cierre = timezone.now()
+            #turno.calcular_ventas()  # Calcular las ventas
+            return JsonResponse({'success': True, 'message': 'Caja cerrada con éxito'})
+        except TurnoCaja.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'No hay un turno de caja abierto'})
+    
+    return render(request, 'cerrar_caja.html')
 

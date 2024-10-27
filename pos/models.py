@@ -64,11 +64,16 @@ class Activacion(models.Model):
         ('Lavadora 4', 'Lavadora 4'),
         ('Lavadora 5', 'Lavadora 5'),
         ('Lavadora 6', 'Lavadora 6'),
+        ('Lavadora 7', 'Lavadora 7'),
         ('Lavadora 8', 'Lavadora 8'),
         ('Lavadora 9', 'Lavadora 9'),
         ('Lavadora 10', 'Lavadora 10'),
         ('Secadora 1', 'Secadora 1'),
         ('Secadora 2', 'Secadora 2'),
+        ('Secadora 3', 'Secadora 3'),
+        ('Secadora 4', 'Secadora 4'),
+        ('Secadora 5', 'Secadora 5'),
+        ('Secadora 6', 'Secadora 6'),
     )
 
     MOTIVO_CHOICES = (
@@ -126,3 +131,21 @@ class PagosEncargos(models.Model):
     encargoCompleto = models.ForeignKey(Encargo, on_delete=models.CASCADE)
     fecha = models.DateField()
     pago = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class TurnoCaja(models.Model):
+    vendedor = models.ForeignKey(User, on_delete=models.CASCADE)
+    saldo_inicial = models.DecimalField(max_digits=10, decimal_places=2)
+    saldo_final = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    fecha_apertura = models.DateTimeField(default=timezone.now)
+    fecha_cierre = models.DateTimeField(null=True, blank=True)
+    ventas = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
+    def calcular_ventas(self):
+        if self.saldo_final is not None:
+            self.ventas = self.saldo_final - self.saldo_inicial
+            self.save()
+
+    def __str__(self):
+        return f'Turno de {self.vendedor.username} - {self.fecha_apertura.strftime("%Y-%m-%d %H:%M:%S")}'
+    
