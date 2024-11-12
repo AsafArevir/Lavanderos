@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="UTF-8">
-    <title>Abrir Caja</title>
+    <title>Cerrar Caja</title>
 
     <!-- Agregar enlaces a Bootstrap y a tu archivo CSS personalizado -->
     <style>
@@ -60,6 +60,9 @@
             if (data.success) {
               alert(data.message);
               // Opcional: Redirigir o cerrar modal después de cerrar caja
+              if (data.redirect_url) {
+                window.location.href = data.redirect_url;  // Redirige a la URL proporcionada
+              }
             } else {
               alert(data.message);
             }

@@ -60,6 +60,10 @@
             if (data.success) {
               alert(data.message);
               // Opcional: Redirigir o cerrar modal después de abrir caja
+              alert(data.message);
+                if (data.redirect_url) {
+                    window.location.href = data.redirect_url;  // Redirige a la URL proporcionada
+                }
             } else {
               alert(data.message);
             }

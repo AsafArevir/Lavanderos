@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% comment %} <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -84,5 +84,75 @@
             </div>
         </div>
     </div>
+</body>
+</html> {% endcomment %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corte de Caja</title>
+    {% comment %} <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> {% endcomment %}
+    <style>
+        /* Estilos personalizados */
+    </style>
+</head>
+
+<body>
+
+    {% include 'layouts/navbar.html' %}
+
+    <div class="container mt-5">
+        <h2 class="mb-4">Corte de Caja - {{ fecha_actual }}</h2>
+
+        <!-- Selector de fecha -->
+        <form method="get" action="{% url 'corte_caja' %}">
+            <label for="fecha">Seleccionar Fecha:</label>
+            <input type="date" id="fecha" name="fecha" value="{{ fecha_actual }}" required>
+            <button type="submit" class="btn btn-primary">Ver Cortes</button>
+        </form>
+
+        <hr>
+
+        <!-- Información de los turnos de caja -->
+        {% comment %} {% for turno in turnos_caja %}
+            <div class="turno mb-4">
+                <h4>Turno de {{ turno.vendedor.username }}</h4>
+                <p><span class="font-weight-bold">Hora de Apertura:</span> {{ turno.fecha_apertura|date:"H:i" }}</p>
+                <p><span class="font-weight-bold">Hora de Cierre:</span> {{ turno.fecha_cierre|date:"H:i" }}</p>
+                <p><span class="font-weight-bold">Saldo Inicial:</span> ${{ turno.saldo_inicial }}</p>
+                <p><span class="font-weight-bold">Saldo Final:</span> {% if turno.saldo_final %}${{ turno.saldo_final }}{% else %}Aún no reportado{% endif %}</p>
+                <hr>
+            </div>
+        {% empty %}
+            <p>No hay cortes de caja para la fecha seleccionada.</p>
+        {% endfor %} {% endcomment %}
+
+        {% for turno in detalles_turnos %}
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Turno de {{ turno.vendedor }} - {{ turno.fecha_apertura|date:"H:i" }} a {{ turno.fecha_cierre|date:"H:i" }}</h4>
+                    <p>Saldo Inicial: ${{ turno.saldo_inicial }}</p>
+                    <p>Ventas: ${{ turno.ventas }}</p>
+                    <p>Encargos: ${{ turno.encargos }}</p>
+                    <p>Saldo Final: ${{ turno.saldo_final }}</p>
+                </div>
+            </div>
+            <hr>
+        {% endfor %}
+
+        <!-- Totales de día -->
+        <div>
+            <h3>Resumen del Día</h3>
+            <p><span class="font-weight-bold">Total Ventas:</span> ${{ total_ventas }}</p>
+            <p><span class="font-weight-bold">Total Encargos Entregados:</span> ${{ total_encargos }}</p>
+            <p><span class="font-weight-bold">Saldo Inicial Total:</span> ${{ saldo_inicial_total }}</p>
+            <p><span class="font-weight-bold">Saldo Final Total:</span> ${{ saldo_final_total }}</p>
+        </div>
+    </div>
+
 </body>
 </html>

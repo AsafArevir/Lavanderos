@@ -16,7 +16,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.http import JsonResponse
-from django.utils import timezone
+from django.db.models import Sum
+from datetime import datetime
+from django.utils.timezone import make_aware
 
 # Vista de la muestra la pagina de inicio 
 @login_required
@@ -491,50 +493,131 @@ def eliminar_precio(request, precio_id):
         return JsonResponse({'error': 'Se esperaba una solicitud DELETE'}, status=400)
     
 
+# @superusuario_required
+# def corte_caja(request):    
+#     # Obtener la fecha actual
+#     fecha_actual = timezone.now()
+    
+#     # Obtener la fecha del día anterior
+#     fecha_anterior = fecha_actual - timezone.timedelta(days=1)
+
+
+#     saldo_inicial = 0
+#     saldo_inicial_query = TurnoCaja.objects.filter(fecha_cierre=fecha_actual)
+#     if saldo_inicial_query.exists():
+#         saldo_inicial = saldo_inicial_query.first().saldo_inicial
+#         print(saldo_inicial)
+
+#     # Filtrar los registros de ControlPagoEncargos para la fecha de encargo
+#     pagos_recibidos = ControlPagoEncargos.objects.filter(fecha_encargo=fecha_actual).aggregate(total=Sum('pago_recibido'))['total'] or 0
+    
+#     # Filtrar los registros de ControlPagoEncargos para la fecha de entregado
+#     adeudos = ControlPagoEncargos.objects.filter(fecha_entregado=fecha_actual).aggregate(total=Sum('adeudo'))['total'] or 0
+    
+#     total_encargos = pagos_recibidos + adeudos
+    
+#     # Filtrar los registros de Ventas para la fecha de venta
+#     ventas_totales = Ventas.objects.filter(fecha_venta=fecha_actual).aggregate(total=Sum('importe_total'))['total'] or 0
+    
+#     # Calcular el saldo final total
+#     saldo_final_total = pagos_recibidos + adeudos + ventas_totales + saldo_inicial
+    
+#     saldo_final_reportado_obj = SaldoFinalDiario.objects.filter(fecha=fecha_actual).first()
+#     saldo_final_reportado = saldo_final_reportado_obj.saldo_final if saldo_final_reportado_obj else None
+#     usuario_saldo_final = saldo_final_reportado_obj.usuario if saldo_final_reportado_obj else None
+        
+        
+#     context = {
+#         'fecha_actual': fecha_actual,
+#         'total_ventas': ventas_totales,
+#         'total_encargos': total_encargos,
+#         'saldo_inicial': saldo_inicial,
+#         'saldo_final': saldo_final_total,
+#         'saldo_final_reportado': saldo_final_reportado,
+#         'usuario_saldo_final': usuario_saldo_final,
+#     }
+
+#     # Renderizar la plantilla con los datos del corte de caja
+#     return render(request, 'corte_caja.html', context)
+
 @superusuario_required
-def corte_caja(request):    
-    # Obtener la fecha actual
-    fecha_actual = timezone.now().date()
-    
-    # Obtener la fecha del día anterior
-    fecha_anterior = fecha_actual - timezone.timedelta(days=1)
+def corte_caja(request):
+    # Obtener la fecha seleccionada o usar la fecha actual
+    fecha_seleccionada = request.GET.get('fecha') 
+    if fecha_seleccionada:
+        # Convertir fecha seleccionada a aware datetime
+        fecha_seleccionada = make_aware(datetime.strptime(fecha_seleccionada, '%Y-%m-%d'))
+    else:
+        fecha_seleccionada = timezone.now().date()
 
-    # Obtener el saldo inicial del día anterior, si existe
-    saldo_inicial = 0
-    saldo_inicial_query = SaldoFinalDiario.objects.filter(fecha=fecha_anterior)
-    if saldo_inicial_query.exists():
-        saldo_inicial = saldo_inicial_query.first().saldo_final
+    # Filtrar turnos de caja con la fecha aware
+    # turnos_caja = [turno for turno in TurnoCaja.objects.all() if turno.fecha_apertura.date() == fecha_seleccionada]
+    turnos_caja = TurnoCaja.objects.filter(
+        fecha_apertura__date=fecha_seleccionada,
+        estado="cerrada"
+    ).order_by("fecha_apertura")
 
-    # Filtrar los registros de ControlPagoEncargos para la fecha de encargo
-    pagos_recibidos = ControlPagoEncargos.objects.filter(fecha_encargo=fecha_actual).aggregate(total=Sum('pago_recibido'))['total'] or 0
-    
-    # Filtrar los registros de ControlPagoEncargos para la fecha de entregado
-    adeudos = ControlPagoEncargos.objects.filter(fecha_entregado=fecha_actual).aggregate(total=Sum('adeudo'))['total'] or 0
-    
-    total_encargos = pagos_recibidos + adeudos
-    
-    # Filtrar los registros de Ventas para la fecha de venta
-    ventas_totales = Ventas.objects.filter(fecha_venta=fecha_actual).aggregate(total=Sum('importe_total'))['total'] or 0
-    
-    # Calcular el saldo final total
-    saldo_final_total = pagos_recibidos + adeudos + ventas_totales + saldo_inicial
-    
-    saldo_final_reportado_obj = SaldoFinalDiario.objects.filter(fecha=fecha_actual).first()
-    saldo_final_reportado = saldo_final_reportado_obj.saldo_final if saldo_final_reportado_obj else None
-    usuario_saldo_final = saldo_final_reportado_obj.usuario if saldo_final_reportado_obj else None
+    detalles_turnos = []
+    # Variables para acumular totales
+    ventas_totales = 0
+    encargos_totales = 0
+
+    for turno in turnos_caja:
+        # Obtener ventas y encargos dentro del rango de apertura y cierre del turno
+        ventas_turno = Ventas.objects.filter(
+            fecha_venta__range=[turno.fecha_apertura, turno.fecha_cierre]
+        ).aggregate(total=Sum('importe_total'))['total'] or 0
         
-        
+        pagos_recibidos_turno = ControlPagoEncargos.objects.filter(
+            fecha_encargo__range=[turno.fecha_apertura, turno.fecha_cierre]
+        ).aggregate(total=Sum('pago_recibido'))['total'] or 0
+
+        adeudos_turno = ControlPagoEncargos.objects.filter(
+            fecha_entregado__range=[turno.fecha_apertura, turno.fecha_cierre]
+        ).aggregate(total=Sum('adeudo'))['total'] or 0
+
+        total_encargos = pagos_recibidos_turno + adeudos_turno
+        saldo_final = turno.saldo_inicial + ventas_turno + total_encargos
+
+        # Agregar los datos del turno al contexto
+        detalles_turnos.append({
+            'vendedor': turno.vendedor,
+            'fecha_apertura': turno.fecha_apertura,
+            'fecha_cierre': turno.fecha_cierre,
+            'saldo_inicial': turno.saldo_inicial,
+            'ventas': ventas_turno,
+            'encargos': total_encargos,
+            'saldo_final': saldo_final,
+        })
+
+        ventas_totales += ventas_turno
+        encargos_totales += total_encargos
+
+    # Calcular totales
+    saldo_inicial_total = sum(turno.saldo_inicial for turno in turnos_caja)
+    saldo_final_total = sum(turno.saldo_final or 0 for turno in turnos_caja)
+
+    # ventas_totales = Ventas.objects.filter(
+    #     fecha_venta__date=fecha_seleccionada
+    # ).aggregate(total=Sum('importe_total'))['total'] or 0
+    
+    # total_encargos = (
+    #     ControlPagoEncargos.objects.filter(fecha_encargo__date=fecha_seleccionada).aggregate(total=Sum('pago_recibido'))['total'] or 0
+    #     + ControlPagoEncargos.objects.filter(fecha_entregado__date=fecha_seleccionada).aggregate(total=Sum('adeudo'))['total'] or 0
+    # )
+
+
+    # Contexto para enviar a la plantilla
     context = {
-        'fecha_actual': fecha_actual,
+        'fecha_actual': fecha_seleccionada,
+        'turnos_caja': turnos_caja,
         'total_ventas': ventas_totales,
         'total_encargos': total_encargos,
-        'saldo_inicial': saldo_inicial,
-        'saldo_final': saldo_final_total,
-        'saldo_final_reportado': saldo_final_reportado,
-        'usuario_saldo_final': usuario_saldo_final,
+        'detalles_turnos': detalles_turnos,
+        'saldo_inicial_total': saldo_inicial_total,
+        'saldo_final_total': saldo_final_total,
     }
-
-    # Renderizar la plantilla con los datos del corte de caja
+    
     return render(request, 'corte_caja.html', context)
 
 
@@ -557,17 +640,22 @@ def ingresar_saldo_final(request):
 
 @login_required
 def abrir_caja(request):
+    caja_abierta = TurnoCaja.objects.filter(vendedor=request.user, estado="abierta").exists()
+
+    if caja_abierta:
+        return redirect('home')
+
     if request.method == 'POST':
         saldo_inicial = request.POST.get('saldo_inicial')
         if saldo_inicial:
-            # Crear un nuevo turno de caja con el saldo inicial y el vendedor actual (usuario)
-            turno = TurnoCaja.objects.create(
+            TurnoCaja.objects.create(
                 vendedor=request.user,
                 saldo_inicial=saldo_inicial,
-                saldo_final=None,  # Se registrará más tarde
+                estado="abierta",
                 fecha_apertura=timezone.now()
             )
-            return JsonResponse({'success': True, 'message': 'Caja abierta con éxito'})
+            return JsonResponse({'success': True, 'message': 'Caja abierta con éxito', 'redirect_url': '/home'})
+
         else:
             return JsonResponse({'success': False, 'message': 'El saldo inicial es requerido'})
 
@@ -580,13 +668,19 @@ def cerrar_caja(request):
         saldo_final = request.POST.get('saldo_final')
         try:
             # Obtener el último turno de caja del usuario que aún está abierto (sin saldo final)
-            turno = TurnoCaja.objects.filter(vendedor=request.user, saldo_final__isnull=True).latest('fecha_apertura')
+            turno = TurnoCaja.objects.filter(vendedor=request.user, estado="abierta").first()
             turno.saldo_final = saldo_final
             turno.fecha_cierre = timezone.now()
-            #turno.calcular_ventas()  # Calcular las ventas
-            return JsonResponse({'success': True, 'message': 'Caja cerrada con éxito'})
+            turno.estado = "cerrada"
+            turno.save()  # Calcular las ventas
+
+            # logout(request)
+            return JsonResponse({'success': True, 'message': 'Caja cerrada con éxito', 'redirect_url': '/logout'})
+
         except TurnoCaja.DoesNotExist:
             return JsonResponse({'success': False, 'message': 'No hay un turno de caja abierto'})
     
     return render(request, 'cerrar_caja.html')
+
+
 

@@ -42,8 +42,8 @@ class Encargo(models.Model):
     )
 
     Folio = models.CharField(max_length=30) 
-    fecha_encargo = models.DateField(auto_now_add=True,editable=False)
-    fecha_entrega = models.DateField()
+    fecha_encargo = models.DateTimeField(auto_now_add=True,editable=False)
+    fecha_entrega = models.DateTimeField()
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, default=1)
     estado = models.CharField(max_length=20, choices=ESTADOS_CHOICES, default='ENCARGO')
     costo = models.DecimalField(max_digits=10, decimal_places=2)
@@ -95,7 +95,7 @@ class Ventas(models.Model):
     cliente = models.CharField(max_length=100)
     productos = models.CharField(max_length=1000)
     importe_total = models.DecimalField(max_digits=10, decimal_places=2)
-    fecha_venta = models.DateField()
+    fecha_venta = models.DateTimeField()
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
 
     METODO_PAGO_CHOICES = (
@@ -109,16 +109,16 @@ class Ventas(models.Model):
 # Tabla control del pago encargo    
 class ControlPagoEncargos(models.Model):
     encargo = models.ForeignKey(Encargo, on_delete=models.CASCADE)
-    fecha_encargo = models.DateField()
+    fecha_encargo = models.DateTimeField()
     pago_recibido = models.DecimalField(max_digits=10, decimal_places=2)
     adeudo = models.DecimalField(max_digits=10, decimal_places=2)
-    fecha_entregado = models.DateField(null=True, blank=True)
+    fecha_entregado = models.DateTimeField(null=True, blank=True)
     
 # Tabla para el control del sueldo final diario
 class SaldoFinalDiario(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     saldo_final = models.DecimalField(max_digits=10, decimal_places=2)
-    fecha = models.DateField()
+    fecha = models.DateTimeField()
 
 # Tabla para el control de la lista de precios de encargos
 class lista_precios(models.Model):
@@ -129,7 +129,7 @@ class lista_precios(models.Model):
 # Tabla para el control del pagado de encargos
 class PagosEncargos(models.Model):
     encargoCompleto = models.ForeignKey(Encargo, on_delete=models.CASCADE)
-    fecha = models.DateField()
+    fecha = models.DateTimeField()
     pago = models.DecimalField(max_digits=10, decimal_places=2)
 
 
@@ -139,13 +139,5 @@ class TurnoCaja(models.Model):
     saldo_final = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     fecha_apertura = models.DateTimeField(default=timezone.now)
     fecha_cierre = models.DateTimeField(null=True, blank=True)
-    ventas = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-
-    def calcular_ventas(self):
-        if self.saldo_final is not None:
-            self.ventas = self.saldo_final - self.saldo_inicial
-            self.save()
-
-    def __str__(self):
-        return f'Turno de {self.vendedor.username} - {self.fecha_apertura.strftime("%Y-%m-%d %H:%M:%S")}'
+    estado = models.CharField(max_length=10, default="abierta")
     
