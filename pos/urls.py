@@ -28,4 +28,6 @@ urlpatterns = [
     #path('cambiar-estado-entregado/<int:encargo_id>/', views.cambiar_estado_entregado, name='cambiar_estado_entregado'),
     #path('cambiar-estado-incidente/<int:encargo_id>/', views.cambiar_estado_incidende, name='cambiar_estado_incidente'),
     path('modificar_producto/<int:producto_id>/', views.modificar_producto, name='modificar_producto'),
+    path('abrir-caja/', views.abrir_caja, name='abrir_caja'),
+    path('cerrar-caja/', views.cerrar_caja, name='cerrar_caja'),
 ]
