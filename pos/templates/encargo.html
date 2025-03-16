@@ -4,156 +4,104 @@
 <head>
     <meta charset="UTF-8">
     <title>Lista de Precios</title>
-    <!-- Agregar enlaces a Bootstrap y a tu archivo CSS personalizado -->
     <style>
-        .mt-7, .my-7 {
-            margin-top: 3.8rem !important;
+        /* Estilo para el contenedor */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
         }
-        .table th, .table td {
-            vertical-align: middle;
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 10px;
         }
-        .color-blue {
-            color: #0c4de6;
-            font-weight: bold;
-            font-size: 1.2rem;
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
         }
-        .blue {
-            color: #181864;
+
+        /* Estilo del campo de búsqueda */
+        #searchInput {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
-        .color-green {
-            color: #008000;
+
+        /* Estilo de la lista */
+        .product-listul {
+            list-style-type: none;
+            padding: 0;
         }
-        .color-price {
-            color: rgb(0, 110, 255);
+
+        .product-list li {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: block; /* Por defecto, los elementos están visibles */
         }
-        .color-grey {
-            color: gray;
+
+        h5 {
+            margin: 0 0 5px 0;
+            font-size: 18px;
+        }
+
+        p {
+            margin: 0;
+            font-size: 14px;
         }
     </style>
 </head>
 
 <body>
-
     {% include 'layouts/navbar.html' %}
+    
+    <div class="container" style="margin-top: 90px !important">
+        <h1>Lista de Precios</h1>
 
-    <div class="container mt-7">
-        <h1 class="mt-5 mb-4">Lista de Precios</h1>
+        <!-- Buscador -->
+        <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="Buscar productos o servicios por nombre..."
+        >
 
-        <!-- Formulario para crear un nuevo producto -->
-        <div class="card mb-4">
-            <div class="card-header color-blue">Crear Precio</div>
-            <div class="card-body">
-                <form action="{% url 'nuevo_precio' %}" method="post">
-                    {% csrf_token %}
-                    <div class="form-group blue">
-                        <label for="nombre">Nombre:</label>
-                        <input type="text" class="form-control" id="nombre" name="nombre" required>
-                    </div>
-                    <div class="form-group mb-3 blue">
-                        <label for="descripcion">Descripcion:</label>
-                        <input type="text" class="form-control" id="descripcion" name="descripcion">
-                    </div>
-                    <div class="form-group blue">
-                        <label for="precio">Precio:</label>
-                        <input type="number" class="form-control" id="precio" name="precio" step="0.01" required>
-                    </div>
-                    <div class="text-end">
-                        <button type="submit" class="btn btn-primary">Crear</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Tarjetas para mostrar los precios -->
-        <h2 class="mb-4">Lista de Precios</h2>
-
-        <div class="row">
+        <!-- Lista de productos -->
+        <div class="product-list"> 
+        <ul id="productList">
             {% for lista_precios in precios %}
-            <div class="col-md-4 mb-3">
-                <div class="card">
-                    <div class="card-body text-center mb-4 ">
-                        <h5 class="card-title">{{ lista_precios.Nombre }}</h5>
-                        <p class="card-text">
-                            <span class="color-price">Descripcion: </span>
-                            <span class="color-green">{{ lista_precios.Descripcion }}</span>
-                        </p>
-                        <p class="card-text">
-                            <span class="color-price">Precio: </span>
-                            <span class="color-grey">${{ lista_precios.Precio }}</span>
-                        </p>
-                        <div class="text-center">
-                            <button class="btn btn-danger" onclick="eliminar({{ lista_precios.id }})">Eliminar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <li>
+                <h5>{{ lista_precios.nombre }}</h5>
+                <p><strong>Precio:</strong> ${{ lista_precios.precio }}</p>
+            </li>
             {% endfor %}
+        </ul>
         </div>
     </div>
 
-
     <script>
-        // Script para eliminar un producto
-        function eliminar(precioId) {
-            if (confirm("¿Estás seguro de que deseas eliminar este precio?")) {
-                fetch(`/eliminar_precio/${precioId}/`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        location.reload(); // Recargar la página para actualizar la lista de productos
-                    } else {
-                        console.error('Error al eliminar el precio');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error al eliminar el precio:', error);
-                });
-            }
-        }
+        // Filtro de búsqueda
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const filter = this.value.toLowerCase(); // Texto ingresado
+            const items = document.querySelectorAll('#productList li'); // Elementos de la lista
 
-        // Script para controlar las operaciones del modal
-        document.addEventListener('DOMContentLoaded', function() {
-
-            // Manejar el envío del formulario del modal
-            document.getElementById('formModificarProducto').addEventListener('submit', function(event) {
-                event.preventDefault();
-
-                const precioId = document.getElementById('precioId').value;
-                const nombre = document.getElementById('nombreModificar').value;
-                const descripcion = document.getElementById('descripcionModificar').value;
-                const precio = document.getElementById('precioModificar').value;
-
-                fetch(`/modificar_producto/${precioId}/`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: JSON.stringify({
-                        nombre: nombre,
-                        descripcion: descripcion,
-                        precio: precio
-                    })
-                })
-                .then(response => {
-                    if (response.ok) {
-                        $('#modalModificarProducto').modal('hide');
-                        location.reload(); // Recargar la página para actualizar la lista de productos
-                    } else {
-                        console.error('Error al modificar el precio');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error al modificar el precio:', error);
-                });
+            // Recorrer cada elemento y filtrar
+            items.forEach(item => {
+                const name = item.querySelector('h5').textContent.toLowerCase(); // Texto del nombre
+                if (name.includes(filter)) {
+                    item.style.display = ''; // Mostrar si coincide
+                } else {
+                    item.style.display = 'none'; // Ocultar si no coincide
+                }
             });
         });
     </script>
-
 </body>
+
 </html>

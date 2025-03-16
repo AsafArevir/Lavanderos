@@ -263,6 +263,7 @@
                 <th>Fecha de Entrega</th>
                 <th>Costo</th>
                 <th>Estado de Pago</th>
+                <th>Entregado por</th>
                 {% comment %}
                 <th></th>
                 {% endcomment %}
@@ -272,9 +273,9 @@
             <tbody>
               {% for encargo in encargos_entregados %}
               <tr>
-                <td class="color-grey">{{ encargo.Folio }}</td>
+                <td class="color-grey">{{ encargo.folio }}</td>
                 <td>{{ encargo.cliente }}</td>
-                <td>{{ encargo.fecha_entrega }}</td>
+                <td>{{ encargo.fecha_entrega_real|default:"No registrada" }}</td>
                 <td>{{ encargo.costo }}</td>
                 <td>
                   {% if encargo.adeudo == 0 %}
@@ -286,6 +287,7 @@
                   <img src="{% static 'img/icons8-no-30.png' %}" alt="no" />
                   {% endif %}
                 </td>
+                <td>{{ encargo.usuario_entrega|default:"No registrado" }}</td>
                 {% comment %}
                 <td>
                   {% if encargo.adeudo != 0 %}

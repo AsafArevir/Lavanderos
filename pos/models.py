@@ -9,10 +9,20 @@ from django.db.models import F
 
 # Tabla productos
 class Producto(models.Model):
-    nombre = models.CharField(max_length=100)
+    nombre = models.CharField(max_length=120)
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     codigo_barras = models.CharField(max_length=100)
     tipo = models.CharField(max_length=100)
+
+
+# Tabla de Inventario
+class Inventario(models.Model):
+    producto = models.OneToOneField(Producto, on_delete=models.CASCADE, related_name='inventario')
+    cantidad = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.producto.nombre} - {self.cantidad} en stock"
+
 
 # Tabla cliente
 class Cliente(models.Model):
@@ -53,6 +63,7 @@ class Encargo(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     #entregado = models.BooleanField(default=False)
     observaciones = models.TextField(blank=True, null=True)
+    productos = models.CharField(max_length=1000000, blank=False, null=True, default='Efectivo')
 
 # Tabla activacion
 class Activacion(models.Model):
@@ -93,7 +104,7 @@ class Activacion(models.Model):
 # Tabla ventas
 class Ventas(models.Model):
     cliente = models.CharField(max_length=100)
-    productos = models.CharField(max_length=1000)
+    productos = models.CharField(max_length=10000)
     importe_total = models.DecimalField(max_digits=10, decimal_places=2)
     fecha_venta = models.DateTimeField()
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
@@ -113,6 +124,9 @@ class ControlPagoEncargos(models.Model):
     pago_recibido = models.DecimalField(max_digits=10, decimal_places=2)
     adeudo = models.DecimalField(max_digits=10, decimal_places=2)
     fecha_entregado = models.DateTimeField(null=True, blank=True)
+    forma_pago = models.CharField(max_length=30)
+    productos = models.CharField(max_length=1000000, default='Efectivo')
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     
 # Tabla para el control del sueldo final diario
 class SaldoFinalDiario(models.Model):

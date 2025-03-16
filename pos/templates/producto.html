@@ -6,10 +6,6 @@
 
     <!-- Agregar enlaces a Bootstrap y a tu archivo CSS personalizado -->
     <style>
-      .mt-7,
-      .my-7 {
-        margin-top: 3.8rem !important;
-      }
       .table th,
       .table td {
         vertical-align: middle;
@@ -37,7 +33,7 @@
     {% include 'layouts/navbar.html' %}
 
     <!-- Contenido de la página -->
-    <div class="container mt-7">
+    <div class="container" style="margin-top: 90px !important">
       <h1 class="mt-5 mb-4">Gestión de Productos</h1>
 
       <!-- Formulario para crear un nuevo producto -->
@@ -134,37 +130,38 @@
           aria-labelledby="productos-tab"
         >
           <!-- Tarjetas para mostrar los productos -->
-          <h2 class="mb-4">Productos</h2>
-
-          <div class="row">
+          <h2 class="mb-2">Productos</h2>
             <!-- Aquí se iterarán los productos y se mostrarán en tarjetas -->
             {% for producto in productos %}
             {% if producto.tipo == 'producto' %}
-            <div class="col-md-4 mb-3">
+            <div class="col-12 mb-1">
               <div class="card">
-                <div class="card-body text-center mb-4">
-                  <h5 class="card-title">{{ producto.nombre }}</h5>
-                  <p class="card-text">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                  <h5 class="card-title mb-1", style="width: 350px; text-align: center;">{{ producto.nombre }}</h5>
+                  <p class="mb-0 me-3" tyle="width: 150px; text-align: center;">
                     <span class="color-price">Precio: </span>
-                    <span class="color-green">${{ producto.precio }}</span>
+                    <span class="color-green" id="precio">${{ producto.precio }}</span>
                   </p>
-                  <p class="card-text">
+                  <div class="mb-0 text-center" style="width: 200px; margin-right: 10px;">
                     <span class="color-price">Código de Barras: </span>
-                    <span class="color-grey">{{ producto.codigo_barras }}</span>
-                  </p>
+                    <span class="color-grey" id="codigo_barrass">{{ producto.codigo_barras }}</span>
+                  </div>
+                  {% comment %} <p class="mb-0 me-3" tyle="width: 150px; text-align: center;">
+                    <span class="color-price">Código de Barras: </span>
+                    <span class="color-grey" id="codigo_barrass">{{ producto.codigo_barras }}</span>
+                  </p> {% endcomment %}
                   <div class="text-center">
                     <!-- Botones para actualizar y eliminar producto -->
                     <button
-                      class="btn btn-danger"
+                      class="btn btn-danger ms-3"
                       onclick="eliminarProducto({{ producto.id }})"
                     >
                       Eliminar
                     </button>
-                    <button class="btn btn-primary modificar-producto">
+                    <button class="btn btn-primary modificar-producto ms-3">
                       Modificar
                     </button>
                   </div>
-                  <div class="text-center"></div>
                 </div>
               </div>
             </div>
@@ -172,7 +169,6 @@
             {% endif %}
 
             {% endfor %}
-          </div>
         </div>
 
       <!-- Servicios -->
@@ -183,37 +179,36 @@
         aria-labelledby="servicios-tab"
       >
         <!-- Tarjetas para mostrar los productos -->
-        <h2 class="mb-4">Productos</h2>
+        <h2 class="mb-2">Servicios</h2>
 
         <div class="row">
           <!-- Aquí se iterarán los productos y se mostrarán en tarjetas -->
           {% for producto in productos %}
           {% if producto.tipo == 'servicio' %}
-          <div class="col-md-4 mb-3">
+          <div class="col-12 mb-1">
             <div class="card">
-              <div class="card-body text-center mb-4">
-                <h5 class="card-title">{{ producto.nombre }}</h5>
-                <p class="card-text">
+              <div class="card-body d-flex align-items-center justify-content-between">
+                <h5 class="card-title mb-1", style="width: 350px; text-align: center;">{{ producto.nombre }}</h5>
+                <p class="mb-0 me-3" tyle="width: 150px; text-align: center;">
                   <span class="color-price">Precio: </span>
-                  <span class="color-green">${{ producto.precio }}</span>
+                  <span class="color-green" id="precio">${{ producto.precio }}</span>
                 </p>
-                <p class="card-text">
+                <p class="mb-0 text-center" style="width: 200px; margin-right: 10px;">
                   <span class="color-price">Código de Barras: </span>
-                  <span class="color-grey">{{ producto.codigo_barras }}</span>
+                  <span class="color-grey" id="codigo_barrass">{{ producto.codigo_barras }}</span>
                 </p>
                 <div class="text-center">
                   <!-- Botones para actualizar y eliminar producto -->
                   <button
-                    class="btn btn-danger"
+                    class="btn btn-danger ms-3"
                     onclick="eliminarProducto({{ producto.id }})"
                   >
                     Eliminar
                   </button>
-                  <button class="btn btn-primary modificar-producto">
+                  <button class="btn btn-primary modificar-producto ms-3">
                     Modificar
                   </button>
                 </div>
-                <div class="text-center"></div>
               </div>
             </div>
           </div>
@@ -298,154 +293,29 @@
         </div>
       </div>
     </div>
-
-    <!-- Modal para actualizar producto o servicio -->
-    <div
-      class="modal fade"
-      id="modalModificarProducto"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="modalModificarProductoLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="modalModificarProductoLabel">
-              Modificar Producto o Servicio
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <ul class="nav nav-tabs" id="modalTabs" role="tablist">
-              <li class="nav-item">
-                <a
-                  class="nav-link active"
-                  id="modal-productos-tab"
-                  data-bs-toggle="tab"
-                  href="#modal-productos"
-                  role="tab"
-                  aria-controls="modal-productos"
-                  aria-selected="true"
-                  >Productos</a
-                >
-              </li>
-              <li class="nav-item">
-                <a
-                  class="nav-link"
-                  id="modal-servicios-tab"
-                  data-bs-toggle="tab"
-                  href="#modal-servicios"
-                  role="tab"
-                  aria-controls="modal-servicios"
-                  aria-selected="false"
-                  >Servicios</a
-                >
-              </li>
-            </ul>
-            <div class="tab-content">
-              <!-- Productos -->
-              <div
-                class="tab-pane fade show active"
-                id="modal-productos"
-                role="tabpanel"
-                aria-labelledby="modal-productos-tab"
-              >
-                <form id="formModificarProducto">
-                  {% csrf_token %}
-                  <input type="hidden" id="productoId" name="producto_id" />
-                  <div class="form-group">
-                    <label for="nombreModificar">Nombre:</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="nombreModificar"
-                      name="nombre"
-                      required
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="precioModificar">Precio:</label>
-                    <input
-                      type="number"
-                      class="form-control"
-                      id="precioModificar"
-                      name="precio"
-                      step="0.01"
-                      required
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="codigoBarrasModificar">Código de Barras:</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="codigoBarrasModificar"
-                      name="codigo_barras"
-                    />
-                  </div>
-                  <button type="submit" class="btn btn-primary">
-                    Guardar Cambios
-                  </button>
-                </form>
-              </div>
-              <!-- Servicios -->
-              <div
-                class="tab-pane fade"
-                id="modal-servicios"
-                role="tabpanel"
-                aria-labelledby="modal-servicios-tab"
-              >
-                <form id="formModificarServicio">
-                  {% csrf_token %}
-                  <input type="hidden" id="servicioId" name="servicio_id" />
-                  <div class="form-group">
-                    <label for="nombreModificarServicio">Nombre:</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="nombreModificarServicio"
-                      name="nombre"
-                      required
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="precioModificarServicio">Precio:</label>
-                    <input
-                      type="number"
-                      class="form-control"
-                      id="precioModificarServicio"
-                      name="precio"
-                      step="0.01"
-                      required
-                    />
-                  </div>
-                  <div class="form-group">
-                    <label for="codigoBarrasModificarServicio"
-                      >Código de Barras:</label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="codigoBarrasModificarServicio"
-                      name="codigo_barras"
-                    />
-                  </div>
-                  <button type="submit" class="btn btn-primary">
-                    Guardar Cambios
-                  </button>
-                </form>
-              </div>
-            </div>
-          </div>
+    {% if messages %}
+        <div id="message-container" style="position: relative; display: inline-block;">
+            <span id="message-icon" 
+                  data-bs-toggle="tooltip" 
+                  data-bs-placement="top" 
+                  title="{% for message in messages %}{{ message|escapejs }}{% if not forloop.last %}<br>{% endif %}{% endfor %}" 
+                  style="cursor: pointer; color: #007bff;">
+                ℹ️
+            </span>
         </div>
-      </div>
-    </div>
+    {% endif %}
+
+  <script>
+      // Inicializar los tooltips de Bootstrap
+      document.addEventListener('DOMContentLoaded', function () {
+          const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+          tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+              new bootstrap.Tooltip(tooltipTriggerEl, {
+                  html: true // Permitir HTML dentro del tooltip
+              });
+          });
+      });
+  </script>
 
     <script>
       //Script para eliminar un producto
@@ -478,17 +348,24 @@
         document.querySelectorAll(".modificar-producto").forEach((button) => {
           button.addEventListener("click", function () {
             const card = this.closest(".card");
+            /*const productoId = card
+              .querySelector(".btn-danger")
+              .getAttribute("onclick")
+              .match(/\d+/)[0];*/
             const productoId = card
               .querySelector(".btn-danger")
               .getAttribute("onclick")
               .match(/\d+/)[0];
+            //const nombre = card.querySelector(".card-title").innerText;
             const nombre = card.querySelector(".card-title").innerText;
-            const precio = card
+            /*const precio = card
               .querySelector(".card-text")
-              .innerText.match(/\d+(\.\d+)?/)[0];
-            const codigoBarras = card
+              .innerText.match(/\d+(\.\d+)?/)[0];*/
+            const precio = card.querySelector(".color-green").innerText.replace('$', '');
+            /*const codigoBarras = card
               .querySelectorAll(".card-text")[1]
-              .innerText.replace("Código de Barras: ", "");
+              .innerText.replace("Código de Barras: ", "");*/
+            const codigoBarras = card.querySelector(".color-grey").innerText;
 
             // Rellenar el modal con los datos del producto
             document.getElementById("productoId").value = productoId;
@@ -496,6 +373,8 @@
             document.getElementById("precioModificar").value = precio;
             document.getElementById("codigoBarrasModificar").value =
               codigoBarras;
+
+            console.log(productoId, nombre, precio, codigoBarras);
 
             // Mostrar el modal
             $("#modalModificarProducto").modal("show");
@@ -542,34 +421,6 @@
       });
     </script>
 
-    <!-- Script para manejar la modificación de productos o servicios -->
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const modalModificarProducto = new bootstrap.Modal(
-          document.getElementById("modalModificarProducto")
-        );
-
-        document.querySelectorAll(".modificar-producto").forEach((button) => {
-          button.addEventListener("click", function () {
-            const productoCard = this.closest(".card");
-            const nombre = productoCard.querySelector(".card-title").innerText;
-            const precio = productoCard
-              .querySelector(".card-text span")
-              .innerText.replace("$", "");
-            const codigoBarras = productoCard.querySelector(
-              ".card-text span:nth-child(2)"
-            ).innerText;
-
-            // Asignar valores al modal
-            document.getElementById("nombreModificar").value = nombre;
-            document.getElementById("precioModificar").value = precio;
-            document.getElementById("codigoBarrasModificar").value =
-              codigoBarras;
-
-            modalModificarProducto.show();
-          });
-        });
-      });
-    </script>
+    
   </body>
 </html>

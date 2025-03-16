@@ -34,20 +34,14 @@
                     <a class="nav-link" href="{% url 'clientes' %}">Clientes</a>
                 </li>
 
-                <li class="nav-item">
+                {% comment %} <li class="nav-item">
                     <a class="nav-link" href="{% url 'ingresar_saldo_final' %}">Caja</a>
-                </li>
+                </li> {% endcomment %}
 
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'cerrar_caja' %}">Cerrar caja</a>
-                </li>
+                
 
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'corte_caja' %}">Caja-Admin</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Consultas</a>
                 </li>
 
                 <li class="nav-item">
@@ -56,6 +50,14 @@
 
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'nuevo_precio' %}">Lista de Precios</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'inventario' %}">Inventario</a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'cerrar_caja' %}">Cerrar caja</a>
                 </li>
 
             </ul>
@@ -92,8 +94,10 @@
 <script src="{% static 'js/bootstrapmin452.js' %}"></script>
 <script src="{% static 'js/popper.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
+{% comment %} <script src="{% static 'js/select2.min.js' %}"></script> {% endcomment %}
 
 <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+{% comment %} <link rel="stylesheet" href="{% static 'css/select2.min.css' %}"> {% endcomment %}
 
 <!-- Seccion de estilos para el navbar -->
 <style>

@@ -59,6 +59,13 @@
           .then(data => {
             if (data.success) {
               alert(data.message);
+
+              // Mostrar el ticket en una ventana nueva para impresión
+              const ticketWindow = window.open('', '_blank', 'width=400,height=600');
+              ticketWindow.document.write(data.ticket);
+              ticketWindow.document.close();
+              ticketWindow.print();
+
               // Opcional: Redirigir o cerrar modal después de cerrar caja
               if (data.redirect_url) {
                 window.location.href = data.redirect_url;  // Redirige a la URL proporcionada

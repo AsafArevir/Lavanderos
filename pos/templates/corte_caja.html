@@ -98,6 +98,9 @@
     {% comment %} <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> {% endcomment %}
     <style>
         /* Estilos personalizados */
+        .margen{
+            margin-top: 80px !important;
+        }
     </style>
 </head>
 
@@ -105,8 +108,8 @@
 
     {% include 'layouts/navbar.html' %}
 
-    <div class="container mt-5">
-        <h2 class="mb-4">Corte de Caja - {{ fecha_actual }}</h2>
+    <div class="container mt-8">
+        <h2 class="mb-4 margen">Corte de Caja - {{ fecha_actual }}</h2>
 
         <!-- Selector de fecha -->
         <form method="get" action="{% url 'corte_caja' %}">
@@ -139,10 +142,57 @@
                     <p>Ventas: ${{ turno.ventas }}</p>
                     <p>Encargos: ${{ turno.encargos }}</p>
                     <p>Saldo Final: ${{ turno.saldo_final }}</p>
+                    <p>Saldo Final Reportado: ${{ turno.saldo_reportado }}</p>
+                    <h5>Productos de Ventas</h5>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Método de Pago</th>
+                                <th>Producto</th>
+                                <th>Precio</th>
+                                <th>Cantidad</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for venta in turno.productos_ventas %}
+                                {% for producto in venta.productos %}
+                                    <tr>
+                                        <td>{{ venta.cliente }}</td>
+                                        <td>{{ venta.metodo_pago }}</td>
+                                        <td>{{ producto.nombre }}</td>
+                                        <td>${{ producto.precio }}</td>
+                                        <td>{{ producto.cantidad }}</td>
+                                        <td>${{ producto.total|floatformat:2 }}</td>
+                                        {% comment %} <td>${{ producto.precio*producto.cantidad }}</td> {% endcomment %}
+                                    </tr>
+                                {% endfor %}
+                                {% comment %} <p>{{venta.importe_total}}</p> {% endcomment %}
+                            {% endfor %}
+                            {% for venta in turno.productos_encargos %}
+                                {% for producto in venta.productos %}
+                                    <tr>
+                                        <td>{{ venta.cliente }}</td>
+                                        <td>{{ venta.metodo_pago }}</td>
+                                        <td>{{ producto.nombre }}</td>
+                                        <td>${{ producto.precio }}</td>
+                                        <td>{{ producto.cantidad }}</td>
+                                        <td>${{ producto.total|floatformat:2 }}</td>
+                                        {% comment %} <td>${{ producto.precio*producto.cantidad }}</td> {% endcomment %}
+                                    </tr>
+                                {% endfor %}
+                                {% comment %} <p>{{venta.importe_total}}</p> {% endcomment %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <hr>
         {% endfor %}
+            <br/>
+
+            
 
         <!-- Totales de día -->
         <div>

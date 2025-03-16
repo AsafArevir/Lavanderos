@@ -239,25 +239,25 @@
       <div class="tab-content" id="myTabContent">
         <!-- Productos -->
         <div class="tab-pane fade show active" id="productos" role="tabpanel" aria-labelledby="productos-tab">
-          <div class="container mt-5">
-            <h1>Productos disponibles</h1>
+          <div class="container mt-1" >
+            <h2 class="text-center">Productos disponibles</h2>
     
-            <div class="row">
               {% for producto in productos %}
               {% if producto.tipo == 'producto' %}
-              <div class="col-md-4 mb-4">
-                <div class="card">
-                  <div class="card-body text-center">
-                    <h5 class="card-title">
+              <div class="col-12 mb-1">
+                <div class="card" style="border-radius: 10px;">
+                  <div class="card-body d-flex align-items-center justify-content-between" 
+                    style="padding-top: 3px; padding-bottom: 3px;">
+                    <h5 class="card-title mb-1", style="width: 350px; text-align: center;">
                       <span class="color-blue"> {{ producto.nombre }} </span>
                     </h5>
-                    <p class="card-text">
+                    <p class="mb-0 me-3" tyle="width: 150px; text-align: center;">
                       <span class="color-green">Precio:</span>
                       <span class="color-price">${{ producto.precio }}</span>
                     </p>
     
                     <!-- Campo de entrada para cantidad -->
-                    <div class="form-group">
+                    <div class="form-group mb-0 text-center" style="width: 350px; margin-right: 10px;">
                       <input
                         type="number"
                         class="form-control cantidad-input"
@@ -273,7 +273,7 @@
     
                     <!-- Botón para agregar producto -->
                     <button
-                      class="btn btn-primary agregar-producto"
+                      class="btn btn-primary agregar-producto ms-3"
                       data-nombre="{{ producto.nombre }}"
                       data-precio="{{ producto.precio }}"
                     >
@@ -286,34 +286,34 @@
               {% endfor %}
             </div>
           </div>
-        </div>
+        
     
         <!-- Servicios -->
         <div class="tab-pane fade" id="servicios" role="tabpanel" aria-labelledby="servicios-tab">
-          <div class="container mt-5">
-            <h1>Servicios disponibles</h1>
+          <div class="container mt-1">
+            <h2 class="text-center">Servicios disponibles</h2>
     
-            <div class="row">
               {% for producto in productos %}
               {% if producto.tipo == 'servicio' %}
-              <div class="col-md-4 mb-4">
-                <div class="card">
-                  <div class="card-body text-center">
-                    <h5 class="card-title">
+              <div class="col-12 mb-1">
+                <div class="card" style="border-radius: 10px;">
+                  <div class="card-body d-flex align-items-center justify-content-between" 
+                    style="padding-top: 3px; padding-bottom: 3px;">
+                    <h5 class="card-title mb-1", style="width: 350px; text-align: center;">
                       <span class="color-blue"> {{ producto.nombre }} </span>
                     </h5>
-                    <p class="card-text">
+                    <p class="mb-0 me-3" tyle="width: 150px; text-align: center;">
                       <span class="color-green">Precio:</span>
                       <span class="color-price">${{ producto.precio }}</span>
                     </p>
     
                     <!-- Campo de entrada para cantidad -->
-                    <div class="form-group">
+                    <div class="form-group mb-0 text-center" style="width: 350px; margin-right: 10px;">
                       <input
                         type="number"
                         class="form-control cantidad-input"
                         data-precio="{{ producto.precio }}"
-                        placeholder="Cantidad"
+                        placeholder="Cantidad/Kg"
                         min="1"
                         step="1"
                       />
@@ -324,7 +324,7 @@
     
                     <!-- Botón para agregar producto -->
                     <button
-                      class="btn btn-primary agregar-producto"
+                      class="btn btn-primary agregar-producto ms-3"
                       data-nombre="{{ producto.nombre }}"
                       data-precio="{{ producto.precio }}"
                     >
@@ -335,7 +335,6 @@
               </div>
               {% endif %}
               {% endfor %}
-            </div>
           </div>
         </div>
       </div>
@@ -366,8 +365,17 @@
 
           <div class="modal-body">
             <div class="mb-3">
+              <label for="clienteInput" class="form-label">Buscar Cliente</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="clienteInput" 
+                placeholder="Escribe el nombre del cliente..."
+              />
+            </div>
+            <div class="mb-3">
               <label for="cliente" class="form-label">Clientes</label>
-              <select class="form-select" id="cliente" name="cliente_id">
+              <select class="form-select" id="cliente" name="cliente_id" size="4">
                 {% for cliente in clientes %}
                 <option value="{{ cliente.id }}">
                   {{ cliente.nombre }} {{ cliente.apellidos }}
@@ -427,51 +435,55 @@
               role="tabpanel"
               aria-labelledby="productos5-tab"
             >
-              <div class="container mt-3">
-                <h3>Productos Disponibles</h3>
-                <div class="row">
+              <div class="container mt-1">
+                <h4 class="text-center">Productos Disponibles</h4>
                   {% for producto in productos %}
                     {% if producto.tipo == 'producto' %}
-                      <div class="col-md-4 mb-4">
-                        <div class="card">
-                          <div class="card-body text-center">
-                            <h5 class="card-title">
-                              <span class="color-blue">{{ producto.nombre }}</span>
-                            </h5>
-                            <p class="card-text">
-                              <span class="color-green">Precio:</span>
-                              <span class="color-price">${{ producto.precio }}</span>
-                            </p>
-
-                            <!-- Campo de entrada para cantidad -->
-                            <div class="form-group mb-2">
-                              <input
-                                type="number"
-                                class="form-control cantidad-input5"
-                                data-precio="{{ producto.precio }}"
-                                placeholder="Cantidad/Kg"
-                                min="1"
-                                step="1"
-                              />
-                              <small class="form-text text-muted total-preview5">
-                                Total: $0.00
-                              </small>
-                            </div>
-
-                            <!-- Botón para agregar producto -->
-                            <button
-                              class="btn btn-primary agregar-producto5"
-                              data-nombre="{{ producto.nombre }}"
+                    <div class="col-11 mb-1">
+                      <div class="card" style="border-radius: 10px;">
+                        <div
+                          class="card-body d-flex align-items-center justify-content-between"
+                          style="padding-top: 3px; padding-bottom: 3px;"
+                        >
+                          <!-- Nombre del producto -->
+                          <h5 class="card-title mb-1" style="width: 350px; text-align: center;">
+                            <span class="color-blue">{{ producto.nombre }}</span>
+                          </h5>
+                    
+                          <!-- Precio del producto -->
+                          <p class="mb-0 me-3" style="width: 150px; text-align: center;">
+                            <span class="color-green">Precio:</span>
+                            <span class="color-price">${{ producto.precio }}</span>
+                          </p>
+                    
+                          <!-- Campo de entrada y total -->
+                          <div class="form-group mb-0 text-center" style="width: 350px; margin-right: 10px;">
+                            <input
+                              type="number"
+                              class="form-control cantidad-input5"
                               data-precio="{{ producto.precio }}"
-                            >
-                              Agregar
-                            </button>
+                              placeholder="Cantidad/Kg"
+                              min="1"
+                              step="1"
+                            />
+                            <small class="form-text text-muted total-preview5">
+                              Total: $0.00
+                            </small>
                           </div>
+                    
+                          <!-- Botón para agregar producto -->
+                          <button
+                            class="btn btn-primary agregar-producto5 ms-3"
+                            data-nombre="{{ producto.nombre }}"
+                            data-precio="{{ producto.precio }}"
+                          >
+                            Agregar
+                          </button>
                         </div>
                       </div>
+                    </div>                    
                     {% endif %}
                   {% endfor %}
-                </div>
               </div>
             </div>
 
@@ -482,51 +494,55 @@
               role="tabpanel"
               aria-labelledby="servicios5-tab"
             >
-              <div class="container mt-3">
-                <h3>Servicios Disponibles</h3>
-                <div class="row">
+              <div class="container mt-1">
+                <h4 class="text-center">Servicios Disponibles</h4>
                   {% for producto in productos %}
                     {% if producto.tipo == 'servicio' %}
-                      <div class="col-md-4 mb-4">
-                        <div class="card">
-                          <div class="card-body text-center">
-                            <h5 class="card-title">
-                              <span class="color-blue">{{ producto.nombre }}</span>
-                            </h5>
-                            <p class="card-text">
-                              <span class="color-green">Precio:</span>
-                              <span class="color-price">${{ producto.precio }}</span>
-                            </p>
-
-                            <!-- Campo de entrada para cantidad -->
-                            <div class="form-group mb-2">
-                              <input
-                                type="number"
-                                class="form-control cantidad-input5"
-                                data-precio="{{ producto.precio }}"
-                                placeholder="Cantidad"
-                                min="1"
-                                step="1"
-                              />
-                              <small class="form-text text-muted total-preview5">
-                                Total: $0.00
-                              </small>
-                            </div>
-
-                            <!-- Botón para agregar servicio -->
-                            <button
-                              class="btn btn-primary agregar-producto5"
-                              data-nombre="{{ producto.nombre }}"
+                    <div class="col-11 mb-1">
+                      <div class="card" style="border-radius: 10px;">
+                        <div
+                          class="card-body d-flex align-items-center justify-content-between"
+                          style="padding-top: 3px; padding-bottom: 3px;"
+                        >
+                          <!-- Nombre del producto -->
+                          <h5 class="card-title mb-1" style="width: 350px; text-align: center;">
+                            <span class="color-blue">{{ producto.nombre }}</span>
+                          </h5>
+                    
+                          <!-- Precio del producto -->
+                          <p class="mb-0 me-3" style="width: 150px; text-align: center;">
+                            <span class="color-green">Precio:</span>
+                            <span class="color-price">${{ producto.precio }}</span>
+                          </p>
+                    
+                          <!-- Campo de entrada y total -->
+                          <div class="form-group mb-0 text-center" style="width: 350px; margin-right: 10px;">
+                            <input
+                              type="number"
+                              class="form-control cantidad-input5"
                               data-precio="{{ producto.precio }}"
-                            >
-                              Agregar
-                            </button>
+                              placeholder="Cantidad/Kg"
+                              min="1"
+                              step="1"
+                            />
+                            <small class="form-text text-muted total-preview5">
+                              Total: $0.00
+                            </small>
                           </div>
+                    
+                          <!-- Botón para agregar producto -->
+                          <button
+                            class="btn btn-primary agregar-producto5 ms-3"
+                            data-nombre="{{ producto.nombre }}"
+                            data-precio="{{ producto.precio }}"
+                          >
+                            Agregar
+                          </button>
                         </div>
                       </div>
+                    </div>                    
                     {% endif %}
                   {% endfor %}
-                </div>
               </div>
             </div>
           </div>
@@ -562,7 +578,26 @@
             </li>
           </ul>
           <!-- Total y Botón Siguiente -->
+          <div>
+            <p> Servicios y Productos Agregados:</p>
+            <div class="table-responsive">
+              <table class="table table-bordered mt-1" id="tabla-encargos">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Cantidad</th>
+                    <th>Importe</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+
+          </div>
           <div class="mt-4 d-flex justify-content-between align-items-center">
+            
             <label for="total5">Total: $<span id="total5">0.00</span></label>
             <button
               type="button"
@@ -733,6 +768,7 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         let totalAcumulado = 0;
+        let prodServices = [];
     
         // Manejar la actualización del total en cada producto/servicio
         document.querySelectorAll(".cantidad-input5").forEach(function (input) {
@@ -759,6 +795,38 @@
     
               // Actualizar el total acumulado en el modal
               document.getElementById("total5").textContent = totalAcumulado.toFixed(2);
+
+              // Insertar producto/servicio en la tabla
+              const tablaEncargos = document.querySelector("#tabla-encargos tbody");
+              const nuevaFila = document.createElement("tr");
+              nuevaFila.innerHTML = `
+                <td>${nombre}</td>
+                <td>${precio.toFixed(2)}</td>
+                <td>${cantidad}</td>
+                <td>${total.toFixed(2)}</td>
+                <td>
+                  <button class="btn btn-danger btn-sm eliminar-fila">Eliminar</button>
+                </td>
+              `;
+              tablaEncargos.appendChild(nuevaFila);
+
+              // Agregar producto/servicio a la lista
+              prodServices.push({ nombre, precio, cantidad });
+              console.log("Productos/Servicios actuales:", prodServices);
+
+              // Añadir evento para eliminar filas
+              nuevaFila.querySelector(".eliminar-fila").addEventListener("click", function () {
+                // Restar el total de la fila al total acumulado
+                totalAcumulado -= total;
+                document.getElementById("total5").textContent = totalAcumulado.toFixed(2);
+
+                // Eliminar el producto/servicio de la lista
+                prodServices = prodServices.filter(item => item.nombre !== nombre || item.cantidad !== cantidad);
+                console.log("Productos/Servicios actualizados:", prodServices);
+
+                // Eliminar la fila de la tabla
+                this.closest("tr").remove();
+              });
     
               // Resetear el campo de cantidad y total preview
               cantidadInput.value = "";
@@ -774,12 +842,13 @@
         modalAgregarEncargo.addEventListener("show.bs.modal", function () {
           const folioInput = document.getElementById("folio5");
           const now = new Date();
+          console.log(now);
           const folio = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}${String(now.getSeconds()).padStart(2, '0')}`;
           folioInput.value = folio;
     
           // Establecer la fecha de encargo como la fecha actual
           const fechaEncargoInput = document.getElementById("fecha_encargo5");
-          const fechaActual = now.toISOString().split('T')[0];
+          const fechaActual = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
           fechaEncargoInput.value = fechaActual;
         });
     
@@ -875,6 +944,9 @@
           event.preventDefault();
     
           var formData = new FormData(this);
+          formData.append('productos', JSON.stringify(prodServices)); // Añadir los productos/servicios como JSON
+
+
           var url = 'guardar-encargo/'; // Usar la URL especificada en el atributo 'action' del formulario
     
           // Enviar la información al servidor por medio de AJAX
@@ -902,9 +974,9 @@
             resetForm(); // Llamar a la función para limpiar el formulario
             
           })
-          .catch(error => {data
-            console.error('Error:', error);
-            alert('Ocurrió un error al guardar el encargo.');
+          .catch(error => {
+            console.error('Error al guardar el encargo:', error);
+            alert('Error al guardar el encargo, no ha abierto ninguna caja');
           });
         });
     
@@ -937,56 +1009,79 @@
           const folio = document.getElementById("folio5").value;
           const fechaEncargo = document.getElementById("fecha_encargo5").value;
           const fechaEntrega = document.getElementById("fecha_entrega5").value;
+          console.log(fechaEntrega);
+          console.log(fechaEncargo);
+          function parseLocalDate(dateString) {
+            const [year, month, day] = dateString.split('-');
+            // Crear una fecha local con el año, mes y día especificados
+            return new Date(year, month - 1, day);
+        }
           const costo = parseFloat(document.getElementById("costo5").value) || 0;
           const anticipo = parseFloat(document.getElementById("anticipo5").value) || 0;
           const adeudo = parseFloat(document.getElementById("adeudo5").value) || 0;
           const metodoPagoSeleccionado = document.getElementById("forma_pago5").value;
           const descripcion = document.getElementById("observaciones5").value;
           const descuento = parseFloat(document.getElementById("descuento5").value) || 0;
+
+          // Generar las filas dinámicamente con los productos/servicios
+          const productosHTML = prodServices
+          .map(
+            prod => `
+              <tr>
+                <td style="text-align: center;">${prod.nombre}</td>
+                <td style="text-align: center;">${prod.cantidad}</td>
+                <td style="text-align: center;">${prod.precio.toFixed(2)}</td>
+                <td style="text-align: center;">${(prod.precio * prod.cantidad).toFixed(2)}</td>
+              </tr>`
+          )
+          .join("");
         
           const ticketContent = document.getElementById("ticketContent");
           ticketContent.innerHTML = `
-            <div style="font-family: 'Monospace', serif; font-size: 18px;">
+            <div style="font-family: 'Ticketing', serif; font-size: 1.5em;">
               <div style="text-align: right;">
                 <img src="{% static 'img/LAVANDEROS.ico' %}" alt="Lavanderos" style="width: 100px; height: auto;"/>
               </div>
-              <h2 style="text-align: center; font-size: 19px;">Lavanderos</h2>
-              <p>WhatsApp: 7222947337</p>
-              <p>Teléfono: 7229365461</p>
-              <p>Calle Paseo de los Matlatzincas 235</p>
-              <p>Col. Lomas Altas, Toluca, México</p>
+              <h2 style="text-align: center; font-size: 1.6em;">Lavanderos</h2>
+              <p>WhatsApp: 712 187 1436</p>
+              <p>Teléfono: 712 187 1436</p>
+              {% comment %} <p>Calle Paseo de los Matlatzincas 235</p>
+              <p>Col. Lomas Altas, Toluca, México</p> {% endcomment %}
+              {% comment %} <p>Av. Gustavo Baz Esq. con Av. de la Mujer</p>
+              <p>SN, Ixtlahuaca de Rayon, Edomex, México</p> {% endcomment %}
+              <p>Plaza Central 20, Carretera Ixtlahuaca-Jiquipilco</p>
+              <p>Ixtlahuaca de Rayon, Edomex, México</p>
               <h4>Folio: ${folio} </h4>
               <h4>Cliente: ${cliente}</h4>
               <p>Método de Pago: <span style="font-weight: bold">${metodoPagoSeleccionado}</span></p>
-              <p>Fecha de encargo: ${new Date(fechaEncargo).toLocaleString("es-ES")}</p>
-              <p>Fecha de entrega: ${new Date(fechaEntrega).toLocaleString("es-ES")}</p>
+              <p>Fecha de encargo: ${parseLocalDate(fechaEncargo).toLocaleDateString("es-ES")}</p>
+              <p>Fecha de entrega: ${parseLocalDate(fechaEntrega).toLocaleDateString("es-ES")}</p>
               <table class="table">
                 <thead>
                   <tr>
                     <th style="text-align: center;">Servicio</th>
-                    <th style="text-align: center;">Costo</th>
-                    <th style="text-align: center;">Anticipo</th>
-                    <th style="text-align: center;">Adeudo</th>
+                    <th style="text-align: center;">Cantidad</th>
+                    <th style="text-align: center;">Precio</th>
+                    <th style="text-align: center;">Total</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td style="font-size: 0.8em; text-align: center;">Encargo</td>
-                    <td style="font-size: 0.9em; text-align: center;">${costo.toFixed(2)}</td>
-                    <td style="font-size: 0.9em; text-align: center;">${anticipo.toFixed(2)}</td>
-                    <td style="font-size: 0.9em; text-align: center;">${adeudo.toFixed(2)}</td>
+                    ${productosHTML}
                   </tr>
                 </tbody>
               </table>
               
 
-              <p style="font-size: 0.9em; text-align: right;">Descuento ${descuento.toFixed(2)}%</p>
-              <p style="font-size: 0.9em; text-align: right;">Descuento $${(costo * (descuento / 100)).toFixed(2)}</p>
-              <p style="font-size: 0.9em; text-align: right;">Costo con Descuento: $${(costo - (costo * (descuento / 100))).toFixed(2)}</p>
+              <p style="font-size: 1em; text-align: right;">Descuento ${descuento.toFixed(2)}%</p>
+              <p style="font-size: 1em; text-align: right;">Descuento $${(costo * (descuento / 100)).toFixed(2)}</p>
+              <p style="font-size: 1em; text-align: right;">Total con Descuento: $${(costo - (costo * (descuento / 100))).toFixed(2)}</p>
 
-              <p class="total" style="text-align: right; font-size: 1.5em;">Total/Anticipo: $${anticipo.toFixed(2)}</p>
-              <p style="font-size: 0.8em;">Descripción: ${descripcion}</p>
-              <p style="font-style: italic; text-align: center;">"Porque NO toda la ropa sucia se lava en casa"</p>
+              <p class="total" style="text-align: right; font-size: 1.0em;">Total: $${costo.toFixed(2)}</p>
+              <p class="total" style="text-align: right; font-size: 1.5em;">Anticipo: $${anticipo.toFixed(2)}</p>
+              <p class="total" style="text-align: right; font-size: 1.5em;">Por pagar: $${adeudo.toFixed(2)}</p>
+              <p style="font-size: 1.2em;">Descripción: ${descripcion}</p>
+              <p style="font-style: italic; text-align: center; font-size: 1.1em;">"Porque NO toda la ropa sucia se lava en casa"</p>
               <p style="font-size: 1.1em; text-align: justify;"><i>"Lavanderos"</i>, después de <b style="font-size: 1.2em;">1 mes</b> la empresa no se hace responsable de las prendas. Por su comprensión, gracias.</p>
             </div>
           `;
@@ -1229,7 +1324,8 @@
               console.error("Error:", error);
               // Aquí puedes manejar el error, como mostrar un mensaje de error al usuario
               alert(
-                "Error al realizar el pago. Por favor, inténtalo de nuevo."
+                "Error al realizar el pago. Por favor, inténtalo de nuevo." +
+                "No ha abierto la caja o no tienen stock de algun producto"
               );
             });
         });
@@ -1246,19 +1342,23 @@
       ) {
         var ticketContent = document.getElementById("ticketContent");
         ticketContent.innerHTML = `
-                <div style="font-family: 'Monospace', serif; font-size: 18px;" >
-                <div style="text-align: right;, font-family: 'Monospace', serif; font-size: 19px;">
+                <div style="font-family: 'Ticketing', serif; font-size: 1.6em;" >
+                <div style="text-align: right;, font-family: 'Ticketing', serif; font-size: 1.6em;">
                 <img src={% static 'img/LAVANDEROS.ico' %} alt="Lavanderos" style="width: 100px; height: auto;"/>
                 </div>
                 <h2 style="text-align: center;">Lavanderos</h2>
-                <p>WhatsApp: 7222947337</p>
-                <p>Teléfono: 7229365461</p>
-                <p>Calle Paseo de los Matlatzincas 235</p>
-                <p>Col. Lomas Altas, Toluca, México</p>
+                <p>WhatsApp: 712 187 1436</p>
+                <p>Teléfono: 712 187 1436</p>
+                {% comment %} <p>Calle Paseo de los Matlatzincas 235</p>
+                <p>Col. Lomas Altas, Toluca, México</p> {% endcomment %}
+                {% comment %} <p>Av. Gustavo Baz Esq. con Av. de la Mujer</p>
+                <p>SN, Ixtlahuaca de Rayon, Edomex, México</p> {% endcomment %}
+                <p>Plaza Central 20, Carretera Ixtlahuaca-Jiquipilco</p>
+                <p>Ixtlahuaca de Rayon, Edomex, México</p>
                 <h4>Cliente: ${cliente}</h4>
                 <p>Folio: ${folio} </p>
                 <p>Método de Pago: <span style="font-weight: bold">${metodoPagoSeleccionado}</span></p>
-                <p>Fecha de encargo: ${new Date().toLocaleString("es-ES", {
+                <p>Fecha de Compra: ${new Date().toLocaleString("es-ES", {
                   day: "2-digit",
                   month: "2-digit",
                   year: "numeric",
@@ -1267,7 +1367,7 @@
                   hour12: true,
                 })}</p>
    
-                <p>Fecha de entrega: ${new Date().toLocaleString("es-ES", {
+                {% comment %} <p>Fecha de entrega: ${new Date().toLocaleString("es-ES", {
                   day: "2-digit",
                   month: "2-digit",
                   year: "numeric",
@@ -1275,7 +1375,7 @@
                   minute: "2-digit",
                   hour12: true,
                 })}</p>
-                
+                 {% endcomment %}
                 <table class="table">
                     <thead>
                         <tr>
@@ -1290,16 +1390,16 @@
                           .map(
                             (producto) => `
                             <tr>
-                                <td style="font-size: 0.8em; text-align: center;">${
+                                <td style="font-size: 1.2em; text-align: center;">${
                                   producto.nombre
                                 }</td>
-                                <td style="font-size: 0.9em; text-align: center;">${producto.precio.toFixed(
+                                <td style="font-size: 1.2em; text-align: center;">${producto.precio.toFixed(
                                   2
                                 )}</td>
-                                <td style="font-size: 1.0em; text-align: center;">${
+                                <td style="font-size: 1.2em; text-align: center;">${
                                   producto.cantidad
                                 }</td>
-                                <td style="font-size: 0.9em; text-align: center;">${(
+                                <td style="font-size: 1.2em; text-align: center;">${(
                                   producto.precio * producto.cantidad
                                 ).toFixed(2)}</td>
                             </tr>
@@ -1313,9 +1413,9 @@
                   total
                 ).toFixed(2)}</p>
                 <p>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</p>
-                <p style="font-size: 0.8em;">Descripción: ${descripcion}</p>
+                <p style="font-size: 1.2em;">Descripción: ${descripcion}</p>
                 <p>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</p>
-                <p style="font-style: italic; text-align: center;">"Porque NO toda la ropa sucia se lava en casa"</p>
+                <p style="font-style: italic; text-align: center; font-size: 1.1em;">"Porque NO toda la ropa sucia se lava en casa"</p>
                 <p style="font-size: 1.1em; text-align: justify;"><i>"Lavanderos"</i>,después de <b style="font-size: 1.2em;"> 1 mes</b> la empresa no se hace responsable de las prendas. Por su comprensión, gracias.</p>
                 </div>
             `;
@@ -1567,6 +1667,21 @@
       });
     </script>
 
+    <script>
+      document.getElementById('clienteInput').addEventListener('input', function () {
+        const input = this.value.toLowerCase(); // Texto del usuario
+        const opciones = document.getElementById('cliente').options; // Opciones del select
+    
+        for (let i = 0; i < opciones.length; i++) {
+          const textoOpcion = opciones[i].text.toLowerCase(); // Texto del cliente
+          if (textoOpcion.includes(input)) {
+            opciones[i].style.display = ''; // Mostrar la opción
+          } else {
+            opciones[i].style.display = 'none'; // Ocultar la opción
+          }
+        }
+      });
+    </script>
     
   </body>
 </html>
